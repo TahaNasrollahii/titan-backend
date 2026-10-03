@@ -17,12 +17,18 @@ DEBUG = env.bool("DEBUG", default=False)
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=[])
 
 DJANGO_APPS = [
+    # Unfold (admin theme) must come before django.contrib.admin so its templates win.
+    "unfold",
+    "unfold.contrib.filters",
+    "unfold.contrib.forms",
+    "unfold.contrib.inlines",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django.contrib.humanize",
 ]
 THIRD_PARTY_APPS = [
     "rest_framework",
@@ -49,6 +55,7 @@ MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.locale.LocaleMiddleware",
+    "apps.core.middleware.AdminEnglishMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -63,7 +70,7 @@ ASGI_APPLICATION = "config.asgi.application"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [BASE_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -208,3 +215,11 @@ LOGGING = {
     "root": {"handlers": ["console"], "level": env("LOG_LEVEL", default="INFO")},
     "loggers": {"django.db.backends": {"level": "WARNING"}},
 }
+
+# ---------------------------------------------------------------- admin theme
+from .unfold import UNFOLD  # noqa: E402
+
+UNFOLD["SITE_URL"] = FRONTEND_URL  # "Return to site" goes to the storefront, not the API root.
+
+# Compact English date formats for the admin (the public API serialises ISO-8601 regardless).
+FORMAT_MODULE_PATH = ["config.formats"]

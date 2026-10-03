@@ -278,13 +278,42 @@ See `titan-front/README.md` for how the client is organised.
 
 ### Staff back office (`/admin/`)
 
+The admin uses the [django-unfold](https://unfoldadmin.com) theme in Titan colours, in English (LTR), with
+light and dark modes. The public API stays Persian; `AdminEnglishMiddleware` switches only `/admin/`.
+
+- **Where things live:**
+  - Theme settings, palette and sidebar: `config/settings/unfold.py`.
+  - Dashboard data and sidebar badges: `apps/core/admin_site.py`.
+  - Dashboard template: `templates/admin/index.html`.
+  - Styles and logos: `apps/core/static/admin/titan/`.
+  - Shared helpers, plus the Group and JWT token admins: `apps/core/admin.py`.
+- **Dashboard:**
+  - KPIs: 30-day revenue and new players, each compared with the previous 30 days; orders to fulfil; live
+    tournaments.
+  - A 14-day revenue chart and orders by status.
+  - Latest orders, upcoming tournaments with fill rate, top products and low stock.
+- **Sidebar:** grouped navigation (Sales, Store, Esports, Community, Content, Security). It shows live badges
+  for orders to fulfil, live matches and hidden reviews, and hides items the staff member can't view.
+  <kbd>Ctrl</kbd>+<kbd>K</kbd> searches across models.
 - **Orders:**
-  - Enter redeem codes on each order line, then run **"Mark as delivered"**. The customer sees the codes
-    and is notified.
-  - **"Mark as processing"** moves paid orders to processing.
+  - Enter redeem codes on each order line, then use **"Mark as delivered"**. It is in the order's top bar,
+    or a bulk action in the list. The customer sees the codes and is notified.
+  - **"Start processing"** / **"Mark as processing"** moves paid orders to processing.
+- **Products:**
+  - Tabbed form (Pricing & stock, Delivery, Content, Merchandising), with options and gallery as tabs.
+  - **"View on storefront"** opens the product on the frontend.
+  - Bulk actions: activate, deactivate and toggle the best-seller badge.
+- **Reviews:** approve or hide in bulk, or with the per-row toggle. Product ratings are recalculated
+  automatically.
 - **Game accounts:** passwords are hidden unless the staff member has the `accounts.reveal_password`
   permission.
 - **Tournaments:**
-  - **"Generate bracket and start"** builds the bracket.
+  - **"Generate bracket & start"** builds the bracket. It is available on the tournament page or as a bulk
+    action. Registrations and matches are shown as tabs.
   - Enter both scores on a match to report the result. Advancement, stats and prizes follow automatically.
-- **Wallets:** balances are read-only in the admin. Every change goes through the ledgered wallet services.
+- **Wallets:**
+  - Balances are read-only.
+  - **"Adjust balance"** on a wallet opens a dialog that credits or debits through the ledgered wallet
+    services.
+  - The full ledger is under *Wallet ledger*.
+- **Notifications:** **"Broadcast to all players"** sends a system notification to every active player.

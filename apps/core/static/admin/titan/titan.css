@@ -1,0 +1,548 @@
+/* Titan admin — dashboard and small brand touches on top of django-unfold.
+   Colours come from Unfold's palette variables (configured in config/settings/unfold.py). */
+
+:root {
+  --tt-surface: #ffffff;
+  --tt-border: var(--color-base-200);
+  --tt-muted: var(--color-base-500);
+  --tt-strong: var(--color-base-900);
+  --tt-soft: var(--color-base-50);
+  --tt-radius: 14px;
+}
+
+html.dark {
+  --tt-surface: var(--color-base-900);
+  --tt-border: var(--color-base-800);
+  --tt-muted: var(--color-base-400);
+  --tt-strong: var(--color-base-100);
+  --tt-soft: rgba(255, 255, 255, 0.03);
+}
+
+.tt-dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* ---------- hero ---------- */
+.tt-hero {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 28px 32px;
+  border-radius: calc(var(--tt-radius) + 4px);
+  color: #fff;
+  background:
+    radial-gradient(circle at 85% 20%, rgba(255, 255, 255, 0.18), transparent 45%),
+    linear-gradient(135deg, var(--color-primary-600), var(--color-primary-900) 70%, #2e131a);
+  box-shadow: 0 18px 40px -24px rgba(226, 69, 63, 0.75);
+}
+
+.tt-hero-kicker {
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  opacity: 0.75;
+}
+
+.tt-hero-title {
+  margin: 4px 0 6px;
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.tt-hero-sub {
+  font-size: 14px;
+  opacity: 0.85;
+}
+
+.tt-quick {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tt-quick-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #fff !important;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  backdrop-filter: blur(6px);
+  transition: background 0.2s, transform 0.2s;
+}
+
+.tt-quick-link:hover {
+  background: rgba(255, 255, 255, 0.24);
+  transform: translateY(-1px);
+}
+
+.tt-quick-link .material-symbols-outlined {
+  font-size: 18px;
+}
+
+/* ---------- cards ---------- */
+.tt-card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px 22px;
+  border-radius: var(--tt-radius);
+  background: var(--tt-surface);
+  border: 1px solid var(--tt-border);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  min-width: 0;
+}
+
+.tt-card-flush {
+  padding-bottom: 6px;
+}
+
+.tt-card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.tt-card-head h2 {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--tt-strong);
+}
+
+.tt-card-head p {
+  font-size: 12px;
+  color: var(--tt-muted);
+  margin-top: 2px;
+}
+
+.tt-link {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-primary-600) !important;
+  white-space: nowrap;
+}
+
+html.dark .tt-link {
+  color: var(--color-primary-400) !important;
+}
+
+.tt-pill {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  color: var(--color-primary-700);
+  background: var(--color-primary-50);
+}
+
+html.dark .tt-pill {
+  color: var(--color-primary-300);
+  background: rgba(226, 69, 63, 0.14);
+}
+
+/* ---------- KPIs ---------- */
+.tt-kpis {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.tt-kpi {
+  gap: 10px;
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+}
+
+.tt-kpi:hover {
+  transform: translateY(-2px);
+  border-color: var(--color-primary-300);
+  box-shadow: 0 12px 24px -16px rgba(226, 69, 63, 0.55);
+}
+
+.tt-kpi-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.tt-kpi-title {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--tt-muted);
+}
+
+.tt-kpi-icon {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  font-size: 20px;
+  color: var(--color-primary-600);
+  background: var(--color-primary-50);
+}
+
+html.dark .tt-kpi-icon {
+  color: var(--color-primary-300);
+  background: rgba(226, 69, 63, 0.15);
+}
+
+.tt-kpi-value {
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--tt-strong);
+}
+
+.tt-kpi-foot {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--tt-muted);
+}
+
+.tt-delta {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-weight: 700;
+}
+
+.tt-delta .material-symbols-outlined {
+  font-size: 16px;
+}
+
+.tt-up {
+  color: #15803d;
+  background: #dcfce7;
+}
+
+.tt-down {
+  color: #b91c1c;
+  background: #fee2e2;
+}
+
+html.dark .tt-up {
+  color: #4ade80;
+  background: rgba(34, 197, 94, 0.15);
+}
+
+html.dark .tt-down {
+  color: #f87171;
+  background: rgba(239, 68, 68, 0.15);
+}
+
+/* ---------- grids ---------- */
+.tt-grid {
+  display: grid;
+  gap: 16px;
+}
+
+.tt-grid-2-1 {
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+}
+
+.tt-grid-1-1 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+@media (max-width: 1200px) {
+  .tt-kpis {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  .tt-kpis,
+  .tt-grid-2-1,
+  .tt-grid-1-1 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---------- order status list ---------- */
+.tt-status-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.tt-status-list a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--tt-strong) !important;
+}
+
+.tt-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.tt-status-count {
+  margin-left: auto;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.tt-bar {
+  height: 6px;
+  margin-top: 6px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: var(--tt-soft);
+  border: 1px solid var(--tt-border);
+}
+
+.tt-bar span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--color-primary-500);
+}
+
+.tt-mini-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: auto;
+  padding-top: 14px;
+  border-top: 1px dashed var(--tt-border);
+}
+
+.tt-mini-stats div {
+  display: flex;
+  flex-direction: column;
+  font-size: 12px;
+  color: var(--tt-muted);
+}
+
+.tt-mini-stats strong {
+  font-size: 18px;
+  color: var(--tt-strong);
+}
+
+/* ---------- tables ---------- */
+.tt-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.tt-table th {
+  padding: 8px 10px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--tt-muted);
+  border-bottom: 1px solid var(--tt-border);
+}
+
+.tt-table td {
+  padding: 11px 10px;
+  vertical-align: middle;
+  color: var(--tt-strong);
+  border-bottom: 1px solid var(--tt-border);
+}
+
+.tt-table tr:last-child td {
+  border-bottom: none;
+}
+
+.tt-table td a {
+  font-weight: 600;
+  color: var(--tt-strong) !important;
+}
+
+.tt-table td a:hover {
+  color: var(--color-primary-600) !important;
+}
+
+.tt-table td small {
+  display: block;
+  margin-top: 2px;
+  font-size: 11px;
+  color: var(--tt-muted);
+}
+
+.tt-num {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.tt-mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.tt-fill {
+  min-width: 120px;
+}
+
+.tt-fill span {
+  font-variant-numeric: tabular-nums;
+}
+
+.tt-empty {
+  padding: 18px 10px !important;
+  text-align: center;
+  font-size: 13px;
+  color: var(--tt-muted) !important;
+}
+
+/* ---------- status badges (order + tournament states) ---------- */
+.tt-badge {
+  display: inline-block;
+  padding: 2px 9px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+  color: var(--color-base-700);
+  background: var(--color-base-100);
+}
+
+.tt-badge-completed,
+.tt-badge-registration_open {
+  color: #15803d;
+  background: #dcfce7;
+}
+
+.tt-badge-paid,
+.tt-badge-upcoming {
+  color: #1d4ed8;
+  background: #dbeafe;
+}
+
+.tt-badge-processing,
+.tt-badge-live {
+  color: #6d28d9;
+  background: #ede9fe;
+}
+
+.tt-badge-pending_payment,
+.tt-badge-registration_closed {
+  color: #b45309;
+  background: #fef3c7;
+}
+
+.tt-badge-failed,
+.tt-badge-cancelled {
+  color: #b91c1c;
+  background: #fee2e2;
+}
+
+html.dark .tt-badge {
+  color: var(--color-base-200);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+html.dark .tt-badge-completed,
+html.dark .tt-badge-registration_open {
+  color: #4ade80;
+  background: rgba(34, 197, 94, 0.15);
+}
+
+html.dark .tt-badge-paid,
+html.dark .tt-badge-upcoming {
+  color: #60a5fa;
+  background: rgba(59, 130, 246, 0.15);
+}
+
+html.dark .tt-badge-processing,
+html.dark .tt-badge-live {
+  color: #a78bfa;
+  background: rgba(139, 92, 246, 0.18);
+}
+
+html.dark .tt-badge-pending_payment,
+html.dark .tt-badge-registration_closed {
+  color: #fbbf24;
+  background: rgba(245, 158, 11, 0.15);
+}
+
+html.dark .tt-badge-failed,
+html.dark .tt-badge-cancelled {
+  color: #f87171;
+  background: rgba(239, 68, 68, 0.15);
+}
+
+/* ---------- admin-wide touches ---------- */
+.tt-swatch {
+  display: inline-block;
+  width: 46px;
+  height: 18px;
+  border-radius: 999px;
+  vertical-align: middle;
+  border: 1px solid var(--tt-border);
+}
+
+.tt-thumb {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  object-fit: cover;
+  border: 1px solid var(--tt-border);
+  background: var(--tt-soft);
+}
+
+.tt-code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 6px;
+  background: var(--tt-soft);
+  border: 1px solid var(--tt-border);
+}
+
+.tt-stars {
+  color: #f59e0b;
+  letter-spacing: 1px;
+  white-space: nowrap;
+}
+
+.tt-stars-off {
+  color: var(--color-base-300);
+}
+
+html.dark .tt-stars-off {
+  color: var(--color-base-700);
+}
+
+.tt-muted {
+  color: var(--tt-muted);
+}
+
+/* Content is largely Persian inside an English (LTR) admin: let each cell and input pick its own
+   direction so mixed Persian/Latin titles keep their natural word order. */
+#result_list td,
+.tt-table td,
+.readonly,
+input[type="text"],
+textarea {
+  unicode-bidi: plaintext;
+}
+
+#result_list td,
+.tt-table td {
+  text-align: left;
+}

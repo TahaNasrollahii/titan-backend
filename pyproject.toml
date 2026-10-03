@@ -19,6 +19,7 @@ dependencies = [
     "pillow>=11.2",
     "gunicorn>=23.0",
     "whitenoise>=6.9",
+    "django-unfold>=0.60",
 ]
 
 [dependency-groups]

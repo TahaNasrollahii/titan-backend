@@ -1,0 +1,198 @@
+{% extends 'admin/base.html' %}
+{% load i18n unfold humanize %}
+
+{% block title %}{% trans "Dashboard" %} | {{ site_title|default:_('Django site admin') }}{% endblock %}
+
+{% block branding %}
+    {% include "unfold/helpers/site_branding.html" %}
+{% endblock %}
+
+{% block content %}
+<div class="tt-dashboard">
+
+    {# ---------- greeting + quick actions ---------- #}
+    <section class="tt-hero">
+        <div>
+            <p class="tt-hero-kicker">{% now "l, j F Y" %}</p>
+            <h1 class="tt-hero-title">{% blocktrans with name=request.user.username|default:request.user.phone %}Welcome back, {{ name }}{% endblocktrans %}</h1>
+            <p class="tt-hero-sub">{% trans "Here is what is happening across the Titan store and tournaments." %}</p>
+        </div>
+        <div class="tt-quick">
+            {% for link in quick_links %}
+                <a href="{{ link.link }}" class="tt-quick-link">
+                    <span class="material-symbols-outlined">{{ link.icon }}</span>{{ link.title }}
+                </a>
+            {% endfor %}
+        </div>
+    </section>
+
+    {# ---------- KPI cards ---------- #}
+    <section class="tt-kpis">
+        {% for kpi in kpis %}
+            <a href="{{ kpi.link }}" class="tt-card tt-kpi">
+                <div class="tt-kpi-head">
+                    <span class="tt-kpi-title">{{ kpi.title }}</span>
+                    <span class="tt-kpi-icon material-symbols-outlined">{{ kpi.icon }}</span>
+                </div>
+                <div class="tt-kpi-value">{{ kpi.value }}</div>
+                <div class="tt-kpi-foot">
+                    {% if kpi.change %}
+                        <span class="tt-delta {% if kpi.change.positive %}tt-up{% else %}tt-down{% endif %}">
+                            <span class="material-symbols-outlined">{% if kpi.change.positive %}trending_up{% else %}trending_down{% endif %}</span>
+                            {{ kpi.change.text }}
+                        </span>
+                    {% endif %}
+                    <span>{{ kpi.footer }}</span>
+                </div>
+            </a>
+        {% endfor %}
+    </section>
+
+    {# ---------- revenue chart + order statuses ---------- #}
+    <section class="tt-grid tt-grid-2-1">
+        <div class="tt-card">
+            <div class="tt-card-head">
+                <div>
+                    <h2>{% trans "Revenue" %}</h2>
+                    <p>{% trans "Paid orders, last 14 days" %}</p>
+                </div>
+                <span class="tt-pill">{% trans "Wallet float" %}: {{ wallet_float }}</span>
+            </div>
+            {% component "unfold/components/chart/bar.html" with data=revenue_chart height=260 %}{% endcomponent %}
+        </div>
+
+        <div class="tt-card">
+            <div class="tt-card-head">
+                <div>
+                    <h2>{% trans "Orders by status" %}</h2>
+                    <p>{% trans "All time" %}</p>
+                </div>
+            </div>
+            {% if order_statuses %}
+                <ul class="tt-status-list">
+                    {% for status in order_statuses %}
+                        <li>
+                            <a href="{{ status.link }}">
+                                <span class="tt-dot" style="background: {{ status.color }}"></span>
+                                <span class="tt-status-label">{{ status.label }}</span>
+                                <span class="tt-status-count">{{ status.count|intcomma }}</span>
+                            </a>
+                            <div class="tt-bar"><span style="width: {{ status.percent }}%; background: {{ status.color }}"></span></div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p class="tt-empty">{% trans "No orders yet." %}</p>
+            {% endif %}
+            <div class="tt-mini-stats">
+                <div><strong>{{ pending_payments|intcomma }}</strong><span>{% trans "payments awaiting gateway" %}</span></div>
+                <div><strong>{{ unapproved_reviews|intcomma }}</strong><span>{% trans "hidden reviews" %}</span></div>
+            </div>
+        </div>
+    </section>
+
+    {# ---------- latest orders + upcoming tournaments ---------- #}
+    <section class="tt-grid tt-grid-1-1">
+        <div class="tt-card tt-card-flush">
+            <div class="tt-card-head">
+                <div>
+                    <h2>{% trans "Latest orders" %}</h2>
+                    <p>{% trans "Most recent purchases" %}</p>
+                </div>
+                <a class="tt-link" href="{% url 'admin:orders_order_changelist' %}">{% trans "View all" %} →</a>
+            </div>
+            <table class="tt-table">
+                <thead><tr><th>{% trans "Order" %}</th><th>{% trans "Customer" %}</th><th>{% trans "Total" %}</th><th>{% trans "Status" %}</th></tr></thead>
+                <tbody>
+                {% for order in latest_orders %}
+                    <tr>
+                        <td><a href="{{ order.link }}" class="tt-mono">{{ order.number }}</a><small>{{ order.created|naturaltime }}</small></td>
+                        <td>{{ order.customer }}</td>
+                        <td class="tt-num">{{ order.total }}</td>
+                        <td><span class="tt-badge tt-badge-{{ order.status_value }}">{{ order.status }}</span></td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="4" class="tt-empty">{% trans "No orders yet." %}</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="tt-card tt-card-flush">
+            <div class="tt-card-head">
+                <div>
+                    <h2>{% trans "Upcoming & live tournaments" %}</h2>
+                    <p>{% trans "Registration fill rate" %}</p>
+                </div>
+                <a class="tt-link" href="{% url 'admin:tournaments_tournament_changelist' %}">{% trans "View all" %} →</a>
+            </div>
+            <table class="tt-table">
+                <thead><tr><th>{% trans "Tournament" %}</th><th>{% trans "Status" %}</th><th>{% trans "Entrants" %}</th></tr></thead>
+                <tbody>
+                {% for t in upcoming_tournaments %}
+                    <tr>
+                        <td><a href="{{ t.link }}">{{ t.title }}</a><small>{{ t.game }} · {{ t.starts|date:"M j, H:i" }}</small></td>
+                        <td><span class="tt-badge tt-badge-{{ t.status }}">{{ t.status_label }}</span></td>
+                        <td class="tt-fill">
+                            <span>{{ t.filled }}</span>
+                            <div class="tt-bar"><span style="width: {{ t.percent }}%"></span></div>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="3" class="tt-empty">{% trans "No scheduled tournaments." %}</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    {# ---------- top products + low stock ---------- #}
+    <section class="tt-grid tt-grid-1-1">
+        <div class="tt-card tt-card-flush">
+            <div class="tt-card-head">
+                <div>
+                    <h2>{% trans "Top products" %}</h2>
+                    <p>{% trans "By paid revenue" %}</p>
+                </div>
+            </div>
+            <table class="tt-table">
+                <thead><tr><th>{% trans "Product" %}</th><th>{% trans "Units" %}</th><th>{% trans "Revenue" %}</th></tr></thead>
+                <tbody>
+                {% for p in top_products %}
+                    <tr>
+                        <td><a href="{{ p.link }}">{{ p.title }}</a></td>
+                        <td class="tt-num">{{ p.units|intcomma }}</td>
+                        <td class="tt-num">{{ p.revenue }}</td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="3" class="tt-empty">{% trans "No sales yet." %}</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="tt-card tt-card-flush">
+            <div class="tt-card-head">
+                <div>
+                    <h2>{% trans "Low stock" %}</h2>
+                    <p>{% blocktrans with n=low_stock_threshold %}{{ n }} units or fewer{% endblocktrans %}</p>
+                </div>
+                <a class="tt-link" href="{% url 'admin:catalog_product_changelist' %}">{% trans "Products" %} →</a>
+            </div>
+            <table class="tt-table">
+                <thead><tr><th>{% trans "Item" %}</th><th>{% trans "In stock" %}</th></tr></thead>
+                <tbody>
+                {% for item in low_stock %}
+                    <tr>
+                        <td><a href="{{ item.link }}">{{ item.title }}</a></td>
+                        <td class="tt-num"><span class="tt-badge {% if item.stock == 0 %}tt-badge-failed{% else %}tt-badge-pending_payment{% endif %}">{{ item.stock }}</span></td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="2" class="tt-empty">{% trans "Everything is well stocked." %}</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+</div>
+{% endblock %}
