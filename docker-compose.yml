@@ -1,0 +1,40 @@
+# Local development stack: PostgreSQL + the API (Django runserver with auto-reload).
+#   docker compose up -d            # start
+#   docker compose exec api python manage.py seed
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-titan}
+      POSTGRES_USER: ${POSTGRES_USER:-titan}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-titan}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build: .
+    command: sh -c "python manage.py migrate --noinput && python manage.py runserver 0.0.0.0:8000"
+    env_file: .env
+    environment:
+      DJANGO_SETTINGS_MODULE: config.settings.dev
+      DATABASE_URL: postgres://${POSTGRES_USER:-titan}:${POSTGRES_PASSWORD:-titan}@db:5432/${POSTGRES_DB:-titan}
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+      - media:/app/media
+      - ../titan-front/public:/titan-front/public:ro
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  postgres-data:
+  media:

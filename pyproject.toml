@@ -1,0 +1,88 @@
+[project]
+name = "titan-back"
+version = "0.1.0"
+description = "Titan gaming & esports platform — REST API"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "django>=5.2,<5.3",
+    "djangorestframework>=3.16",
+    "djangorestframework-simplejwt>=5.5",
+    "djangorestframework-camel-case>=1.4",
+    "drf-spectacular>=0.28",
+    "django-filter>=25.1",
+    "django-cors-headers>=4.7",
+    "django-environ>=0.12",
+    "psycopg[binary]>=3.2",
+    "cryptography>=45.0",
+    "requests>=2.32",
+    "pillow>=11.2",
+    "gunicorn>=23.0",
+    "whitenoise>=6.9",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.4",
+    "pytest-django>=4.11",
+    "pytest-cov>=6.2",
+    "factory-boy>=3.3",
+    "faker>=37.4",
+    "responses>=0.25",
+    "ruff>=0.12",
+    "pre-commit>=4.2",
+]
+
+[tool.uv]
+package = false
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "config.settings.test"
+python_files = ["test_*.py"]
+addopts = "-ra --strict-markers --no-migrations --reuse-db"
+filterwarnings = ["ignore::DeprecationWarning:drf_spectacular.*"]
+
+[tool.coverage.run]
+source = ["apps", "config"]
+omit = ["*/migrations/*", "*/tests/*", "config/asgi.py", "config/wsgi.py", "config/settings/prod.py"]
+
+[tool.coverage.report]
+skip_covered = true
+show_missing = true
+
+[tool.ruff]
+line-length = 110
+target-version = "py313"
+extend-exclude = ["**/migrations/*"]
+
+[tool.ruff.lint]
+select = [
+    "E", "W", "F",   # pycodestyle / pyflakes
+    "I",             # isort
+    "B",             # bugbear
+    "UP",            # pyupgrade
+    "C4",            # comprehensions
+    "SIM",           # simplify
+    "DJ",            # django
+    "RET",           # return
+    "PIE",
+    "T20",           # no print
+    "PTH",           # pathlib
+    "RUF",
+]
+ignore = [
+    "RUF001", "RUF002", "RUF003",  # Persian text is intentional, not "ambiguous unicode"
+    "RUF012",                      # mutable class attrs are idiomatic in Django/DRF Meta classes
+]
+
+[tool.ruff.lint.per-file-ignores]
+# Long literals (Persian seed copy, request payloads in tests) read better unwrapped.
+"apps/*/tests/*" = ["E501"]
+"apps/core/seed/data.py" = ["E501"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["apps", "config"]
+section-order = ["future", "standard-library", "django", "third-party", "first-party", "local-folder"]
+
+[tool.ruff.lint.isort.sections]
+django = ["django"]

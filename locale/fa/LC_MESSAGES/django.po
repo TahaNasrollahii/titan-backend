@@ -1,0 +1,1058 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-10-03 17:46+0330\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: fa\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: .\apps\accounts\admin.py:32
+msgid "Profile"
+msgstr "پروفایل"
+
+#: .\apps\accounts\admin.py:35
+msgid "Progress"
+msgstr "پیشرفت"
+
+#: .\apps\accounts\admin.py:36
+msgid "Presence"
+msgstr "وضعیت حضور"
+
+#: .\apps\accounts\admin.py:38
+msgid "Permissions"
+msgstr "دسترسی‌ها"
+
+#: .\apps\accounts\admin.py:41
+msgid "Dates"
+msgstr "تاریخ‌ها"
+
+#: .\apps\accounts\admin.py:58 .\apps\accounts\models.py:149
+msgid "password"
+msgstr "رمز عبور"
+
+#: .\apps\accounts\apps.py:8
+msgid "Accounts"
+msgstr "حساب‌ها"
+
+#: .\apps\accounts\models.py:19
+msgid ""
+"Username may contain 3-32 English letters, digits, dots and underscores."
+msgstr ""
+"شناسه بازی باید بین ۳ تا ۳۲ کاراکتر و فقط شامل حروف انگلیسی، عدد، نقطه و "
+"زیرخط باشد."
+
+#: .\apps\accounts\models.py:54
+msgid "Online"
+msgstr "آنلاین"
+
+#: .\apps\accounts\models.py:55
+msgid "Away"
+msgstr "دور از سیستم"
+
+#: .\apps\accounts\models.py:56
+msgid "In game"
+msgstr "در بازی"
+
+#: .\apps\accounts\models.py:57
+msgid "Offline"
+msgstr "آفلاین"
+
+#: .\apps\accounts\models.py:59
+msgid "mobile number"
+msgstr "شماره موبایل"
+
+#: .\apps\accounts\models.py:61
+msgid "game ID"
+msgstr "شناسه بازی"
+
+#: .\apps\accounts\models.py:63
+msgid "full name"
+msgstr "نام و نام خانوادگی"
+
+#: .\apps\accounts\models.py:64 .\apps\catalog\models.py:227
+msgid "email"
+msgstr "ایمیل"
+
+#: .\apps\accounts\models.py:69
+msgid "Progress inside the current level."
+msgstr "پیشرفت در سطح فعلی."
+
+#: .\apps\accounts\models.py:70
+msgid "Drives the rank tier."
+msgstr "تعیین‌کننده رنک."
+
+#: .\apps\accounts\models.py:91
+msgid "user"
+msgstr "کاربر"
+
+#: .\apps\accounts\models.py:92
+msgid "users"
+msgstr "کاربران"
+
+#: .\apps\accounts\models.py:117
+msgid "Login"
+msgstr "ورود"
+
+#: .\apps\accounts\models.py:118
+msgid "Change phone"
+msgstr "تغییر شماره موبایل"
+
+#: .\apps\accounts\models.py:147 .\apps\catalog\models.py:18
+#: .\apps\catalog\models.py:91 .\apps\tournaments\models.py:70
+msgid "title"
+msgstr "عنوان"
+
+#: .\apps\accounts\models.py:148
+msgid "username or email"
+msgstr "نام کاربری یا ایمیل"
+
+#: .\apps\accounts\models.py:161 .\apps\teams\models.py:99
+msgid "Pending"
+msgstr "در انتظار"
+
+#: .\apps\accounts\models.py:162 .\apps\teams\models.py:100
+msgid "Accepted"
+msgstr "پذیرفته شده"
+
+#: .\apps\accounts\models.py:163 .\apps\teams\models.py:101
+msgid "Declined"
+msgstr "رد شده"
+
+#: .\apps\accounts\serializers.py:128
+msgid "This game ID is already taken."
+msgstr "این شناسه بازی قبلاً ثبت شده است."
+
+#: .\apps\accounts\serializers.py:201
+msgid "This field is required."
+msgstr "این فیلد الزامی است."
+
+#: .\apps\accounts\serializers.py:223 .\apps\teams\serializers.py:142
+msgid "No player with this game ID was found."
+msgstr "بازیکنی با این شناسه پیدا نشد."
+
+#: .\apps\accounts\services.py:25
+msgid "Too many code requests. Please wait before trying again."
+msgstr "درخواست کد بیش از حد مجاز است. لطفاً کمی صبر کنید و دوباره تلاش کنید."
+
+#: .\apps\accounts\services.py:30
+msgid "The verification code is invalid or has expired."
+msgstr "کد تایید نامعتبر است یا منقضی شده است."
+
+#: .\apps\accounts\services.py:36
+msgid "Too many wrong attempts. Request a new code."
+msgstr "تعداد تلاش‌های ناموفق زیاد است. کد جدید درخواست کنید."
+
+#: .\apps\accounts\services.py:106
+msgid "This account has been disabled."
+msgstr "این حساب کاربری غیرفعال شده است."
+
+#: .\apps\accounts\services.py:124
+msgid "Invalid or expired refresh token."
+msgstr "توکن نامعتبر است یا منقضی شده است."
+
+#: .\apps\accounts\services.py:129
+msgid "This mobile number is already registered."
+msgstr "این شماره موبایل قبلاً ثبت شده است."
+
+#: .\apps\accounts\services.py:174
+msgid "You cannot add yourself as a friend."
+msgstr "نمی‌توانید خودتان را به دوستان اضافه کنید."
+
+#: .\apps\accounts\services.py:178
+msgid "You are already friends."
+msgstr "شما قبلاً با هم دوست هستید."
+
+#: .\apps\accounts\services.py:182 .\apps\accounts\services.py:189
+msgid "A friend request is already pending."
+msgstr "یک درخواست دوستی در انتظار پاسخ است."
+
+#: .\apps\accounts\services.py:193
+msgid "New friend request"
+msgstr "درخواست دوستی جدید"
+
+#: .\apps\accounts\services.py:194
+#, python-format
+msgid "%(name)s wants to be your friend."
+msgstr "%(name)s می‌خواهد با شما دوست شود."
+
+#: .\apps\accounts\services.py:208
+msgid "Friend request not found."
+msgstr "درخواست دوستی پیدا نشد."
+
+#: .\apps\accounts\services.py:221
+msgid "Friend request accepted"
+msgstr "درخواست دوستی پذیرفته شد"
+
+#: .\apps\accounts\services.py:222
+#, python-format
+msgid "%(name)s accepted your friend request."
+msgstr "%(name)s درخواست دوستی شما را پذیرفت."
+
+#: .\apps\accounts\services.py:240
+msgid "This user is not your friend."
+msgstr "این کاربر در لیست دوستان شما نیست."
+
+#: .\apps\catalog\admin.py:49
+msgid "Set a fixed price or add at least one option."
+msgstr "یک قیمت ثابت وارد کنید یا حداقل یک گزینه اضافه کنید."
+
+#: .\apps\catalog\apps.py:8
+msgid "Catalog"
+msgstr "کاتالوگ"
+
+#: .\apps\catalog\models.py:14
+msgid "Game"
+msgstr "بازی"
+
+#: .\apps\catalog\models.py:15
+msgid "Service"
+msgstr "سرویس"
+
+#: .\apps\catalog\models.py:19
+msgid "English title"
+msgstr "عنوان انگلیسی"
+
+#: .\apps\catalog\models.py:32
+msgid "Shown as a store category tab."
+msgstr "به‌عنوان تب دسته‌بندی در فروشگاه نمایش داده می‌شود."
+
+#: .\apps\catalog\models.py:65
+msgid "product categories"
+msgstr "دسته‌بندی محصولات"
+
+#: .\apps\catalog\models.py:86
+msgid "Redeem code"
+msgstr "کد فعال‌سازی"
+
+#: .\apps\catalog\models.py:87
+msgid "Direct account top-up"
+msgstr "شارژ مستقیم اکانت"
+
+#: .\apps\catalog\models.py:88
+msgid "Manual fulfilment"
+msgstr "تحویل دستی"
+
+#: .\apps\catalog\models.py:95
+msgid "vendor / store"
+msgstr "ناشر / فروشگاه"
+
+#: .\apps\catalog\models.py:104 .\apps\catalog\models.py:183
+msgid "price (toman)"
+msgstr "قیمت (تومان)"
+
+#: .\apps\catalog\models.py:107
+msgid ""
+"Required for fixed-price products. With options it is the cheapest option "
+"(automatic)."
+msgstr ""
+"برای محصولات با قیمت ثابت الزامی است. برای محصولات دارای گزینه، قیمت "
+"ارزان‌ترین گزینه (خودکار)."
+
+#: .\apps\catalog\models.py:109 .\apps\catalog\models.py:184
+msgid "price before discount"
+msgstr "قیمت قبل از تخفیف"
+
+#: .\apps\catalog\models.py:114
+msgid "Most expensive option; empty for fixed-price products."
+msgstr "گران‌ترین گزینه؛ برای محصولات با قیمت ثابت خالی است."
+
+#: .\apps\catalog\models.py:120
+msgid ""
+"Empty means unlimited. With options it is their total stock (automatic)."
+msgstr ""
+"خالی یعنی نامحدود. برای محصولات دارای گزینه، مجموع موجودی گزینه‌ها (خودکار)."
+
+#: .\apps\catalog\models.py:127
+msgid "[{\"title\", \"description\", \"icon\"}]"
+msgstr "[{\"title\", \"description\", \"icon\"}]"
+
+#: .\apps\catalog\models.py:185
+msgid "Empty means unlimited."
+msgstr "خالی یعنی نامحدود."
+
+#: .\apps\catalog\models.py:226 .\apps\teams\models.py:30
+msgid "name"
+msgstr "نام"
+
+#: .\apps\catalog\models.py:226
+msgid "Shown publicly with the review."
+msgstr "همراه نظر به‌صورت عمومی نمایش داده می‌شود."
+
+#: .\apps\catalog\models.py:227
+msgid "Private; never shown publicly."
+msgstr "محرمانه؛ هرگز به‌صورت عمومی نمایش داده نمی‌شود."
+
+#: .\apps\content\apps.py:8
+msgid "Site content"
+msgstr "محتوای سایت"
+
+#: .\apps\content\models.py:25
+msgid "Store — special offers"
+msgstr "فروشگاه — پیشنهادهای ویژه"
+
+#: .\apps\content\models.py:26
+msgid "Store — best sellers"
+msgstr "فروشگاه — پرفروش‌ها"
+
+#: .\apps\content\models.py:27
+msgid "Home — hero"
+msgstr "خانه — بنر اصلی"
+
+#: .\apps\content\models.py:28
+msgid "Tournaments — hero"
+msgstr "تورنمنت‌ها — بنر اصلی"
+
+#: .\apps\content\models.py:46
+msgid "Internal path or absolute URL."
+msgstr "مسیر داخلی یا آدرس کامل."
+
+#: .\apps\content\models.py:48
+msgid "Art placement, e.g. {\"scale\": 1.1, \"x\": 0}"
+msgstr "Art placement, e.g. {\"scale\": 1.1, \"x\": 0}"
+
+#: .\apps\content\models.py:51
+msgid "Drives the countdown on the banner."
+msgstr "شمارش معکوس بنر بر اساس این زمان است."
+
+#: .\apps\content\models.py:88
+msgid "Telegram channel"
+msgstr "کانال تلگرام"
+
+#: .\apps\content\models.py:89
+msgid "Telegram support"
+msgstr "پشتیبانی تلگرام"
+
+#: .\apps\content\models.py:90
+msgid "Live chat"
+msgstr "چت آنلاین"
+
+#: .\apps\content\models.py:91
+msgid "Email"
+msgstr "ایمیل"
+
+#: .\apps\content\models.py:92
+msgid "Phone"
+msgstr "تلفن"
+
+#: .\apps\content\models.py:97
+msgid "https://…, mailto:… or tel:…"
+msgstr "https://…, mailto:… or tel:…"
+
+#: .\apps\core\exceptions.py:21
+msgid "The request could not be completed."
+msgstr "درخواست قابل انجام نیست."
+
+#: .\apps\core\exceptions.py:37
+msgid "You are not allowed to perform this action."
+msgstr "شما اجازه انجام این کار را ندارید."
+
+#: .\apps\core\exceptions.py:43
+msgid "An external service is unavailable. Please try again later."
+msgstr "سرویس خارجی در دسترس نیست. لطفاً بعداً دوباره تلاش کنید."
+
+#: .\apps\core\exceptions.py:62
+msgid "Invalid input."
+msgstr "اطلاعات وارد شده نامعتبر است."
+
+#: .\apps\core\utils.py:31
+msgid "Enter a valid Iranian mobile number."
+msgstr "یک شماره موبایل معتبر ایرانی وارد کنید."
+
+#: .\apps\core\validators.py:19
+#, python-format
+msgid "File is too large. Maximum size is %(size)s MB."
+msgstr "حجم فایل زیاد است. حداکثر حجم مجاز %(size)s مگابایت است."
+
+#: .\apps\notifications\apps.py:8
+msgid "Notifications"
+msgstr "اعلان‌ها"
+
+#: .\apps\notifications\models.py:8
+msgid "System"
+msgstr "سیستم"
+
+#: .\apps\notifications\models.py:9
+msgid "Tournament"
+msgstr "تورنمنت"
+
+#: .\apps\notifications\models.py:10 .\apps\teams\services.py:230
+msgid "Team invitation"
+msgstr "دعوت به تیم"
+
+#: .\apps\notifications\models.py:11 .\apps\tournaments\models.py:46
+msgid "Team"
+msgstr "تیم"
+
+#: .\apps\notifications\models.py:12
+msgid "Friend request"
+msgstr "درخواست دوستی"
+
+#: .\apps\notifications\models.py:13 .\apps\payments\models.py:49
+msgid "Order"
+msgstr "سفارش"
+
+#: .\apps\notifications\models.py:14
+msgid "Payment"
+msgstr "پرداخت"
+
+#: .\apps\notifications\models.py:21
+msgid "Action payload consumed by the frontend."
+msgstr "داده‌های عملیات برای استفاده در فرانت‌اند."
+
+#: .\apps\orders\admin.py:53
+msgid "Mark as processing"
+msgstr "تغییر وضعیت به در حال پردازش"
+
+#: .\apps\orders\admin.py:56
+#, python-format
+msgid "%(count)d order(s) marked as processing."
+msgstr "%(count)d سفارش به وضعیت در حال پردازش تغییر کرد."
+
+#: .\apps\orders\admin.py:58
+msgid "Mark as delivered (completed)"
+msgstr "تحویل شد (تکمیل سفارش)"
+
+#: .\apps\orders\apps.py:8
+msgid "Orders"
+msgstr "سفارش‌ها"
+
+#: .\apps\orders\models.py:61 .\apps\tournaments\models.py:170
+msgid "Awaiting payment"
+msgstr "در انتظار پرداخت"
+
+#: .\apps\orders\models.py:62 .\apps\payments\models.py:55
+msgid "Paid"
+msgstr "پرداخت شده"
+
+#: .\apps\orders\models.py:63
+msgid "Processing"
+msgstr "در حال پردازش"
+
+#: .\apps\orders\models.py:64 .\apps\tournaments\models.py:56
+#: .\apps\tournaments\models.py:66 .\apps\tournaments\models.py:259
+msgid "Completed"
+msgstr "تکمیل شده"
+
+#: .\apps\orders\models.py:65 .\apps\payments\models.py:57
+#: .\apps\teams\models.py:102 .\apps\tournaments\models.py:57
+#: .\apps\tournaments\models.py:67 .\apps\tournaments\models.py:173
+msgid "Cancelled"
+msgstr "لغو شده"
+
+#: .\apps\orders\models.py:66
+msgid "Payment failed"
+msgstr "پرداخت ناموفق"
+
+#: .\apps\orders\models.py:67
+msgid "Refunded"
+msgstr "بازگشت وجه"
+
+#: .\apps\orders\models.py:78
+msgid "Sum of pre-discount prices."
+msgstr "مجموع قیمت‌ها قبل از تخفیف."
+
+#: .\apps\orders\models.py:120
+msgid "Redeem code(s) delivered to the customer."
+msgstr "کد(های) تحویل داده شده به مشتری."
+
+#: .\apps\orders\serializers.py:136 .\apps\orders\services.py:199
+msgid "Invalid game account."
+msgstr "اکانت بازی نامعتبر است."
+
+#: .\apps\orders\services.py:23
+msgid "This product is not available."
+msgstr "این محصول در دسترس نیست."
+
+#: .\apps\orders\services.py:28
+msgid "Not enough stock for this product."
+msgstr "موجودی این محصول کافی نیست."
+
+#: .\apps\orders\services.py:33
+msgid "Choose one of this product's options."
+msgstr "یکی از گزینه‌های این محصول را انتخاب کنید."
+
+#: .\apps\orders\services.py:38
+msgid "Your cart is empty."
+msgstr "سبد خرید شما خالی است."
+
+#: .\apps\orders\services.py:43
+msgid "Select a game account to receive this order."
+msgstr "یک اکانت بازی برای دریافت این سفارش انتخاب کنید."
+
+#: .\apps\orders\services.py:97
+msgid "This option does not belong to the product."
+msgstr "این گزینه متعلق به این محصول نیست."
+
+#: .\apps\orders\services.py:219
+msgid "Could not create the order. Please try again."
+msgstr "ثبت سفارش انجام نشد. لطفاً دوباره تلاش کنید."
+
+#: .\apps\orders\services.py:236 .\apps\orders\services.py:249
+#, python-format
+msgid "Payment for order %(number)s"
+msgstr "پرداخت سفارش %(number)s"
+
+#: .\apps\orders\services.py:299
+msgid "Order refunded"
+msgstr "مبلغ سفارش بازگردانده شد"
+
+#: .\apps\orders\services.py:300
+#, python-format
+msgid ""
+"Order %(number)s could not be completed and was refunded to your wallet."
+msgstr ""
+"سفارش %(number)s قابل انجام نبود و مبلغ آن به کیف پول شما بازگردانده شد."
+
+#: .\apps\orders\services.py:318
+msgid "Refund for an order that was no longer payable"
+msgstr "بازگشت وجه سفارشی که دیگر قابل پرداخت نبود"
+
+#: .\apps\orders\services.py:321
+msgid "Refund: product went out of stock"
+msgstr "بازگشت وجه: موجودی محصول تمام شد"
+
+#: .\apps\orders\services.py:334
+msgid "Order confirmed"
+msgstr "سفارش تایید شد"
+
+#: .\apps\orders\services.py:335
+#, python-format
+msgid "Order %(number)s was paid and is being processed."
+msgstr "سفارش %(number)s پرداخت شد و در حال پردازش است."
+
+#: .\apps\orders\services.py:358
+msgid "Only unpaid orders can be cancelled."
+msgstr "فقط سفارش‌های پرداخت‌نشده قابل لغو هستند."
+
+#: .\apps\orders\services.py:369
+msgid "Only paid orders can be completed."
+msgstr "فقط سفارش‌های پرداخت‌شده قابل تکمیل هستند."
+
+#: .\apps\orders\services.py:378
+msgid "Order delivered"
+msgstr "سفارش تحویل داده شد"
+
+#: .\apps\orders\services.py:379
+#, python-format
+msgid "Order %(number)s has been delivered."
+msgstr "سفارش %(number)s تحویل داده شد."
+
+#: .\apps\payments\apps.py:8
+msgid "Payments"
+msgstr "پرداخت‌ها"
+
+#: .\apps\payments\models.py:11
+msgid "Wallet"
+msgstr "کیف پول"
+
+#: .\apps\payments\models.py:12
+msgid "Online gateway"
+msgstr "درگاه پرداخت آنلاین"
+
+#: .\apps\payments\models.py:17
+msgid "balance (toman)"
+msgstr "موجودی (تومان)"
+
+#: .\apps\payments\models.py:25
+msgid "Top-up"
+msgstr "شارژ"
+
+#: .\apps\payments\models.py:26
+msgid "Order payment"
+msgstr "پرداخت سفارش"
+
+#: .\apps\payments\models.py:27
+msgid "Tournament entry fee"
+msgstr "هزینه ورود تورنمنت"
+
+#: .\apps\payments\models.py:28
+msgid "Refund"
+msgstr "بازگشت وجه"
+
+#: .\apps\payments\models.py:29
+msgid "Prize"
+msgstr "جایزه"
+
+#: .\apps\payments\models.py:30
+msgid "Manual adjustment"
+msgstr "اصلاح دستی"
+
+#: .\apps\payments\models.py:33
+msgid "Positive for credit, negative for debit."
+msgstr "مثبت برای واریز، منفی برای برداشت."
+
+#: .\apps\payments\models.py:37
+msgid "e.g. \"order:TTN-…\""
+msgstr "e.g. \"order:TTN-…\""
+
+#: .\apps\payments\models.py:50
+msgid "Tournament registration"
+msgstr "ثبت‌نام تورنمنت"
+
+#: .\apps\payments\models.py:51 .\apps\payments\services.py:218
+msgid "Wallet top-up"
+msgstr "شارژ کیف پول"
+
+#: .\apps\payments\models.py:54
+msgid "Initiated"
+msgstr "ایجاد شده"
+
+#: .\apps\payments\models.py:56
+msgid "Failed"
+msgstr "ناموفق"
+
+#: .\apps\payments\models.py:62
+msgid "amount (toman)"
+msgstr "مبلغ (تومان)"
+
+#: .\apps\payments\models.py:66
+msgid "Paid object's primary key."
+msgstr "شناسه مورد پرداخت‌شده."
+
+#: .\apps\payments\models.py:68
+msgid "Human readable reference."
+msgstr "مرجع قابل خواندن."
+
+#: .\apps\payments\services.py:21
+msgid "Your wallet balance is not enough."
+msgstr "موجودی کیف پول شما کافی نیست."
+
+#: .\apps\payments\services.py:27
+msgid "Payment not found."
+msgstr "پرداخت پیدا نشد."
+
+#: .\apps\payments\services.py:209
+msgid "Titan wallet top-up"
+msgstr "شارژ کیف پول تایتان"
+
+#: .\apps\teams\apps.py:8
+msgid "Teams"
+msgstr "تیم‌ها"
+
+#: .\apps\teams\models.py:25 .\apps\tournaments\models.py:18
+msgid "Middle East"
+msgstr "خاورمیانه"
+
+#: .\apps\teams\models.py:26 .\apps\tournaments\models.py:19
+msgid "Europe"
+msgstr "اروپا"
+
+#: .\apps\teams\models.py:27 .\apps\tournaments\models.py:20
+msgid "Iran"
+msgstr "ایران"
+
+#: .\apps\teams\models.py:28 .\apps\tournaments\models.py:21
+msgid "International"
+msgstr "بین‌المللی"
+
+#: .\apps\teams\models.py:31
+msgid "tag"
+msgstr "تگ"
+
+#: .\apps\teams\models.py:73
+msgid "Captain"
+msgstr "کاپیتان"
+
+#: .\apps\teams\models.py:74
+msgid "Player"
+msgstr "بازیکن"
+
+#: .\apps\teams\models.py:75
+msgid "Substitute"
+msgstr "ذخیره"
+
+#: .\apps\teams\serializers.py:122
+msgid "The tag may only contain letters and digits."
+msgstr "تگ فقط می‌تواند شامل حروف و اعداد باشد."
+
+#: .\apps\teams\services.py:17
+msgid "This team is full."
+msgstr "ظرفیت این تیم تکمیل است."
+
+#: .\apps\teams\services.py:22
+msgid "You are already a member of this team."
+msgstr "شما در حال حاضر عضو این تیم هستید."
+
+#: .\apps\teams\services.py:27
+msgid "Only the team captain can do this."
+msgstr "فقط کاپیتان تیم می‌تواند این کار را انجام دهد."
+
+#: .\apps\teams\services.py:65 .\apps\tournaments\services\registration.py:65
+msgid "This team has been dissolved."
+msgstr "این تیم منحل شده است."
+
+#: .\apps\teams\services.py:89 .\apps\teams\services.py:104
+msgid "A team with this name already exists."
+msgstr "تیمی با این نام وجود دارد."
+
+#: .\apps\teams\services.py:115
+msgid ""
+"The team is registered in an ongoing tournament and cannot be dissolved."
+msgstr "این تیم در یک تورنمنت در جریان ثبت‌نام کرده و قابل انحلال نیست."
+
+#: .\apps\teams\services.py:129
+msgid "Team dissolved"
+msgstr "تیم منحل شد"
+
+#: .\apps\teams\services.py:130
+#, python-format
+msgid "%(team)s was dissolved by its captain."
+msgstr "تیم %(team)s توسط کاپیتان منحل شد."
+
+#: .\apps\teams\services.py:148
+msgid "This invite link is invalid or has expired."
+msgstr "این لینک دعوت نامعتبر است یا منقضی شده است."
+
+#: .\apps\teams\services.py:164 .\apps\teams\services.py:200
+msgid "This user is not a member of the team."
+msgstr "این کاربر عضو تیم نیست."
+
+#: .\apps\teams\services.py:172
+msgid "Transfer captaincy to another member before leaving the team."
+msgstr "قبل از ترک تیم، کاپیتانی را به عضو دیگری واگذار کنید."
+
+#: .\apps\teams\services.py:185
+msgid "Removed from team"
+msgstr "اخراج از تیم"
+
+#: .\apps\teams\services.py:186
+#, python-format
+msgid "You were removed from %(team)s."
+msgstr "شما از تیم %(team)s اخراج شدید."
+
+#: .\apps\teams\services.py:207
+msgid "You are now captain"
+msgstr "شما کاپیتان شدید"
+
+#: .\apps\teams\services.py:208
+#, python-format
+msgid "You are now the captain of %(team)s."
+msgstr "شما اکنون کاپیتان تیم %(team)s هستید."
+
+#: .\apps\teams\services.py:219
+msgid "This player is already in the team."
+msgstr "این بازیکن در حال حاضر عضو تیم است."
+
+#: .\apps\teams\services.py:225
+msgid "This player already has a pending invitation."
+msgstr "این بازیکن یک دعوت‌نامه در انتظار دارد."
+
+#: .\apps\teams\services.py:231
+#, python-format
+msgid "%(team)s invited you to join the team."
+msgstr "تیم %(team)s شما را دعوت به عضویت کرده است."
+
+#: .\apps\teams\services.py:246
+msgid "Invitation not found."
+msgstr "دعوت‌نامه پیدا نشد."
+
+#: .\apps\teams\services.py:260
+msgid "Invitation accepted"
+msgstr "دعوت پذیرفته شد"
+
+#: .\apps\teams\services.py:261
+#, python-format
+msgid "%(name)s joined %(team)s."
+msgstr "%(name)s به تیم %(team)s پیوست."
+
+#: .\apps\tournaments\admin.py:47
+msgid "Generate bracket and start"
+msgstr "ساخت براکت و شروع"
+
+#: .\apps\tournaments\admin.py:55
+#, python-format
+msgid "Bracket generated for %(t)s."
+msgstr "براکت برای %(t)s ساخته شد."
+
+#: .\apps\tournaments\apps.py:8
+msgid "Tournaments"
+msgstr "تورنمنت‌ها"
+
+#: .\apps\tournaments\models.py:13
+msgid "Toman"
+msgstr "تومان"
+
+#: .\apps\tournaments\models.py:14
+msgid "US dollar"
+msgstr "دلار آمریکا"
+
+#: .\apps\tournaments\models.py:45
+msgid "Solo"
+msgstr "تک‌نفره"
+
+#: .\apps\tournaments\models.py:49
+msgid "Single elimination"
+msgstr "حذفی تک‌مرحله‌ای"
+
+#: .\apps\tournaments\models.py:54 .\apps\tournaments\models.py:257
+msgid "Scheduled"
+msgstr "زمان‌بندی شده"
+
+#: .\apps\tournaments\models.py:55 .\apps\tournaments\models.py:65
+#: .\apps\tournaments\models.py:258
+msgid "Live"
+msgstr "در جریان"
+
+#: .\apps\tournaments\models.py:62
+msgid "Coming soon"
+msgstr "به‌زودی"
+
+#: .\apps\tournaments\models.py:63
+msgid "Registration open"
+msgstr "ثبت‌نام باز"
+
+#: .\apps\tournaments\models.py:64
+msgid "Registration closed"
+msgstr "ثبت‌نام بسته"
+
+#: .\apps\tournaments\models.py:77
+msgid "Players per team; 1 for solo."
+msgstr "تعداد بازیکنان هر تیم؛ برای تک‌نفره ۱."
+
+#: .\apps\tournaments\models.py:79
+msgid "e.g. \"5v5 — knockout\""
+msgstr "e.g. \"5v5 — knockout\""
+
+#: .\apps\tournaments\models.py:84
+msgid "entry fee (toman)"
+msgstr "هزینه ورود (تومان)"
+
+#: .\apps\tournaments\models.py:145
+msgid "In the tournament's prize currency."
+msgstr "به واحد پول جایزه تورنمنت."
+
+#: .\apps\tournaments\models.py:147
+msgid "Rank points for every player at this place."
+msgstr "امتیاز رنک برای هر بازیکن در این جایگاه."
+
+#: .\apps\tournaments\models.py:171
+msgid "Confirmed"
+msgstr "تایید شده"
+
+#: .\apps\tournaments\models.py:172
+msgid "Withdrawn"
+msgstr "انصراف داده"
+
+#: .\apps\tournaments\models.py:256
+msgid "Waiting for participants"
+msgstr "در انتظار شرکت‌کنندگان"
+
+#: .\apps\tournaments\models.py:260
+msgid "Bye"
+msgstr "استراحت (بای)"
+
+#: .\apps\tournaments\models.py:267
+msgid "1 is the first round."
+msgstr "۱ یعنی مرحله اول."
+
+#: .\apps\tournaments\models.py:268
+msgid "0-based index inside the round."
+msgstr "شماره (از صفر) در همان مرحله."
+
+#: .\apps\tournaments\models.py:287
+msgid "Only visible to the participants."
+msgstr "فقط برای شرکت‌کنندگان نمایش داده می‌شود."
+
+#: .\apps\tournaments\models.py:292
+msgid "matches"
+msgstr "مسابقات"
+
+#: .\apps\tournaments\models.py:330
+msgid "player stats"
+msgstr "آمار بازیکنان"
+
+#: .\apps\tournaments\models.py:342
+msgid "team stats"
+msgstr "آمار تیم‌ها"
+
+#: .\apps\tournaments\selectors.py:107
+msgid "Final"
+msgstr "فینال"
+
+#: .\apps\tournaments\selectors.py:109
+msgid "Semi-finals"
+msgstr "نیمه‌نهایی"
+
+#: .\apps\tournaments\selectors.py:111
+msgid "Quarter-finals"
+msgstr "یک‌چهارم نهایی"
+
+#: .\apps\tournaments\selectors.py:112
+#, python-format
+msgid "Round of %(count)d"
+msgstr "مرحله %(count)d تیمی"
+
+#: .\apps\tournaments\selectors.py:152
+msgid "Champion"
+msgstr "قهرمان"
+
+#: .\apps\tournaments\selectors.py:154
+#, python-format
+msgid "Eliminated — place %(place)d"
+msgstr "حذف شده — رتبه %(place)d"
+
+#: .\apps\tournaments\serializers.py:276
+msgid "Send both scores to report a result."
+msgstr "برای ثبت نتیجه هر دو امتیاز را ارسال کنید."
+
+#: .\apps\tournaments\services\bracket.py:74
+msgid "The bracket can only be generated for a scheduled tournament."
+msgstr "براکت فقط برای تورنمنت‌های زمان‌بندی‌شده قابل ساخت است."
+
+#: .\apps\tournaments\services\bracket.py:77
+msgid "The bracket has already been generated."
+msgstr "براکت قبلاً ساخته شده است."
+
+#: .\apps\tournaments\services\bracket.py:86
+msgid "At least two confirmed participants are required."
+msgstr "حداقل دو شرکت‌کننده تاییدشده لازم است."
+
+#: .\apps\tournaments\services\bracket.py:120
+msgid "The bracket is live"
+msgstr "براکت منتشر شد"
+
+#: .\apps\tournaments\services\bracket.py:121
+#, python-format
+msgid "The bracket for %(tournament)s is ready. Check your first match."
+msgstr "براکت %(tournament)s آماده است. اولین مسابقه خود را بررسی کنید."
+
+#: .\apps\tournaments\services\registration.py:19
+msgid "Registration for this tournament is not open."
+msgstr "ثبت‌نام این تورنمنت باز نیست."
+
+#: .\apps\tournaments\services\registration.py:24
+msgid "This tournament is full."
+msgstr "ظرفیت این تورنمنت تکمیل است."
+
+#: .\apps\tournaments\services\registration.py:29
+msgid "You are already registered in this tournament."
+msgstr "شما قبلاً در این تورنمنت ثبت‌نام کرده‌اید."
+
+#: .\apps\tournaments\services\registration.py:34
+msgid "Choose a payment method for the entry fee."
+msgstr "روش پرداخت هزینه ورود را انتخاب کنید."
+
+#: .\apps\tournaments\services\registration.py:67
+msgid "The team's game does not match this tournament."
+msgstr "بازی تیم با این تورنمنت مطابقت ندارد."
+
+#: .\apps\tournaments\services\registration.py:70
+msgid "Only the team captain can register the team."
+msgstr "فقط کاپیتان می‌تواند تیم را ثبت‌نام کند."
+
+#: .\apps\tournaments\services\registration.py:73
+#, python-format
+msgid "The team needs at least %(count)d members for this tournament."
+msgstr "تیم برای این تورنمنت حداقل به %(count)d عضو نیاز دارد."
+
+#: .\apps\tournaments\services\registration.py:88
+msgid "A player in this roster is already registered in this tournament."
+msgstr "یکی از بازیکنان این ترکیب قبلاً در این تورنمنت ثبت‌نام کرده است."
+
+#: .\apps\tournaments\services\registration.py:100
+msgid "Choose a team to register."
+msgstr "یک تیم برای ثبت‌نام انتخاب کنید."
+
+#: .\apps\tournaments\services\registration.py:104
+msgid "This is a solo tournament."
+msgstr "این تورنمنت تک‌نفره است."
+
+#: .\apps\tournaments\services\registration.py:134
+msgid "Tournament registration confirmed"
+msgstr "ثبت‌نام تورنمنت تایید شد"
+
+#: .\apps\tournaments\services\registration.py:135
+#, python-format
+msgid "Your registration in %(tournament)s is confirmed."
+msgstr "ثبت‌نام شما در %(tournament)s تایید شد."
+
+#: .\apps\tournaments\services\registration.py:150
+#, python-format
+msgid "Entry fee for %(tournament)s"
+msgstr "هزینه ورود %(tournament)s"
+
+#: .\apps\tournaments\services\registration.py:206
+msgid "You are not registered in this tournament."
+msgstr "شما در این تورنمنت ثبت‌نام نکرده‌اید."
+
+#: .\apps\tournaments\services\registration.py:208
+msgid "Only the player who registered can withdraw."
+msgstr "فقط ثبت‌نام‌کننده می‌تواند انصراف دهد."
+
+#: .\apps\tournaments\services\registration.py:210
+msgid "You can no longer withdraw from this tournament."
+msgstr "دیگر امکان انصراف از این تورنمنت وجود ندارد."
+
+#: .\apps\tournaments\services\registration.py:212
+msgid "Tournament withdrawal refund"
+msgstr "بازگشت وجه انصراف از تورنمنت"
+
+#: .\apps\tournaments\services\registration.py:225
+msgid "Refund for an expired tournament registration"
+msgstr "بازگشت وجه ثبت‌نام منقضی‌شده تورنمنت"
+
+#: .\apps\tournaments\services\registration.py:231
+msgid "Refund: the tournament filled up before payment"
+msgstr "بازگشت وجه: ظرفیت تورنمنت پیش از پرداخت تکمیل شد"
+
+#: .\apps\tournaments\services\registration.py:235
+msgid "Registration refunded"
+msgstr "مبلغ ثبت‌نام بازگردانده شد"
+
+#: .\apps\tournaments\services\registration.py:236
+#, python-format
+msgid "%(tournament)s filled up; your entry fee was refunded to your wallet."
+msgstr ""
+"ظرفیت %(tournament)s تکمیل شد و هزینه ورود به کیف پول شما بازگردانده شد."
+
+#: .\apps\tournaments\services\results.py:99
+#: .\apps\tournaments\services\results.py:114
+msgid "This match is already finished."
+msgstr "این مسابقه به پایان رسیده است."
+
+#: .\apps\tournaments\services\results.py:101
+#: .\apps\tournaments\services\results.py:116
+msgid "Both participants must be known first."
+msgstr "ابتدا باید هر دو شرکت‌کننده مشخص باشند."
+
+#: .\apps\tournaments\services\results.py:112
+msgid "The tournament is not live."
+msgstr "تورنمنت در جریان نیست."
+
+#: .\apps\tournaments\services\results.py:118
+msgid "Knockout matches cannot end in a draw."
+msgstr "مسابقات حذفی نمی‌توانند مساوی شوند."
+
+#: .\apps\tournaments\services\results.py:169
+#, python-format
+msgid "Prize from %(tournament)s"
+msgstr "جایزه %(tournament)s"
+
+#: .\apps\tournaments\services\results.py:210
+msgid "Tournament finished"
+msgstr "تورنمنت به پایان رسید"
+
+#: .\apps\tournaments\services\results.py:211
+#, python-format
+msgid "%(tournament)s has finished. Your final place: %(place)s."
+msgstr "%(tournament)s به پایان رسید. رتبه نهایی شما: %(place)s."
+
+#: .\config\settings\base.py:93
+msgid "Persian"
+msgstr "فارسی"
+
+#: .\config\settings\base.py:93
+msgid "English"
+msgstr "انگلیسی"
