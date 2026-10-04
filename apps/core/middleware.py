@@ -15,7 +15,11 @@ class AdminEnglishMiddleware:
 
     def __call__(self, request):
         if not request.path.startswith(self.ADMIN_PREFIX):
-            return self.get_response(request)
+            translation.activate("fa")
+            request.LANGUAGE_CODE = "fa"
+            response = self.get_response(request)
+            response.headers.setdefault("Content-Language", "fa")
+            return response
         translation.activate(self.LANGUAGE)
         request.LANGUAGE_CODE = self.LANGUAGE
         response = self.get_response(request)

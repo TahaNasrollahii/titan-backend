@@ -16,17 +16,21 @@ def notify(
     icon: str = "",
     data: dict | None = None,
 ) -> Notification:
-    return Notification.objects.create(
-        user=user, kind=kind, title=str(title), body=str(body), icon=icon, data=data or {}
-    )
+    from django.utils.translation import override
+    with override("fa"):
+        return Notification.objects.create(
+            user=user, kind=kind, title=str(title), body=str(body), icon=icon, data=data or {}
+        )
 
 
 def notify_many(users: Iterable[User], **kwargs) -> list[Notification]:
-    data = kwargs.pop("data", None) or {}
-    title, body = str(kwargs.pop("title")), str(kwargs.pop("body", ""))
-    return Notification.objects.bulk_create(
-        [Notification(user=user, title=title, body=body, data=data, **kwargs) for user in users]
-    )
+    from django.utils.translation import override
+    with override("fa"):
+        data = kwargs.pop("data", None) or {}
+        title, body = str(kwargs.pop("title")), str(kwargs.pop("body", ""))
+        return Notification.objects.bulk_create(
+            [Notification(user=user, title=title, body=body, data=data, **kwargs) for user in users]
+        )
 
 
 def mark_read(user: User, notification_id: int) -> Notification:
