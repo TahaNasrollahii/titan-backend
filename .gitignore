@@ -18,3 +18,4 @@ schema.yml
 .vercel
 .env.*
 !.env.example
+.env*
