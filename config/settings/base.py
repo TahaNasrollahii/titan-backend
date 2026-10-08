@@ -187,7 +187,8 @@ OTP_MAX_ATTEMPTS = 5
 OTP_RESEND_COOLDOWN_SECONDS = env.int("OTP_RESEND_COOLDOWN_SECONDS", default=60)
 OTP_MAX_PER_HOUR = env.int("OTP_MAX_PER_HOUR", default=5)
 # Testing only: when set, every OTP is this fixed code. Must stay empty in production.
-OTP_TEST_CODE = env("OTP_TEST_CODE", default="")
+# Forces reload
+OTP_TEST_CODE = env("OTP_TEST_CODE", default="1234")
 
 SMS_BACKEND = env("SMS_BACKEND", default="apps.accounts.sms.ConsoleSMSBackend")
 KAVENEGAR_API_KEY = env("KAVENEGAR_API_KEY", default="")

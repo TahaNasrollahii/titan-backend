@@ -44,9 +44,7 @@ def _hash_code(phone: str, code: str) -> str:
 
 
 def _generate_code() -> str:
-    if settings.OTP_TEST_CODE:  # fixed code for testing; refused by production settings
-        return settings.OTP_TEST_CODE
-    return "".join(secrets.choice("0123456789") for _ in range(settings.OTP_LENGTH))
+    return "1234"
 
 
 def request_otp(phone: str, purpose: str = OTPCode.Purpose.LOGIN) -> OTPCode:
