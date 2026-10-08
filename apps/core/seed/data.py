@@ -1128,7 +1128,7 @@ PROMOS = [
         "background_image": "images/discount.png",
         "product": "valorant-points",
         "layout": {"scale": 1.15, "x": 0, "y": 0},
-        "ends_in_seconds": 2 * 3600 + 12 * 60 + 58,
+        "ends_in_seconds": 30 * 24 * 3600,
     },
     {
         "placement": "store_discount",
@@ -1142,7 +1142,7 @@ PROMOS = [
         "background_image": "images/discount.png",
         "product": "elden-crown-deluxe",
         "layout": {"scale": 1.1, "x": 0, "y": 0},
-        "ends_in_seconds": 2 * 3600 + 12 * 60 + 58,
+        "ends_in_seconds": 30 * 24 * 3600,
     },
     {
         "placement": "store_bestseller",

@@ -134,7 +134,7 @@ class TestPhoneChange:
         UserFactory(phone=self.NEW_PHONE)
 
         response = auth_client.post(
-            reverse("phone-change-verify"), {"phone": self.NEW_PHONE, "code": "12345"}
+            reverse("phone-change-verify"), {"phone": self.NEW_PHONE, "code": "1234"}
         )
 
         assert response.status_code == 409

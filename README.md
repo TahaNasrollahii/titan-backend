@@ -51,7 +51,7 @@ docker compose exec api python manage.py seed
 
 | Who | Login |
 |---|---|
-| Demo player **طاها / TahaTitan** | phone `09123456789`, code `12345` (any phone number works with `12345` while `OTP_TEST_CODE` is set) |
+| Demo player **طاها / TahaTitan** | phone `09123456789`, code `1234` (any phone number works with `1234` while `OTP_TEST_CODE` is set) |
 | Admin | phone `09000000000`, password `admin` (or `$SEED_ADMIN_PASSWORD`) at `/admin/` |
 
 The demo player mirrors the dashboard mock:

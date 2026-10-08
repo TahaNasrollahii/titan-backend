@@ -44,6 +44,13 @@ class TestOTPRequest:
         assert response.json()["code"] == "validation_error"
         assert "phone" in response.json()["errors"]
 
+    def test_code_is_four_digits(self, api_client):
+        request_code(api_client)
+        code = InMemorySMSBackend.last_code_for(PHONE)
+
+        assert len(code) == 4
+        assert code.isdigit()
+
     def test_code_is_stored_hashed(self, api_client):
         request_code(api_client)
         code = InMemorySMSBackend.last_code_for(PHONE)
@@ -188,20 +195,20 @@ class TestTokens:
 
 class TestFixedTestCode:
     def test_fixed_code_logs_in(self, api_client, settings):
-        settings.OTP_TEST_CODE = "12345"
+        settings.OTP_TEST_CODE = "1234"
         request_code(api_client)
 
-        response = verify(api_client, "12345")
+        response = verify(api_client, "1234")
 
         assert response.status_code == 200
-        assert InMemorySMSBackend.last_code_for(PHONE) == "12345"
+        assert InMemorySMSBackend.last_code_for(PHONE) == "1234"
 
     def test_production_refuses_fixed_code(self, monkeypatch):
         import importlib
 
         from django.core.exceptions import ImproperlyConfigured
 
-        monkeypatch.setenv("OTP_TEST_CODE", "12345")
+        monkeypatch.setenv("OTP_TEST_CODE", "1234")
         monkeypatch.setenv("ALLOWED_HOSTS", "example.com")
         with pytest.raises(ImproperlyConfigured):
             importlib.import_module("config.settings.prod")
