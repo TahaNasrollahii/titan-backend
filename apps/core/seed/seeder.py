@@ -6,6 +6,7 @@ so seeded data obeys the same rules as production data.
 """
 
 import random
+from concurrent.futures import ThreadPoolExecutor
 from datetime import timedelta
 from pathlib import Path
 
@@ -59,6 +60,7 @@ class Seeder:
         self.games: dict[str, Game] = {}
         self.teams: dict[str, Team] = {}
         self._filler_index = 0
+        self._uploads: dict[str, Path] = {}  # storage name -> source image, see _upload_assets
 
     # ------------------------------------------------------------------ entry point
     def run(self) -> None:
@@ -71,11 +73,12 @@ class Seeder:
             self.seed_content()
             self.seed_demo_activity()
             self.seed_reviews()
+        self._upload_assets()
         self.log("Seeding complete.")
 
     # ------------------------------------------------------------------ helpers
     def _attach(self, instance, field: str, relative_path: str | None) -> None:
-        """Copy an image from the frontend's ``public/`` dir into media storage and assign it."""
+        """Assign an image from the frontend's ``public/`` dir; ``_upload_assets`` copies it to storage."""
         if not relative_path or self.assets_dir is None:
             return
         source = self.assets_dir / relative_path
@@ -84,10 +87,28 @@ class Seeder:
         upload_to = str(instance._meta.get_field(field).upload_to).rstrip("/") or "seed"
         # Keep the source folder in the name: games/premium.png and categories/premium.png differ.
         name = f"{upload_to}/{source.parent.name}-{source.name}"
-        if not default_storage.exists(name):
-            with source.open("rb") as handle:
-                name = default_storage.save(name, File(handle))
+        name = default_storage.generate_filename(name).replace("\\", "/")
+        self._uploads[name] = source
         setattr(instance, field, name)
+
+    def _upload_assets(self) -> None:
+        """Copy the attached images that storage doesn't have yet.
+
+        Runs after the transaction: remote storage (Vercel Blob) can take seconds per file, and a database
+        connection left idle that long inside an open transaction gets dropped. Names are deterministic,
+        so the rows already point at the right files.
+        """
+
+        def upload(name: str, source: Path) -> bool:
+            if default_storage.exists(name):
+                return False
+            with source.open("rb") as handle:
+                default_storage.save(name, File(handle))
+            return True
+
+        with ThreadPoolExecutor(max_workers=8) as pool:
+            uploaded = sum(pool.map(upload, self._uploads, self._uploads.values()))
+        self.log(f"Images: {uploaded} uploaded, {len(self._uploads) - uploaded} already in storage.")
 
     def _user(self, username: str, phone: str, **fields) -> User:
         user = User.objects.filter(username=username).first()

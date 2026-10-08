@@ -1,11 +1,14 @@
 from io import StringIO
 
 from django.apps import apps
+from django.core.files.storage import FileSystemStorage, default_storage
 from django.core.management import call_command
+from django.db import connections
 
 import pytest
 
 from apps.accounts.models import User
+from apps.catalog.models import Platform
 from apps.orders.models import Order
 from apps.payments.services import get_wallet
 from apps.tournaments.models import Match, Tournament
@@ -71,3 +74,29 @@ def test_flush_refused_outside_debug(tmp_path, settings):
 
     with pytest.raises(Exception, match="DEBUG"):
         call_command("seed", "--flush", "--assets-dir", str(tmp_path), stdout=StringIO())
+
+
+def test_seed_uploads_images_after_its_transaction(tmp_path, monkeypatch):
+    # Slow remote storage must not hold a connection idle inside the seeding transaction.
+    assets = tmp_path / "public"
+    assets.mkdir()
+    (assets / "pc.png").write_bytes(b"png")
+    seeding_connection = connections["default"]  # uploads run on worker threads, so pin this thread's
+    outer_depth = len(seeding_connection.atomic_blocks)
+    save_depths = []
+    original_save = FileSystemStorage.save
+
+    def recording_save(self, name, content, max_length=None):
+        save_depths.append(len(seeding_connection.atomic_blocks))
+        return original_save(self, name, content, max_length)
+
+    monkeypatch.setattr(FileSystemStorage, "save", recording_save)
+    call_command("seed", "--assets-dir", str(assets), "--admin-password", "pw", stdout=StringIO())
+
+    icon = Platform.objects.get(slug="pc").icon
+    assert icon.name == "platforms/public-pc.png"
+    assert default_storage.exists(icon.name)
+    assert save_depths == [outer_depth]
+
+    call_command("seed", "--assets-dir", str(assets), "--admin-password", "pw", stdout=StringIO())
+    assert len(save_depths) == 1  # already in storage: not uploaded again
