@@ -6,6 +6,7 @@ so seeded data obeys the same rules as production data.
 """
 
 import random
+import time
 from concurrent.futures import ThreadPoolExecutor
 from datetime import timedelta
 from pathlib import Path
@@ -48,6 +49,7 @@ PLAYER_PHONE_PREFIX = "0991"
 FILLER_PHONE_PREFIX = "0992"
 FRIEND_PHONE_PREFIX = "0993"
 DEMO_SOLO_TOURNAMENT = "titan-apex-solo"
+UPLOAD_ATTEMPTS = 3
 
 
 class Seeder:
@@ -96,19 +98,31 @@ class Seeder:
 
         Runs after the transaction: remote storage (Vercel Blob) can take seconds per file, and a database
         connection left idle that long inside an open transaction gets dropped. Names are deterministic,
-        so the rows already point at the right files.
+        so the rows already point at the right files. On a slow link a few parallel uploads go further
+        than many; a file that keeps failing is reported, and re-running `seed` retries just the missing.
         """
 
-        def upload(name: str, source: Path) -> bool:
-            if default_storage.exists(name):
-                return False
-            with source.open("rb") as handle:
-                default_storage.save(name, File(handle))
-            return True
+        def upload(name: str, source: Path) -> str:
+            for attempt in range(UPLOAD_ATTEMPTS):
+                try:
+                    if default_storage.exists(name):
+                        return "present"
+                    with source.open("rb") as handle:
+                        default_storage.save(name, File(handle))
+                    return "uploaded"
+                except Exception as exc:
+                    if attempt + 1 == UPLOAD_ATTEMPTS:
+                        self.log(f"Image {name} failed: {exc!r}")
+                        return "failed"
+                    time.sleep(2**attempt)
+            return "failed"  # unreachable; keeps type checkers content
 
-        with ThreadPoolExecutor(max_workers=8) as pool:
-            uploaded = sum(pool.map(upload, self._uploads, self._uploads.values()))
-        self.log(f"Images: {uploaded} uploaded, {len(self._uploads) - uploaded} already in storage.")
+        with ThreadPoolExecutor(max_workers=3) as pool:
+            results = list(pool.map(upload, self._uploads, self._uploads.values()))
+        self.log(
+            f"Images: {results.count('uploaded')} uploaded, {results.count('present')} already in storage, "
+            f"{results.count('failed')} failed (run seed again to retry them)."
+        )
 
     def _user(self, username: str, phone: str, **fields) -> User:
         user = User.objects.filter(username=username).first()
