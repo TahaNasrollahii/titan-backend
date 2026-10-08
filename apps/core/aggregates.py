@@ -3,7 +3,8 @@
 This module is the only part of ``core`` that depends on feature apps; nothing imports it except URLs.
 """
 
-from django.db.models import Q
+from django.core.cache import cache
+from django.db.models import Q, Sum
 
 from drf_spectacular.utils import OpenApiParameter, extend_schema
 from rest_framework import serializers
@@ -11,7 +12,8 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from apps.catalog.models import Product
+from apps.accounts.models import User
+from apps.catalog.models import Game, Product
 from apps.catalog.selectors import games_with_counts
 from apps.catalog.serializers import GameMiniSerializer, GameSerializer, ProductListSerializer
 from apps.content.models import Announcement, Promo
@@ -32,6 +34,8 @@ from apps.tournaments.serializers import (
 SEARCH_LIMIT = 5
 HERO_LIMIT = 3
 RECENT_LIMIT = 5
+PLATFORM_STATS_CACHE_KEY = "platform-stats"
+PLATFORM_STATS_TTL = 10 * 60
 
 
 class HomeSerializer(serializers.Serializer):
@@ -131,3 +135,49 @@ class DashboardView(APIView):
             "recent_orders": Order.objects.filter(user=user).prefetch_related("items")[:RECENT_LIMIT],
         }
         return Response(DashboardSerializer(payload, context={"request": request}).data)
+
+
+class PrizeTotalSerializer(serializers.Serializer):
+    currency = serializers.CharField()
+    amount = serializers.IntegerField()
+
+
+class PlatformStatsSerializer(serializers.Serializer):
+    players = serializers.IntegerField()
+    teams = serializers.IntegerField()
+    games = serializers.IntegerField()
+    tournaments = serializers.IntegerField(help_text="Tournaments that are live or completed.")
+    orders_delivered = serializers.IntegerField()
+    prizes_awarded = PrizeTotalSerializer(many=True, help_text="Prize pools of completed tournaments.")
+
+
+def platform_stats() -> dict:
+    completed = Tournament.objects.filter(state=Tournament.State.COMPLETED)
+    prizes = (
+        completed.filter(prize_pool__gt=0)
+        .values("prize_currency")
+        .annotate(amount=Sum("prize_pool"))
+        .order_by("prize_currency")
+    )
+    return {
+        "players": User.objects.filter(is_active=True, is_staff=False).count(),
+        "teams": Team.objects.active().count(),
+        "games": Game.objects.filter(is_active=True).count(),
+        "tournaments": Tournament.objects.filter(
+            state__in=[Tournament.State.LIVE, Tournament.State.COMPLETED]
+        ).count(),
+        "orders_delivered": Order.objects.filter(status__in=Order.PAID_STATUSES).count(),
+        # Amounts are never added across currencies.
+        "prizes_awarded": [{"currency": row["prize_currency"], "amount": row["amount"]} for row in prizes],
+    }
+
+
+@extend_schema(tags=["home"], responses=PlatformStatsSerializer)
+class PlatformStatsView(APIView):
+    """Public platform-wide numbers for the About page. Cached briefly."""
+
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        stats = cache.get_or_set(PLATFORM_STATS_CACHE_KEY, platform_stats, PLATFORM_STATS_TTL)
+        return Response(PlatformStatsSerializer(stats).data)

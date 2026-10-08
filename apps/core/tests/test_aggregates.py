@@ -6,9 +6,11 @@ from apps.accounts.tests.factories import UserFactory
 from apps.catalog.tests.factories import GameFactory, ProductFactory
 from apps.content.models import Announcement
 from apps.notifications.services import notify
+from apps.orders.models import Order
 from apps.payments.models import WalletTransaction
 from apps.payments.services import credit
 from apps.teams.tests.factories import team_with_members
+from apps.tournaments.models import Tournament
 from apps.tournaments.tests.factories import TournamentFactory, confirm_player
 
 pytestmark = pytest.mark.django_db
@@ -84,3 +86,34 @@ class TestDashboard:
         confirm_player(TournamentFactory(), UserFactory())
 
         assert auth_client.get(reverse("dashboard")).json()["tournamentsJoined"] == 0
+
+
+class TestPlatformStats:
+    def test_counts_public_activity(self, api_client):
+        player = UserFactory()
+        UserFactory(is_staff=True)
+        UserFactory(is_active=False)
+        GameFactory()
+        team_with_members(2)
+        completed = Tournament.State.COMPLETED
+        TournamentFactory(state=completed, prize_pool=1000, prize_currency="USD")
+        TournamentFactory(state=completed, prize_pool=500, prize_currency="USD")
+        TournamentFactory(state=completed, prize_pool=5_000_000, prize_currency="IRT")
+        TournamentFactory(state=Tournament.State.LIVE, prize_pool=9999, prize_currency="USD")
+        TournamentFactory(state=Tournament.State.CANCELLED)
+        TournamentFactory()
+        for number, status in [("A1", Order.Status.COMPLETED), ("A2", Order.Status.PENDING_PAYMENT)]:
+            Order.objects.create(
+                number=number, user=player, status=status, payment_method="wallet", subtotal=10, total=10
+            )
+
+        body = api_client.get(reverse("platform-stats")).json()
+
+        assert body["players"] == 3  # the active player plus the two team members
+        assert body["teams"] == 1
+        assert body["tournaments"] == 4
+        assert body["ordersDelivered"] == 1
+        assert body["prizesAwarded"] == [
+            {"currency": "IRT", "amount": 5_000_000},
+            {"currency": "USD", "amount": 1500},
+        ]

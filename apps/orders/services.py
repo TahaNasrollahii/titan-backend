@@ -121,7 +121,8 @@ def add_to_cart(
 def update_cart_item(user: User, item_id: int, quantity: int) -> CartItem | None:
     """Set the quantity of a line. Zero removes it and returns ``None``."""
     item = (
-        CartItem.objects.select_for_update()
+        # Lock only the line: PostgreSQL refuses FOR UPDATE on the outer join to the nullable variant.
+        CartItem.objects.select_for_update(of=("self",))
         .select_related("product", "variant")
         .get(cart__user=user, pk=item_id)
     )
