@@ -1,8 +1,9 @@
 """Admin theme (django-unfold): branding, Titan colour palette and sidebar navigation."""
 
 from django.templatetags.static import static
-from django.urls import reverse_lazy
-from django.utils.translation import gettext_lazy as _
+
+from config.lazy import gettext_lazy as _
+from config.lazy import reverse_lazy
 
 CALLBACKS = "apps.core.admin_site"
 

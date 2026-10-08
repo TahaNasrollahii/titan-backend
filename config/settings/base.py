@@ -3,9 +3,9 @@
 from datetime import timedelta
 from pathlib import Path
 
-from django.utils.translation import gettext_lazy as _
-
 import environ
+
+from config.lazy import gettext_lazy as _
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
