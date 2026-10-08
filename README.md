@@ -276,6 +276,27 @@ See `titan-front/README.md` for how the client is organised.
 - **`FIELD_ENCRYPTION_KEY`:** never rotate it without re-encrypting the data. Game-account passwords and
   delivered redeem codes are Fernet-encrypted with it.
 
+### Vercel (demo / testing)
+
+`config.settings.vercel` runs the API as a Vercel Function: production settings, plus Neon Postgres
+(`DATABASE_URL`) and media on Vercel Blob (`apps.core.storage.VercelBlobStorage`, `BLOB_READ_WRITE_TOKEN`).
+Every build runs `migrate` (`[tool.vercel.scripts]` in `pyproject.toml`), and Vercel runs `collectstatic`
+itself and serves `/static/` from its CDN.
+
+- **Stores:** connect a Neon database and a **public** Blob store to the project. They set `DATABASE_URL`
+  and `BLOB_READ_WRITE_TOKEN`.
+- **Env vars:** `DJANGO_SETTINGS_MODULE=config.settings.vercel`, `SECRET_KEY`, `FIELD_ENCRYPTION_KEY`,
+  `ALLOWED_HOSTS=.vercel.app`, `FRONTEND_URL`, `PAYMENT_GATEWAY=fake`, `PAYMENT_CALLBACK_URL`,
+  `SEED_ADMIN_PASSWORD`.
+  - For the `1234` demo login, add `OTP_TEST_CODE=1234` and `ALLOW_OTP_TEST_CODE=True`. Never use these
+    on a real deployment.
+- **Seed** from your machine, which uploads the images from `../titan-front/public` to Blob:
+
+  ```bash
+  vercel link && vercel env pull .env.vercel --environment=production
+  ENV_FILE=.env.vercel uv run python manage.py seed --settings=config.settings.vercel
+  ```
+
 ### Staff back office (`/admin/`)
 
 The admin uses the [django-unfold](https://unfoldadmin.com) theme in Titan colours, in English (LTR), with

@@ -8,7 +8,8 @@ from .base import LOGGING, MIDDLEWARE, env
 DEBUG = False
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS")
 
-if env("OTP_TEST_CODE", default=""):
+# A fixed login code is a backdoor. Only throwaway demo deployments may opt in, explicitly.
+if env("OTP_TEST_CODE", default="") and not env.bool("ALLOW_OTP_TEST_CODE", default=False):
     raise ImproperlyConfigured("OTP_TEST_CODE must not be set in production.")
 
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")

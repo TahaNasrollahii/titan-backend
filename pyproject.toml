@@ -20,6 +20,7 @@ dependencies = [
     "gunicorn>=23.0",
     "whitenoise>=6.9",
     "django-unfold>=0.60",
+    "vercel>=0.11.6",
 ]
 
 [dependency-groups]
@@ -36,6 +37,15 @@ dev = [
 
 [tool.uv]
 package = false
+
+# Vercel deployment (see README). Pin WSGI: with both WSGI_APPLICATION and ASGI_APPLICATION set,
+# Vercel would otherwise pick ASGI. Migrations run on every build; collectstatic runs automatically.
+# --skip-checks: Unfold's admin checks query auth_permission, which doesn't exist yet on a fresh database.
+[tool.vercel]
+entrypoint = "config.wsgi:application"
+
+[tool.vercel.scripts]
+build = "python manage.py migrate --noinput --skip-checks"
 
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "config.settings.test"

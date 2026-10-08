@@ -10,7 +10,8 @@ import environ
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 env = environ.Env()
-environ.Env.read_env(BASE_DIR / ".env", overwrite=False)
+# ENV_FILE points at another file, e.g. one pulled with `vercel env pull` to run commands against the demo.
+environ.Env.read_env(env.str("ENV_FILE", default=str(BASE_DIR / ".env")), overwrite=False)
 
 SECRET_KEY = env("SECRET_KEY")
 DEBUG = env.bool("DEBUG", default=False)

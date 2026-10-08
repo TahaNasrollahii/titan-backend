@@ -13,3 +13,8 @@ htmlcov/
 schema.yml
 .idea/
 .vscode/
+
+# vercel (`vercel env pull` writes secrets to .env.* files)
+.vercel
+.env.*
+!.env.example
