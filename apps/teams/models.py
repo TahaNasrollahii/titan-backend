@@ -9,6 +9,7 @@ from apps.core.utils import random_code
 from apps.core.validators import IMAGE_VALIDATORS
 
 INVITE_CODE_LENGTH = 8
+MAX_TEAM_MEMBERS = 10
 
 
 def new_invite_code() -> str:
@@ -21,19 +22,10 @@ class TeamQuerySet(models.QuerySet):
 
 
 class Team(TimeStampedModel):
-    class Region(models.TextChoices):
-        MIDDLE_EAST = "me", _("Middle East")
-        EUROPE = "eu", _("Europe")
-        IRAN = "ir", _("Iran")
-        INTERNATIONAL = "intl", _("International")
+    """A standing group of players. Tournaments pick a lineup from its members at registration."""
 
     name = models.CharField(_("name"), max_length=40)
-    tag = models.CharField(_("tag"), max_length=4)
-    description = models.CharField(max_length=300, blank=True)
     logo = models.ImageField(upload_to="teams/", blank=True, validators=IMAGE_VALIDATORS)
-    game = models.ForeignKey("catalog.Game", on_delete=models.PROTECT, related_name="teams")
-    region = models.CharField(max_length=4, choices=Region.choices, default=Region.MIDDLE_EAST)
-    max_members = models.PositiveSmallIntegerField(default=10)
     invite_code = models.CharField(max_length=16, unique=True, default=new_invite_code)
     created_by = models.ForeignKey(
         settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL, related_name="+"

@@ -13,14 +13,16 @@ from rest_framework.views import APIView
 from apps.accounts.views import user_with_badges
 from apps.core.permissions import IsStaff
 from apps.teams.models import Team
-from apps.teams.serializers import TeamListSerializer
 
 from . import selectors
 from .models import Match, PlayerStats, Registration, Season, Tournament
 from .serializers import (
     BracketRoundSerializer,
+    EligibleTeamSerializer,
+    LineupSerializer,
     MatchSerializer,
     MatchUpdateSerializer,
+    MyRegistrationSerializer,
     MyTournamentSerializer,
     ParticipantSerializer,
     PlayerLeaderboardSerializer,
@@ -41,7 +43,9 @@ from .services import bracket, registration, results
 class TournamentFilter(django_filters.FilterSet):
     game = django_filters.CharFilter(field_name="game__slug")
     status = django_filters.MultipleChoiceFilter(choices=Tournament.Status.choices)
-    participant_type = django_filters.ChoiceFilter(choices=Tournament.ParticipantType.choices)
+    participant_type = django_filters.ChoiceFilter(
+        choices=Tournament.ParticipantType.choices, method="filter_participant_type"
+    )
     region = django_filters.ChoiceFilter(
         field_name="region", choices=Tournament._meta.get_field("region").choices
     )
@@ -54,6 +58,10 @@ class TournamentFilter(django_filters.FilterSet):
 
     def filter_free(self, queryset, name, value):
         return queryset.filter(entry_fee=0) if value else queryset.filter(entry_fee__gt=0)
+
+    def filter_participant_type(self, queryset, name, value):
+        solo = value == Tournament.ParticipantType.SOLO
+        return queryset.filter(team_size=1) if solo else queryset.filter(team_size__gt=1)
 
 
 @extend_schema(tags=["tournaments"])
@@ -108,7 +116,7 @@ class TournamentViewSet(viewsets.ReadOnlyModelViewSet):
         }
         return Response(BracketRoundSerializer(rounds, many=True, context=context).data)
 
-    @extend_schema(responses=TeamListSerializer(many=True))
+    @extend_schema(responses=EligibleTeamSerializer(many=True))
     @action(
         detail=True,
         methods=["get"],
@@ -118,8 +126,10 @@ class TournamentViewSet(viewsets.ReadOnlyModelViewSet):
         pagination_class=None,
     )
     def eligible_teams(self, request, slug=None):
-        teams = registration.eligible_teams(request.user, self._tournament(slug))
-        return Response(TeamListSerializer(teams, many=True, context={"request": request}).data)
+        tournament = self._tournament(slug)
+        teams = registration.eligible_teams(request.user, tournament)
+        context = {"request": request, "registered_players": registration.registered_players(tournament)}
+        return Response(EligibleTeamSerializer(teams, many=True, context=context).data)
 
     @extend_schema(
         methods=["post"], request=RegisterSerializer, responses={201: RegistrationResultSerializer}
@@ -138,11 +148,22 @@ class TournamentViewSet(viewsets.ReadOnlyModelViewSet):
             request.user,
             tournament,
             team=serializer.validated_data.get("team"),
+            members=serializer.validated_data["members"],
             payment_method=serializer.validated_data.get("payment_method"),
         )
         payload = {"registration": result.registration, "payment_url": result.payment_url}
         data = RegistrationResultSerializer(payload, context={"request": request}).data
         return Response(data, status=status.HTTP_201_CREATED)
+
+    @extend_schema(request=LineupSerializer, responses=MyRegistrationSerializer)
+    @action(detail=True, methods=["put"], permission_classes=[IsAuthenticated])
+    def lineup(self, request, slug=None):
+        serializer = LineupSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        entry = registration.update_lineup(
+            request.user, self._tournament(slug), serializer.validated_data["members"]
+        )
+        return Response(MyRegistrationSerializer(entry, context={"request": request}).data)
 
     @extend_schema(request=None, responses={201: BracketRoundSerializer(many=True)})
     @action(detail=True, methods=["post"], url_path="generate-bracket", permission_classes=[IsStaff])

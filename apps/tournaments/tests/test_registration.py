@@ -186,79 +186,195 @@ class TestSoloRegistration:
         assert response.json()["code"] == "solo_tournament"
 
 
+def members_of(team, count=None):
+    ids = list(team.memberships.values_list("user_id", flat=True))
+    return ids if count is None else ids[:count]
+
+
 class TestTeamRegistration:
     @pytest.fixture
     def tournament(self):
         return TournamentFactory(team=True)  # team_size=2
 
-    def test_captain_registers_team_with_roster(self, client_for, tournament):
-        team = team_with_members(3, game=tournament.game)
-
-        response = client_for(captain_of(team)).post(
-            register_url(tournament), {"team": team.pk}, format="json"
+    def register_team(self, client_for, tournament, team, members):
+        return client_for(captain_of(team)).post(
+            register_url(tournament), {"team": team.pk, "members": members}, format="json"
         )
 
+    def test_captain_registers_a_lineup_from_a_bigger_team(self, client_for, tournament):
+        team = team_with_members(10)
+        lineup = members_of(team)[3:5]
+
+        response = self.register_team(client_for, tournament, team, lineup)
+
         assert response.status_code == 201
-        assert Registration.objects.get().members.count() == 3
+        registration = Registration.objects.get()
+        assert sorted(registration.members.values_list("user_id", flat=True)) == sorted(lineup)
+        body = response.json()["registration"]
+        assert sorted(member["id"] for member in body["members"]) == sorted(lineup)
+        assert body["canManage"] is True
+
+    def test_captain_does_not_have_to_play(self, client_for, tournament):
+        team = team_with_members(3)
+        captain = captain_of(team)
+        lineup = [pk for pk in members_of(team) if pk != captain.pk]
+
+        response = self.register_team(client_for, tournament, team, lineup)
+
+        assert response.status_code == 201
+        detail = client_for(captain).get(reverse("tournament-detail", args=[tournament.slug])).json()
+        assert detail["isRegistered"] is True
+        assert detail["myRegistration"]["canManage"] is True
+
+    @pytest.mark.parametrize("count", [1, 3])
+    def test_lineup_must_match_team_size(self, client_for, tournament, count):
+        team = team_with_members(5)
+
+        response = self.register_team(client_for, tournament, team, members_of(team, count))
+
+        assert response.json()["code"] == "lineup_size"
+
+    def test_duplicate_players_rejected(self, client_for, tournament):
+        team = team_with_members(3)
+        player = members_of(team)[1]
+
+        response = self.register_team(client_for, tournament, team, [player, player])
+
+        assert response.json()["code"] == "lineup_size"
+
+    def test_lineup_players_must_be_members(self, client_for, tournament):
+        team = team_with_members(2)
+        outsider = UserFactory()
+
+        response = self.register_team(client_for, tournament, team, [members_of(team)[0], outsider.pk])
+
+        assert response.json()["code"] == "not_member"
 
     def test_team_required(self, client_for, tournament):
-        team = team_with_members(2, game=tournament.game)
+        team = team_with_members(2)
 
         response = client_for(captain_of(team)).post(register_url(tournament))
 
         assert response.json()["code"] == "team_required"
 
     def test_only_captain(self, client_for, tournament):
-        team = team_with_members(2, game=tournament.game)
+        team = team_with_members(2)
         member = team.memberships.get(role="player").user
 
-        response = client_for(member).post(register_url(tournament), {"team": team.pk}, format="json")
+        response = client_for(member).post(
+            register_url(tournament), {"team": team.pk, "members": members_of(team)}, format="json"
+        )
 
         assert response.json()["code"] == "not_captain"
 
-    def test_team_too_small(self, client_for, tournament):
-        team = team_with_members(1, game=tournament.game)
+    def test_team_registers_once(self, client_for, tournament):
+        team = team_with_members(4)
+        confirm_team(tournament, team)
 
-        response = client_for(captain_of(team)).post(
-            register_url(tournament), {"team": team.pk}, format="json"
-        )
+        response = self.register_team(client_for, tournament, team, members_of(team)[2:4])
 
-        assert response.json()["code"] == "team_too_small"
+        assert response.json()["code"] == "already_registered"
 
-    def test_game_mismatch(self, client_for, tournament):
-        from apps.catalog.tests.factories import GameFactory
-
-        team = team_with_members(2, game=GameFactory(slug="fortnite"))
-
-        response = client_for(captain_of(team)).post(
-            register_url(tournament), {"team": team.pk}, format="json"
-        )
-
-        assert response.json()["code"] == "team_game_mismatch"
-
-    def test_roster_conflict_between_teams(self, client_for, tournament):
-        first = team_with_members(2, game=tournament.game)
+    def test_player_in_two_teams_plays_for_one(self, client_for, tournament):
+        first = team_with_members(2)
         confirm_team(tournament, first)
-        second = team_with_members(2, game=tournament.game)
+        second = team_with_members(2)
         shared_player = first.memberships.get(role="player").user
         second.memberships.create(user=shared_player)
 
-        response = client_for(captain_of(second)).post(
-            register_url(tournament), {"team": second.pk}, format="json"
+        response = self.register_team(
+            client_for, tournament, second, [captain_of(second).pk, shared_player.pk]
         )
 
         assert response.json()["code"] == "roster_conflict"
 
-    def test_eligible_teams(self, client_for, tournament):
-        eligible = team_with_members(2, game=tournament.game)
+    def test_member_left_out_of_a_lineup_can_play_for_another_team(self, client_for, tournament):
+        first = team_with_members(3)
+        bench = first.memberships.order_by("joined_at").last().user
+        confirm_team(tournament, first, lineup=[m.user for m in first.memberships.exclude(user=bench)])
+        second = team_with_members(2)
+        second.memberships.create(user=bench)
+
+        response = self.register_team(client_for, tournament, second, [captain_of(second).pk, bench.pk])
+
+        assert response.status_code == 201
+
+    def test_eligible_teams_list_members_and_who_is_taken(self, client_for, tournament):
+        eligible = team_with_members(3)
         captain = captain_of(eligible)
-        registered = team_with_members(2, game=tournament.game)
+        registered = team_with_members(2)
         registered.memberships.filter(role="captain").update(user=captain)
+        other = team_with_members(2, name="Rivals")
+        taken = other.memberships.get(role="player").user
+        eligible.memberships.create(user=taken)
         confirm_team(tournament, registered)
+        confirm_team(tournament, other)
 
         body = client_for(captain).get(reverse("tournament-eligible-teams", args=[tournament.slug])).json()
 
         assert [team["id"] for team in body] == [eligible.pk]
+        registered_with = {member["user"]["id"]: member["registeredWith"] for member in body[0]["members"]}
+        assert registered_with[taken.pk] == "Rivals"
+        assert registered_with[captain.pk] == registered.name
+
+
+class TestLineup:
+    @pytest.fixture
+    def tournament(self):
+        return TournamentFactory(team=True)
+
+    def lineup_url(self, tournament):
+        return reverse("tournament-lineup", args=[tournament.slug])
+
+    def test_captain_swaps_a_player(self, client_for, tournament):
+        team = team_with_members(3)
+        first, _, third = members_of(team)
+        registration = confirm_team(tournament, team)  # the first two members
+
+        response = client_for(captain_of(team)).put(
+            self.lineup_url(tournament), {"members": [first, third]}, format="json"
+        )
+
+        assert response.status_code == 200
+        assert sorted(registration.members.values_list("user_id", flat=True)) == sorted([first, third])
+        assert Notification.objects.filter(user_id=third, kind="tournament").exists()
+        assert not Notification.objects.filter(user_id=first).exists()
+
+    def test_player_cannot_edit_lineup(self, client_for, tournament):
+        team = team_with_members(3)
+        confirm_team(tournament, team)
+        member = team.memberships.get(user_id=members_of(team)[1]).user
+
+        response = client_for(member).put(
+            self.lineup_url(tournament), {"members": members_of(team, 2)}, format="json"
+        )
+
+        assert response.json()["code"] == "not_captain"
+
+    def test_locked_after_registration_closes(self, client_for, tournament):
+        team = team_with_members(3)
+        confirm_team(tournament, team)
+        Tournament.objects.filter(pk=tournament.pk).update(registration_closes_at=timezone.now())
+
+        response = client_for(captain_of(team)).put(
+            self.lineup_url(tournament), {"members": members_of(team)[1:3]}, format="json"
+        )
+
+        assert response.json()["code"] == "registration_closed"
+
+    def test_cannot_pick_a_player_from_another_entry(self, client_for, tournament):
+        team = team_with_members(3)
+        confirm_team(tournament, team)
+        other = team_with_members(2)
+        taken = other.memberships.get(role="player").user
+        team.memberships.create(user=taken)
+        confirm_team(tournament, other)
+
+        response = client_for(captain_of(team)).put(
+            self.lineup_url(tournament), {"members": [captain_of(team).pk, taken.pk]}, format="json"
+        )
+
+        assert response.json()["code"] == "roster_conflict"
 
 
 class TestWithdraw:
@@ -291,8 +407,26 @@ class TestWithdraw:
 
     def test_team_member_cannot_withdraw_team(self, client_for):
         tournament = TournamentFactory(team=True)
-        team = team_with_members(2, game=tournament.game)
+        team = team_with_members(2)
         confirm_team(tournament, team)
         member = team.memberships.get(role="player").user
 
-        assert client_for(member).delete(register_url(tournament)).json()["code"] == "not_registrant"
+        assert client_for(member).delete(register_url(tournament)).json()["code"] == "not_captain"
+
+    def test_new_captain_withdraws_and_refund_goes_to_the_payer(self, client_for):
+        tournament = TournamentFactory(team=True, entry_fee=40_000)
+        team = team_with_members(2)
+        old_captain = captain_of(team)
+        fund(old_captain, 40_000)
+        client_for(old_captain).post(
+            register_url(tournament),
+            {"team": team.pk, "members": members_of(team), "paymentMethod": "wallet"},
+            format="json",
+        )
+        new_captain = team.memberships.get(role="player").user
+        client_for(old_captain).post(reverse("team-promote", args=[team.pk, new_captain.pk]))
+
+        response = client_for(new_captain).delete(register_url(tournament))
+
+        assert response.status_code == 204
+        assert get_wallet(old_captain).balance == 40_000

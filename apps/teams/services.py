@@ -8,7 +8,7 @@ from apps.core.exceptions import ConflictError, DomainError, NotAllowedError
 from apps.notifications.services import Kind, notify, notify_many, resolve_action
 from apps.tournaments.models import Registration
 
-from .models import Team, TeamInvitation, TeamMembership, new_invite_code
+from .models import MAX_TEAM_MEMBERS, Team, TeamInvitation, TeamMembership, new_invite_code
 
 Role = TeamMembership.Role
 
@@ -33,7 +33,6 @@ def teams_with_members() -> QuerySet[Team]:
     members = TeamMembership.objects.select_related("user", "user__current_game")
     return (
         Team.objects.active()
-        .select_related("game")
         .prefetch_related(Prefetch("memberships", queryset=members))
         .annotate(member_count=Count("memberships", distinct=True))
     )
@@ -74,7 +73,7 @@ def _add_member(team: Team, user: User, role: str = Role.PLAYER) -> TeamMembersh
     _require_active(team)
     if team.memberships.filter(user=user).exists():
         raise AlreadyMember()
-    if team.memberships.count() >= team.max_members:
+    if team.memberships.count() >= MAX_TEAM_MEMBERS:
         raise TeamFull()
     return TeamMembership.objects.create(team=team, user=user, role=role)
 
@@ -166,6 +165,10 @@ def remove_member(team: Team, actor: User, member: User) -> None:
     leaving = actor.pk == member.pk
     if not leaving:
         _require_captain(team, actor)
+    if Registration.objects.active_for_team(team).filter(members__user=member).exists():
+        raise DomainError(
+            _("This player is in the team's lineup for an ongoing tournament."), code="member_in_lineup"
+        )
     if membership.role == Role.CAPTAIN:
         if team.memberships.count() > 1:
             raise DomainError(

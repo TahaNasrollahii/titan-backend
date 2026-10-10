@@ -169,8 +169,8 @@ class TestResults:
 
     def test_team_stats_and_counters(self):
         tournament = TournamentFactory(team=True)
-        winners = team_with_members(2, game=tournament.game, points=900)
-        losers = team_with_members(2, game=tournament.game, points=100)
+        winners = team_with_members(2, points=900)
+        losers = team_with_members(2, points=100)
         confirm_team(tournament, winners)
         confirm_team(tournament, losers)
         bracket.generate_bracket(tournament)

@@ -21,7 +21,7 @@ from django.utils.translation import gettext as _
 from apps.accounts.models import User
 from apps.accounts.ranks import tier_for_points
 
-from .models import Match, PlayerStats, Registration, RegistrationMember, Season, TeamStats, Tournament
+from .models import Match, PlayerStats, Registration, Season, TeamStats, Tournament
 
 Status = Tournament.Status
 ACTIVE_MATCH_STATUSES = (Match.Status.SCHEDULED, Match.Status.LIVE)
@@ -64,11 +64,7 @@ def tournament_list(user: User | None) -> QuerySet[Tournament]:
 def with_registration_flag(queryset: QuerySet[Tournament], user: User | None) -> QuerySet[Tournament]:
     if user is None or not user.is_authenticated:
         return queryset.annotate(is_registered=Value(False, output_field=BooleanField()))
-    entries = RegistrationMember.objects.filter(
-        user=user,
-        registration__tournament=OuterRef("pk"),
-        registration__status__in=Registration.ACTIVE_STATUSES,
-    )
+    entries = Registration.objects.active().involving(user).filter(tournament=OuterRef("pk"))
     return queryset.annotate(is_registered=Exists(entries))
 
 
@@ -81,7 +77,8 @@ def user_registration(tournament: Tournament, user: User) -> Registration | None
         return None
     return (
         Registration.objects.active()
-        .filter(tournament=tournament, members__user=user)
+        .involving(user)
+        .filter(tournament=tournament)
         .select_related("team", "player")
         .first()
     )
@@ -116,9 +113,7 @@ def user_registration_ids(tournament: Tournament, user: User) -> set[int]:
     if not user.is_authenticated:
         return set()
     return set(
-        RegistrationMember.objects.filter(user=user, registration__tournament=tournament).values_list(
-            "registration_id", flat=True
-        )
+        Registration.objects.involving(user).filter(tournament=tournament).values_list("pk", flat=True)
     )
 
 
@@ -136,7 +131,8 @@ def upcoming_matches() -> QuerySet[Match]:
 
 def my_registrations(user: User) -> QuerySet[Registration]:
     return (
-        Registration.objects.filter(members__user=user)
+        Registration.objects.involving(user)
+        .distinct()
         .exclude(status=Registration.Status.CANCELLED)
         .select_related("team", "player", "tournament__game", "tournament__season")
         .order_by("-tournament__starts_at")

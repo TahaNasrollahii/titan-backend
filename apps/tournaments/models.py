@@ -7,6 +7,7 @@ from django.utils.translation import gettext_lazy as _
 from apps.core.models import TimeStampedModel
 from apps.core.utils import percent_off
 from apps.core.validators import IMAGE_VALIDATORS
+from apps.teams.models import TeamMembership
 
 
 class Currency(models.TextChoices):
@@ -42,6 +43,8 @@ class Season(models.Model):
 
 class Tournament(TimeStampedModel):
     class ParticipantType(models.TextChoices):
+        """Derived from ``team_size``: 1 is solo, anything larger is a team tournament."""
+
         SOLO = "solo", _("Solo")
         TEAM = "team", _("Team")
 
@@ -73,8 +76,9 @@ class Tournament(TimeStampedModel):
     description = models.TextField(blank=True)
     cover_image = models.ImageField(upload_to="tournaments/", blank=True, validators=IMAGE_VALIDATORS)
 
-    participant_type = models.CharField(max_length=4, choices=ParticipantType.choices)
-    team_size = models.PositiveSmallIntegerField(default=1, help_text=_("Players per team; 1 for solo."))
+    team_size = models.PositiveSmallIntegerField(
+        default=1, help_text=_("Players in each lineup. 1 makes it a solo tournament.")
+    )
     format = models.CharField(max_length=30, choices=Format.choices, default=Format.SINGLE_ELIMINATION)
     format_label = models.CharField(max_length=80, blank=True, help_text=_('e.g. "5v5 — knockout"'))
     best_of = models.PositiveSmallIntegerField(default=1)
@@ -108,6 +112,7 @@ class Tournament(TimeStampedModel):
                 condition=Q(ends_at__gte=models.F("starts_at")), name="tournament_dates_valid"
             ),
             models.CheckConstraint(condition=Q(max_participants__gte=2), name="tournament_min_participants"),
+            models.CheckConstraint(condition=Q(team_size__gte=1), name="tournament_team_size_positive"),
         ]
 
     def __str__(self) -> str:
@@ -115,7 +120,11 @@ class Tournament(TimeStampedModel):
 
     @property
     def is_team(self) -> bool:
-        return self.participant_type == self.ParticipantType.TEAM
+        return self.team_size > 1
+
+    @property
+    def participant_type(self) -> str:
+        return self.ParticipantType.TEAM if self.is_team else self.ParticipantType.SOLO
 
     @property
     def is_free(self) -> bool:
@@ -158,6 +167,16 @@ class TournamentPrize(models.Model):
 class RegistrationQuerySet(models.QuerySet):
     def active(self):
         return self.filter(status__in=Registration.ACTIVE_STATUSES)
+
+    def involving(self, user):
+        """Registrations ``user`` plays in, plus team registrations of teams ``user`` captains.
+
+        Spans two multi-valued relations, so it can return duplicates: add ``.distinct()`` for lists.
+        """
+        return self.filter(
+            Q(members__user=user)
+            | Q(team__memberships__user=user, team__memberships__role=TeamMembership.Role.CAPTAIN)
+        )
 
     def active_for_team(self, team):
         return self.active().filter(
@@ -227,15 +246,9 @@ class Registration(TimeStampedModel):
             return self.team.name
         return self.player.display_name
 
-    @property
-    def tag(self) -> str:
-        if self.team_id:
-            return self.team.tag
-        return self.player.display_name[:2].upper()
-
 
 class RegistrationMember(models.Model):
-    """Roster snapshot: every player taking part through a registration (the player itself for solo)."""
+    """The lineup: exactly ``team_size`` players taking part through a registration (the player for solo)."""
 
     registration = models.ForeignKey(Registration, on_delete=models.CASCADE, related_name="members")
     user = models.ForeignKey(

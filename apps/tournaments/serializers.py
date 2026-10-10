@@ -8,8 +8,8 @@ from apps.accounts.serializers import PublicPlayerSerializer, RankTierSerializer
 from apps.catalog.serializers import GameMiniSerializer
 from apps.core.serializers import ImageUrlField
 from apps.payments.models import PaymentMethod
-from apps.teams.models import Team
-from apps.teams.serializers import TeamMiniSerializer
+from apps.teams.models import Team, TeamMembership
+from apps.teams.serializers import TeamListSerializer, TeamMemberSerializer, TeamMiniSerializer
 
 from .models import Match, PlayerStats, Registration, Season, TeamStats, Tournament, TournamentPrize
 
@@ -31,7 +31,6 @@ class ParticipantSerializer(serializers.ModelSerializer):
 
     kind = serializers.SerializerMethodField()
     name = serializers.CharField(source="display_name", read_only=True)
-    tag = serializers.CharField(read_only=True)
     logo = serializers.SerializerMethodField()
     avatar_seed = serializers.SerializerMethodField()
     points = serializers.SerializerMethodField()
@@ -45,7 +44,6 @@ class ParticipantSerializer(serializers.ModelSerializer):
             "id",
             "kind",
             "name",
-            "tag",
             "logo",
             "avatar_seed",
             "team_id",
@@ -148,6 +146,7 @@ class TournamentListSerializer(serializers.ModelSerializer):
     game = GameMiniSerializer(read_only=True)
     cover_image = ImageUrlField()
     status = serializers.CharField(read_only=True)
+    participant_type = serializers.CharField(read_only=True)
     participants_count = serializers.IntegerField(read_only=True)
     is_full = serializers.SerializerMethodField()
     is_free = serializers.BooleanField(read_only=True)
@@ -212,6 +211,27 @@ class RegistrationSerializer(serializers.ModelSerializer):
         ]
 
 
+class MyRegistrationSerializer(RegistrationSerializer):
+    """The viewer's own entry: adds the lineup and whether the viewer may change or withdraw it."""
+
+    members = serializers.SerializerMethodField()
+    can_manage = serializers.SerializerMethodField()
+
+    class Meta(RegistrationSerializer.Meta):
+        fields = [*RegistrationSerializer.Meta.fields, "members", "can_manage"]
+
+    @extend_schema_field(UserMiniSerializer(many=True))
+    def get_members(self, registration: Registration):
+        users = [member.user for member in registration.members.select_related("user")]
+        return UserMiniSerializer(users, many=True, context=self.context).data
+
+    def get_can_manage(self, registration: Registration) -> bool:
+        user = self.context["request"].user
+        if registration.team_id:
+            return registration.team.memberships.filter(user=user, role=TeamMembership.Role.CAPTAIN).exists()
+        return registration.player_id == user.pk
+
+
 class TournamentDetailSerializer(TournamentListSerializer):
     season = SeasonSerializer(read_only=True)
     prizes = PrizeSerializer(many=True, read_only=True)
@@ -231,19 +251,46 @@ class TournamentDetailSerializer(TournamentListSerializer):
             "my_registration",
         ]
 
-    @extend_schema_field(RegistrationSerializer(allow_null=True))
+    @extend_schema_field(MyRegistrationSerializer(allow_null=True))
     def get_my_registration(self, tournament: Tournament):
         registration = self.context.get("my_registration")
-        return RegistrationSerializer(registration, context=self.context).data if registration else None
+        return MyRegistrationSerializer(registration, context=self.context).data if registration else None
+
+
+class LineupSerializer(serializers.Serializer):
+    members = serializers.ListField(child=serializers.IntegerField(min_value=1), max_length=50)
 
 
 class RegisterSerializer(serializers.Serializer):
     team = serializers.PrimaryKeyRelatedField(queryset=Team.objects.active(), required=False, allow_null=True)
+    members = serializers.ListField(
+        child=serializers.IntegerField(min_value=1), max_length=50, required=False, default=list
+    )
     payment_method = serializers.ChoiceField(choices=PaymentMethod.choices, required=False, allow_null=True)
 
 
+class LineupCandidateSerializer(TeamMemberSerializer):
+    """A team member offered for a lineup. ``registered_with`` names the entry they already play for."""
+
+    registered_with = serializers.SerializerMethodField()
+
+    class Meta(TeamMemberSerializer.Meta):
+        fields = [*TeamMemberSerializer.Meta.fields, "registered_with"]
+
+    @extend_schema_field(serializers.CharField(allow_null=True))
+    def get_registered_with(self, membership: TeamMembership) -> str | None:
+        return self.context["registered_players"].get(membership.user_id)
+
+
+class EligibleTeamSerializer(TeamListSerializer):
+    members = LineupCandidateSerializer(source="memberships", many=True, read_only=True)
+
+    class Meta(TeamListSerializer.Meta):
+        fields = [*TeamListSerializer.Meta.fields, "members"]
+
+
 class RegistrationResultSerializer(serializers.Serializer):
-    registration = RegistrationSerializer()
+    registration = MyRegistrationSerializer()
     payment_url = serializers.URLField(allow_null=True)
 
 

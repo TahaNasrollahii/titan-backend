@@ -35,8 +35,7 @@ class TeamViewSet(
 
     permission_classes = [IsAuthenticatedOrReadOnly]
     http_method_names = ["get", "post", "patch", "delete"]
-    filterset_fields = {"game__slug": ["exact"], "region": ["exact"]}
-    search_fields = ["name", "tag"]
+    search_fields = ["name"]
     ordering_fields = ["points", "created_at", "name"]
     ordering = ["-points", "name"]
 

@@ -30,7 +30,6 @@ class TournamentFactory(factory.django.DjangoModelFactory):
     title = factory.Sequence(lambda n: f"Tournament {n}")
     game = factory.SubFactory(GameFactory, slug="valorant", title_en="Valorant")
     season = factory.SubFactory(SeasonFactory)
-    participant_type = Tournament.ParticipantType.SOLO
     team_size = 1
     max_participants = 16
     registration_opens_at = factory.LazyFunction(lambda: timezone.now() - timedelta(days=1))
@@ -39,7 +38,7 @@ class TournamentFactory(factory.django.DjangoModelFactory):
     ends_at = factory.LazyFunction(lambda: timezone.now() + timedelta(days=3))
 
     class Params:
-        team = factory.Trait(participant_type=Tournament.ParticipantType.TEAM, team_size=2)
+        team = factory.Trait(team_size=2)
         upcoming = factory.Trait(
             registration_opens_at=factory.LazyFunction(lambda: timezone.now() + timedelta(days=1)),
             registration_closes_at=factory.LazyFunction(lambda: timezone.now() + timedelta(days=2)),
@@ -58,8 +57,11 @@ def confirm_player(tournament: Tournament, user) -> Registration:
     return registration
 
 
-def confirm_team(tournament: Tournament, team) -> Registration:
+def confirm_team(tournament: Tournament, team, lineup=None) -> Registration:
+    """Register ``team`` with ``lineup`` (users), defaulting to its first ``team_size`` members."""
     captain = team.memberships.get(role="captain").user
+    if lineup is None:
+        lineup = [m.user for m in team.memberships.all()[: tournament.team_size]]
     registration = Registration.objects.create(
         tournament=tournament,
         team=team,
@@ -67,6 +69,6 @@ def confirm_team(tournament: Tournament, team) -> Registration:
         status=Registration.Status.CONFIRMED,
         confirmed_at=timezone.now(),
     )
-    for membership in team.memberships.all():
-        RegistrationMember.objects.create(registration=registration, user=membership.user)
+    for user in lineup:
+        RegistrationMember.objects.create(registration=registration, user=user)
     return registration

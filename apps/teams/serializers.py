@@ -6,12 +6,10 @@ from rest_framework import serializers
 
 from apps.accounts.models import User
 from apps.accounts.serializers import PresenceUserSerializer, UserMiniSerializer
-from apps.catalog.models import Game
-from apps.catalog.serializers import GameMiniSerializer
 from apps.core.serializers import ImageUrlField
 
 from . import services
-from .models import Team, TeamInvitation, TeamMembership
+from .models import MAX_TEAM_MEMBERS, Team, TeamInvitation, TeamMembership
 
 
 class TeamMemberSerializer(serializers.ModelSerializer):
@@ -27,13 +25,13 @@ class TeamMiniSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Team
-        fields = ["id", "name", "tag", "logo"]
+        fields = ["id", "name", "logo"]
 
 
 class TeamListSerializer(serializers.ModelSerializer):
     logo = ImageUrlField()
-    game = GameMiniSerializer(read_only=True)
     member_count = serializers.IntegerField(read_only=True)
+    max_members = serializers.SerializerMethodField()
     win_rate = serializers.FloatField(read_only=True)
 
     class Meta:
@@ -41,10 +39,7 @@ class TeamListSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "name",
-            "tag",
             "logo",
-            "game",
-            "region",
             "member_count",
             "max_members",
             "matches_played",
@@ -54,6 +49,9 @@ class TeamListSerializer(serializers.ModelSerializer):
             "points",
             "created_at",
         ]
+
+    def get_max_members(self, team: Team) -> int:
+        return MAX_TEAM_MEMBERS
 
 
 class TeamDetailSerializer(TeamListSerializer):
@@ -65,7 +63,6 @@ class TeamDetailSerializer(TeamListSerializer):
     class Meta(TeamListSerializer.Meta):
         fields = [
             *TeamListSerializer.Meta.fields,
-            "description",
             "members",
             "my_role",
             "invite_code",
@@ -109,18 +106,12 @@ class MyTeamSerializer(TeamListSerializer):
 
 
 class TeamWriteSerializer(serializers.ModelSerializer):
-    game = serializers.SlugRelatedField(slug_field="slug", queryset=Game.objects.filter(is_active=True))
-    max_members = serializers.IntegerField(min_value=2, max_value=20, required=False)
-
     class Meta:
         model = Team
-        fields = ["name", "tag", "description", "logo", "game", "region", "max_members"]
+        fields = ["name", "logo"]
 
-    def validate_tag(self, value: str) -> str:
-        value = value.strip().upper()
-        if not value.isalnum():
-            raise serializers.ValidationError(_("The tag may only contain letters and digits."))
-        return value
+    def validate_name(self, value: str) -> str:
+        return value.strip()
 
 
 class TeamInvitationSerializer(serializers.ModelSerializer):

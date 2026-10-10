@@ -52,6 +52,11 @@ DEMO_SOLO_TOURNAMENT = "titan-apex-solo"
 UPLOAD_ATTEMPTS = 3
 
 
+def _prefix(name: str) -> str:
+    """Username prefix for filler players: the initials of ``name`` (``Iran Titans`` -> ``it``)."""
+    return "".join(word[0] for word in name.split()).lower()
+
+
 class Seeder:
     def __init__(self, *, assets_dir: Path | None, admin_password: str | None, log=print):
         self.assets_dir = assets_dir if assets_dir and assets_dir.is_dir() else None
@@ -277,19 +282,17 @@ class Seeder:
     def seed_teams(self) -> None:
         season = self.season
         captains = {"Iran Titans": self.demo}
-        for name, tag, game_slug, region, points, wins, losses in data.TEAMS:
+        for name, game_slug, points, wins, losses in data.TEAMS:
             team = Team.objects.active().filter(name=name).first()
             if team is None:
-                captain = captains.get(name) or self._filler_user(tag.lower())
-                team = team_services.create_team(
-                    captain, name=name, tag=tag, game=self.games[game_slug], region=region
-                )
+                captain = captains.get(name) or self._filler_user(_prefix(name))
+                team = team_services.create_team(captain, name=name)
             Team.objects.filter(pk=team.pk).update(
                 points=points, wins=wins, losses=losses, matches_played=wins + losses
             )
             TeamStats.objects.update_or_create(
                 team=team,
-                game=team.game,
+                game=self.games[game_slug],
                 season=season,
                 defaults={"matches": wins + losses, "wins": wins, "losses": losses, "points": points},
             )
@@ -312,16 +315,17 @@ class Seeder:
     def _fill_roster(self, team: Team, size: int) -> None:
         missing = size - team.memberships.count()
         for _ in range(max(0, missing)):
-            team_services.join_with_code(self._filler_user(team.tag.lower()), team.invite_code)
+            team_services.join_with_code(self._filler_user(_prefix(team.name)), team.invite_code)
 
     def _generic_teams(self, game: Game, count: int, team_size: int) -> list[Team]:
-        teams = list(Team.objects.active().filter(game=game).order_by("-points")[:count])
+        teams = list(
+            Team.objects.active().filter(game_stats__game=game).distinct().order_by("-points")[:count]
+        )
         while len(teams) < count:
             number = len(teams) + 1
-            tag = f"{game.title_en[:2].upper()}{number}"
             name = f"{game.title_en} Squad {number}"
             team = Team.objects.active().filter(name=name).first() or team_services.create_team(
-                self._filler_user(tag.lower()), name=name, tag=tag, game=game, region=Team.Region.IRAN
+                self._filler_user(f"{_prefix(game.title_en)}{number}"), name=name
             )
             teams.append(team)
         for team in teams:
@@ -347,7 +351,6 @@ class Seeder:
                 "game": self.games[spec["game"]],
                 "season": self.season,
                 "description": spec.get("description", ""),
-                "participant_type": spec["type"],
                 "team_size": spec.get("team_size", 1),
                 "format_label": spec.get("format_label", ""),
                 "best_of": spec.get("best_of", 1),
@@ -388,7 +391,7 @@ class Seeder:
             entrants = entrants[:count]
             for team in entrants:
                 self._fill_roster(team, size=tournament.team_size)
-                roster = [m.user for m in team.memberships.select_related("user")]
+                roster = [m.user for m in team.memberships.select_related("user")][: tournament.team_size]
                 captain = next(
                     m.user for m in team.memberships.all() if m.role == TeamMembership.Role.CAPTAIN
                 )

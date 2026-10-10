@@ -8,7 +8,7 @@ from unfold.decorators import display
 
 from apps.core.admin import DANGER, SUCCESS, WARNING, image_header, initials
 
-from .models import Team, TeamInvitation, TeamMembership
+from .models import MAX_TEAM_MEMBERS, Team, TeamInvitation, TeamMembership
 
 INVITATION_LABELS = {
     TeamInvitation.Status.PENDING: WARNING,
@@ -53,21 +53,14 @@ class TeamInvitationInline(TabularInline):
 
 @admin.register(Team)
 class TeamAdmin(ModelAdmin):
-    list_display = ["team", "game", "region", "members", "record", "points", "status_label"]
+    list_display = ["team", "members", "record", "points", "status_label"]
     list_display_links = ["team"]
-    list_filter = [
-        DissolvedFilter,
-        ("game", RelatedDropdownFilter),
-        ("region", ChoicesDropdownFilter),
-        ("points", RangeNumericFilter),
-    ]
+    list_filter = [DissolvedFilter, ("points", RangeNumericFilter)]
     list_filter_submit = True
-    list_select_related = ["game"]
-    search_fields = ["name", "tag"]
-    autocomplete_fields = ["game"]
+    search_fields = ["name"]
     readonly_fields = ["invite_code", "created_by", "created_at", "updated_at"]
     fieldsets = (
-        (None, {"fields": (("name", "tag"), "logo", "description", ("game", "region"), "max_members")}),
+        (None, {"fields": ("name", "logo")}),
         (
             _("Record"),
             {"classes": ["tab"], "fields": (("matches_played", "wins", "losses"), "points")},
@@ -87,11 +80,11 @@ class TeamAdmin(ModelAdmin):
 
     @display(description=_("team"), header=True, ordering="name")
     def team(self, obj: Team):
-        return [obj.name, f"[{obj.tag}]", initials(obj.tag), image_header(obj.logo)]
+        return [obj.name, obj.invite_code, initials(obj.name), image_header(obj.logo)]
 
     @admin.display(description=_("members"), ordering="member_count")
     def members(self, obj: Team) -> str:
-        return f"{obj.member_count}/{obj.max_members}"
+        return f"{obj.member_count}/{MAX_TEAM_MEMBERS}"
 
     @admin.display(description=_("W–L"))
     def record(self, obj: Team) -> str:

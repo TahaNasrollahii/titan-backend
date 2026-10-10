@@ -48,7 +48,8 @@ class TestLeaderboards:
 
     def test_team_leaderboard(self, api_client, season):
         team = team_with_members(1)
-        TeamStats.objects.create(team=team, game=team.game, season=season, points=10, wins=3, matches=4)
+        game = GameFactory(slug="valorant")
+        TeamStats.objects.create(team=team, game=game, season=season, points=10, wins=3, matches=4)
 
         row = api_client.get(reverse("leaderboard-teams")).json()["results"][0]
 
@@ -114,7 +115,7 @@ class TestMyTournaments:
         from apps.tournaments.tests.factories import confirm_team
 
         tournament = TournamentFactory(team=True)
-        team = team_with_members(2, game=tournament.game)
+        team = team_with_members(2)
         confirm_team(tournament, team)
 
         rows = api_client.get(reverse("team-tournaments", args=[team.pk])).json()["results"]

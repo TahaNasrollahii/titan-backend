@@ -1056,3 +1056,33 @@ msgstr "فارسی"
 #: .\config\settings\base.py:93
 msgid "English"
 msgstr "انگلیسی"
+
+msgid "Players in each lineup. 1 makes it a solo tournament."
+msgstr "تعداد بازیکنان هر ترکیب. عدد ۱ یعنی تورنمنت تک‌نفره."
+
+msgid "This player is in the team's lineup for an ongoing tournament."
+msgstr "این بازیکن در ترکیب تیم برای یک تورنمنت در جریان است."
+
+#, python-format
+msgid "Choose exactly %(count)d players for the lineup."
+msgstr "دقیقاً %(count)d بازیکن برای ترکیب تیم انتخاب کنید."
+
+msgid "Every player in the lineup must be a member of the team."
+msgstr "همه بازیکنان ترکیب باید عضو تیم باشند."
+
+#, python-format
+msgid "%(player)s is already registered in this tournament."
+msgstr "%(player)s قبلاً در این تورنمنت ثبت‌نام شده است."
+
+msgid "This team is already registered in this tournament."
+msgstr "این تیم قبلاً در این تورنمنت ثبت‌نام شده است."
+
+msgid "Only the registered player can do this."
+msgstr "فقط بازیکن ثبت‌نام‌شده می‌تواند این کار را انجام دهد."
+
+msgid "You are in the lineup"
+msgstr "شما در ترکیب تیم هستید"
+
+#, python-format
+msgid "%(team)s picked you for %(tournament)s."
+msgstr "%(team)s شما را برای %(tournament)s انتخاب کرد."

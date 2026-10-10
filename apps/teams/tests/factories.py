@@ -1,7 +1,6 @@
 import factory
 
 from apps.accounts.tests.factories import UserFactory
-from apps.catalog.tests.factories import GameFactory
 from apps.teams.models import Team, TeamMembership
 
 
@@ -10,8 +9,6 @@ class TeamFactory(factory.django.DjangoModelFactory):
         model = Team
 
     name = factory.Sequence(lambda n: f"Team {n}")
-    tag = factory.Sequence(lambda n: f"T{n % 1000}")
-    game = factory.SubFactory(GameFactory, slug="valorant", title_en="Valorant")
 
 
 class MembershipFactory(factory.django.DjangoModelFactory):

@@ -133,7 +133,7 @@ class TournamentAdmin(ModelAdmin):
     list_display = [
         "tournament",
         "game",
-        "participant_type",
+        "team_size",
         "status_label",
         "entrants",
         "prize",
@@ -146,7 +146,6 @@ class TournamentAdmin(ModelAdmin):
         ("state", ChoicesDropdownFilter),
         ("game", RelatedDropdownFilter),
         ("season", RelatedDropdownFilter),
-        ("participant_type", ChoicesDropdownFilter),
         ("is_featured", BooleanRadioFilter),
         ("entry_fee", RangeNumericFilter),
         ("starts_at", RangeDateFilter),
@@ -166,9 +165,9 @@ class TournamentAdmin(ModelAdmin):
             {
                 "classes": ["tab"],
                 "fields": (
-                    ("participant_type", "team_size"),
+                    ("team_size", "max_participants"),
                     ("format", "format_label"),
-                    ("best_of", "max_participants"),
+                    "best_of",
                     "region",
                 ),
             },
