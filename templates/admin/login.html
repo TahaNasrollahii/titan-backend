@@ -1,0 +1,1036 @@
+{% extends 'unfold/layouts/skeleton.html' %}
+{% load i18n static %}
+
+{% block title %}
+    {% trans "Log in" %} | {{ site_title|default:"Titan Admin" }}
+{% endblock %}
+
+{% block base %}
+<div class="tt-login-root">
+    <!-- Ambient Background Glows & Cyber Grid -->
+    <div class="tt-ambient-bg" aria-hidden="true">
+        <div class="tt-cyber-grid"></div>
+        <div class="tt-orb tt-orb-crimson"></div>
+        <div class="tt-orb tt-orb-purple"></div>
+        <div class="tt-orb tt-orb-wine"></div>
+        <div class="tt-scanline"></div>
+    </div>
+
+    <!-- Top Navigation Bar -->
+    <header class="tt-login-topbar">
+        <div class="tt-topbar-left">
+            <span class="tt-status-pill">
+                <span class="tt-status-pulse"></span>
+                <span>TITAN // SECURE GATEWAY</span>
+            </span>
+            <span class="tt-version-tag">V2.4 • PROTOCOL ACTIVE</span>
+        </div>
+
+        <nav class="tt-topbar-right">
+            {% if site_url %}
+                <a href="{{ site_url }}" class="tt-top-link" target="_blank" rel="noreferrer">
+                    <span class="material-symbols-outlined">storefront</span>
+                    <span>{% trans "Storefront" %}</span>
+                    <span class="material-symbols-outlined tt-link-arrow">arrow_outward</span>
+                </a>
+            {% else %}
+                <a href="https://titan-front.vercel.app" class="tt-top-link" target="_blank" rel="noreferrer">
+                    <span class="material-symbols-outlined">storefront</span>
+                    <span>{% trans "Storefront" %}</span>
+                    <span class="material-symbols-outlined tt-link-arrow">arrow_outward</span>
+                </a>
+            {% endif %}
+
+            <a href="{% url 'swagger-ui' %}" class="tt-top-link" target="_blank" rel="noreferrer">
+                <span class="material-symbols-outlined">api</span>
+                <span>{% trans "API Docs" %}</span>
+                <span class="material-symbols-outlined tt-link-arrow">arrow_outward</span>
+            </a>
+        </nav>
+    </header>
+
+    <!-- Main Command Center Card -->
+    <main class="tt-login-main">
+        <div class="tt-console-card {% if form.errors %}tt-has-error{% endif %}">
+            
+            <!-- LEFT PANEL: CYBER-VANGUARD SHOWCASE -->
+            <div class="tt-warrior-panel">
+                <div class="tt-warrior-backdrop">
+                    <div class="tt-energy-ring"></div>
+                    <div class="tt-energy-ring-2"></div>
+                </div>
+
+                <div class="tt-warrior-hud-top">
+                    <span class="tt-hud-badge">
+                        <span class="material-symbols-outlined">shield</span>
+                        <span>VANGUARD PROTOCOL</span>
+                    </span>
+                    <span class="tt-hud-code">DEF-SYS // 01</span>
+                </div>
+
+                <div class="tt-warrior-art-wrap">
+                    <img 
+                        src="{% static 'admin/titan/login.png' %}" 
+                        alt="Titan Cyber Guardian" 
+                        class="tt-warrior-img" 
+                        loading="eager"
+                    />
+                    <div class="tt-blade-glow"></div>
+                </div>
+
+                <div class="tt-warrior-telemetry">
+                    <div class="tt-telemetry-row">
+                        <span class="tt-telemetry-label">SECURITY LEVEL</span>
+                        <span class="tt-telemetry-val tt-val-crimson">RESTRICTED 05</span>
+                    </div>
+                    <div class="tt-telemetry-row">
+                        <span class="tt-telemetry-label">CIPHER</span>
+                        <span class="tt-telemetry-val">AES-256-GCM</span>
+                    </div>
+                    <div class="tt-telemetry-row">
+                        <span class="tt-telemetry-label">FIREWALL INTEGRITY</span>
+                        <span class="tt-telemetry-val tt-val-emerald">100% OPERATIONAL</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT PANEL: AUTHENTICATION TERMINAL -->
+            <div class="tt-auth-panel">
+                <div class="tt-auth-header">
+                    <div class="tt-logo-aura">
+                        <div class="tt-logo-box">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 34 34" width="36" height="36" class="tt-logo-svg">
+                                <path d="M3 4h28v8H21v18h-8V12H3z" fill="#ffffff"/>
+                                <path d="M3 4h11L3 15z" fill="#e2453f"/>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <div class="tt-header-text">
+                        <div class="tt-header-kicker">
+                            <span class="tt-kicker-dot"></span>
+                            <span>AUTHORIZED PERSONNEL ONLY</span>
+                        </div>
+                        <h1 class="tt-auth-title">TITAN CONTROL PANEL</h1>
+                        <p class="tt-auth-subtitle">
+                            {% trans "Enter administrative credentials to access operations console." %}
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Error Messages Box -->
+                {% if form.errors or form.non_field_errors %}
+                    <div class="tt-alert-box">
+                        <div class="tt-alert-icon-wrap">
+                            <span class="material-symbols-outlined">warning</span>
+                        </div>
+                        <div class="tt-alert-content">
+                            <div class="tt-alert-heading">{% trans "Authentication Failed" %}</div>
+                            <div class="tt-alert-message">
+                                {% if form.non_field_errors %}
+                                    {{ form.non_field_errors.0 }}
+                                {% else %}
+                                    {% trans "Please enter a correct username and password. Note that both fields may be case-sensitive." %}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+
+                <!-- Login Form -->
+                <form action="{{ app_path }}" method="post" id="login-form" class="tt-auth-form" autocomplete="on">
+                    {% csrf_token %}
+                    {% if next %}
+                        <input type="hidden" name="next" value="{{ next }}" />
+                    {% endif %}
+
+                    <!-- Username Field -->
+                    <div class="tt-field-group">
+                        <label for="id_username" class="tt-field-label">
+                            <span class="material-symbols-outlined">person</span>
+                            <span>{% trans "Username or Phone" %}</span>
+                        </label>
+                        <div class="tt-input-container">
+                            <input 
+                                type="text" 
+                                name="username" 
+                                id="id_username" 
+                                value="{{ form.username.value|default:'' }}" 
+                                autofocus 
+                                required 
+                                placeholder="{% trans 'Enter username or phone' %}" 
+                                class="tt-form-input" 
+                                autocomplete="username"
+                                spellcheck="false"
+                            />
+                            <span class="tt-input-focus-border"></span>
+                        </div>
+                        {% if form.username.errors %}
+                            <span class="tt-field-error-text">{{ form.username.errors.0 }}</span>
+                        {% endif %}
+                    </div>
+
+                    <!-- Password Field -->
+                    <div class="tt-field-group">
+                        <div class="tt-label-row">
+                            <label for="id_password" class="tt-field-label">
+                                <span class="material-symbols-outlined">lock</span>
+                                <span>{% trans "Password" %}</span>
+                            </label>
+                            {% url 'admin_password_reset' as password_reset_url %}
+                            {% if password_reset_url %}
+                                <a href="{{ password_reset_url }}" class="tt-forgot-link">
+                                    {% trans "Forgot password?" %}
+                                </a>
+                            {% endif %}
+                        </div>
+                        <div class="tt-input-container">
+                            <input 
+                                type="password" 
+                                name="password" 
+                                id="id_password" 
+                                required 
+                                placeholder="••••••••••••" 
+                                class="tt-form-input tt-password-input" 
+                                autocomplete="current-password"
+                            />
+                            <button 
+                                type="button" 
+                                class="tt-pwd-toggle-btn" 
+                                id="tt-pwd-toggle" 
+                                title="Toggle password visibility"
+                                tabindex="-1"
+                            >
+                                <span class="material-symbols-outlined" id="tt-pwd-icon">visibility</span>
+                            </button>
+                            <span class="tt-input-focus-border"></span>
+                        </div>
+                        {% if form.password.errors %}
+                            <span class="tt-field-error-text">{{ form.password.errors.0 }}</span>
+                        {% endif %}
+                    </div>
+
+                    <!-- Security Notice Pill -->
+                    <div class="tt-security-notice">
+                        <span class="material-symbols-outlined">verified_user</span>
+                        <span>{% trans "End-to-end encrypted session. Access attempts are recorded." %}</span>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="tt-submit-group">
+                        <button type="submit" class="tt-submit-btn" id="submit-btn">
+                            <span class="tt-btn-glow"></span>
+                            <span class="tt-btn-text">{% trans "AUTHENTICATE & ENTER" %}</span>
+                            <span class="material-symbols-outlined tt-btn-icon">arrow_forward</span>
+                        </button>
+                    </div>
+                </form>
+
+                <div class="tt-auth-footer">
+                    <span>TITAN ESPORTS & STORE CORE</span>
+                    <span class="tt-footer-sep">•</span>
+                    <span>ALL RIGHTS RESERVED</span>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer Copyright -->
+    <footer class="tt-login-bottom">
+        <p>© {% now "Y" %} Titan Technologies. Authorized personnel only. Unauthorized access is prohibited.</p>
+    </footer>
+</div>
+
+<!-- Password Visibility Toggle & Focus Enhancements -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var toggleBtn = document.getElementById('tt-pwd-toggle');
+        var pwdInput = document.getElementById('id_password');
+        var pwdIcon = document.getElementById('tt-pwd-icon');
+
+        if (toggleBtn && pwdInput && pwdIcon) {
+            toggleBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                if (pwdInput.type === 'password') {
+                    pwdInput.type = 'text';
+                    pwdIcon.textContent = 'visibility_off';
+                } else {
+                    pwdInput.type = 'password';
+                    pwdIcon.textContent = 'visibility';
+                }
+            });
+        }
+    });
+</script>
+
+<style>
+/* ========================================================
+   TITAN COMMAND CENTER - LUXURY ESPORTS LOGIN STYLES
+   ======================================================== */
+:root {
+    --tt-red: #e2453f;
+    --tt-red-light: #f0645a;
+    --tt-red-dark: #b8221d;
+    --tt-purple: #a855f7;
+    --tt-purple-light: #c084fc;
+    --tt-wine: #2e131a;
+    --tt-wine-dark: #19080e;
+    --tt-obsidian: #0c0305;
+}
+
+body.login {
+    margin: 0;
+    padding: 0;
+    background-color: var(--tt-obsidian) !important;
+    color: #fdf1f0 !important;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+    overflow-x: hidden;
+}
+
+.tt-login-root {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background: radial-gradient(circle at 50% 15%, #220810 0%, #0c0305 70%);
+    overflow: hidden;
+}
+
+/* ---------- Ambient Background & Grid ---------- */
+.tt-ambient-bg {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 0;
+}
+
+.tt-cyber-grid {
+    position: absolute;
+    inset: -50%;
+    width: 200%;
+    height: 200%;
+    background-image: 
+        linear-gradient(rgba(226, 69, 63, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(226, 69, 63, 0.04) 1px, transparent 1px);
+    background-size: 48px 48px;
+    transform: perspective(600px) rotateX(25deg);
+    opacity: 0.7;
+}
+
+.tt-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    pointer-events: none;
+}
+
+.tt-orb-crimson {
+    top: -80px;
+    left: -100px;
+    width: 520px;
+    height: 520px;
+    background: radial-gradient(circle, rgba(226, 69, 63, 0.22) 0%, transparent 70%);
+    animation: floatOrb 12s ease-in-out infinite alternate;
+}
+
+.tt-orb-purple {
+    bottom: -100px;
+    right: -100px;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(168, 85, 247, 0.18) 0%, transparent 70%);
+    animation: floatOrb 14s ease-in-out infinite alternate-reverse;
+}
+
+.tt-orb-wine {
+    top: 40%;
+    left: 45%;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(240, 100, 90, 0.08) 0%, transparent 70%);
+}
+
+@keyframes floatOrb {
+    0% { transform: translate(0, 0) scale(1); }
+    100% { transform: translate(40px, 30px) scale(1.1); }
+}
+
+.tt-scanline {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+    background-size: 100% 4px;
+    opacity: 0.15;
+}
+
+/* ---------- Topbar ---------- */
+.tt-login-topbar {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 36px;
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.tt-topbar-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.tt-status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 12px;
+    border-radius: 999px;
+    background: rgba(226, 69, 63, 0.12);
+    border: 1px solid rgba(226, 69, 63, 0.3);
+    color: var(--tt-red-light);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.8px;
+}
+
+.tt-status-pulse {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #10b981;
+    box-shadow: 0 0 10px #10b981;
+    animation: pulseDot 2s infinite;
+}
+
+@keyframes pulseDot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.85); }
+}
+
+.tt-version-tag {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.4);
+    letter-spacing: 0.5px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+.tt-topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.tt-top-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: #e5d4d6 !important;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.tt-top-link:hover {
+    background: rgba(255, 255, 255, 0.09);
+    border-color: rgba(255, 255, 255, 0.18);
+    color: #ffffff !important;
+    transform: translateY(-1px);
+}
+
+.tt-top-link .material-symbols-outlined {
+    font-size: 16px;
+}
+
+.tt-link-arrow {
+    font-size: 13px !important;
+    opacity: 0.6;
+}
+
+/* ---------- Main Layout & Console Card ---------- */
+.tt-login-main {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 30px 20px;
+    flex: 1;
+}
+
+.tt-console-card {
+    display: flex;
+    max-width: 980px;
+    width: 100%;
+    min-height: 560px;
+    background: linear-gradient(135deg, rgba(34, 10, 16, 0.85) 0%, rgba(18, 5, 8, 0.94) 100%);
+    backdrop-filter: blur(28px);
+    -webkit-backdrop-filter: blur(28px);
+    border-radius: 28px;
+    border: 1px solid rgba(240, 100, 90, 0.22);
+    box-shadow: 
+        0 28px 80px -20px rgba(0, 0, 0, 0.85),
+        0 0 50px -15px rgba(226, 69, 63, 0.25),
+        inset 0 1px 0 rgba(255, 255, 255, 0.14);
+    overflow: hidden;
+    animation: cardEntrance 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes cardEntrance {
+    from {
+        opacity: 0;
+        transform: translateY(24px) scale(0.97);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.tt-has-error {
+    animation: shakeCard 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+@keyframes shakeCard {
+    10%, 90% { transform: translate3d(-2px, 0, 0); }
+    20%, 80% { transform: translate3d(3px, 0, 0); }
+    30%, 50%, 70% { transform: translate3d(-5px, 0, 0); }
+    40%, 60% { transform: translate3d(5px, 0, 0); }
+}
+
+/* ---------- Left Panel: Cyber Warrior Showcase ---------- */
+.tt-warrior-panel {
+    position: relative;
+    width: 440px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 32px;
+    background: 
+        radial-gradient(circle at 50% 60%, rgba(168, 85, 247, 0.22) 0%, transparent 65%),
+        linear-gradient(180deg, rgba(46, 12, 19, 0.9) 0%, rgba(20, 5, 9, 0.95) 100%);
+    border-right: 1px solid rgba(255, 255, 255, 0.06);
+    overflow: hidden;
+}
+
+.tt-warrior-backdrop {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+.tt-energy-ring {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 320px;
+    height: 320px;
+    border-radius: 50%;
+    border: 1px dashed rgba(168, 85, 247, 0.28);
+    animation: rotateRing 40s linear infinite;
+}
+
+.tt-energy-ring-2 {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 250px;
+    height: 250px;
+    border-radius: 50%;
+    border: 1px solid rgba(226, 69, 63, 0.2);
+    animation: rotateRingReverse 30s linear infinite;
+}
+
+@keyframes rotateRing {
+    0% { transform: translate(-50%, -50%) rotate(0deg); }
+    100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+@keyframes rotateRingReverse {
+    0% { transform: translate(-50%, -50%) rotate(360deg); }
+    100% { transform: translate(-50%, -50%) rotate(0deg); }
+}
+
+.tt-warrior-hud-top {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.tt-hud-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    border-radius: 8px;
+    background: rgba(168, 85, 247, 0.15);
+    border: 1px solid rgba(168, 85, 247, 0.35);
+    color: var(--tt-purple-light);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.6px;
+}
+
+.tt-hud-badge .material-symbols-outlined {
+    font-size: 14px;
+}
+
+.tt-hud-code {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.45);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+.tt-warrior-art-wrap {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 0;
+}
+
+.tt-warrior-img {
+    width: 100%;
+    max-width: 320px;
+    height: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 15px 35px rgba(0, 0, 0, 0.7)) drop-shadow(0 0 30px rgba(168, 85, 247, 0.35));
+    transition: transform 0.4s ease;
+    animation: heroHover 6s ease-in-out infinite alternate;
+}
+
+@keyframes heroHover {
+    0% { transform: translateY(-4px) scale(0.99); }
+    100% { transform: translateY(4px) scale(1.02); }
+}
+
+.tt-warrior-telemetry {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 14px 18px;
+    border-radius: 14px;
+    background: rgba(12, 3, 5, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(8px);
+}
+
+.tt-telemetry-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 11px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+.tt-telemetry-label {
+    color: rgba(255, 255, 255, 0.5);
+    letter-spacing: 0.5px;
+}
+
+.tt-telemetry-val {
+    font-weight: 700;
+    color: #fff;
+}
+
+.tt-val-crimson { color: var(--tt-red-light); }
+.tt-val-emerald { color: #34d399; }
+
+/* ---------- Right Panel: Authentication Terminal ---------- */
+.tt-auth-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 44px 48px;
+}
+
+.tt-auth-header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 28px;
+}
+
+.tt-logo-aura {
+    position: relative;
+    flex-shrink: 0;
+}
+
+.tt-logo-box {
+    width: 62px;
+    height: 62px;
+    border-radius: 18px;
+    background: linear-gradient(135deg, #3d1017 0%, #1a0408 100%);
+    border: 1.5px solid rgba(226, 69, 63, 0.4);
+    box-shadow: 
+        0 10px 24px rgba(0, 0, 0, 0.5),
+        0 0 20px rgba(226, 69, 63, 0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.tt-header-text {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.tt-header-kicker {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--tt-red-light);
+    letter-spacing: 1px;
+}
+
+.tt-kicker-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--tt-red);
+    box-shadow: 0 0 8px var(--tt-red);
+}
+
+.tt-auth-title {
+    margin: 0;
+    font-size: 26px;
+    font-weight: 900;
+    color: #ffffff;
+    letter-spacing: -0.3px;
+    line-height: 1.2;
+}
+
+.tt-auth-subtitle {
+    margin: 0;
+    font-size: 13px;
+    color: #bfa4a7;
+    line-height: 1.5;
+}
+
+/* Alert Box */
+.tt-alert-box {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 14px 18px;
+    border-radius: 14px;
+    background: rgba(239, 68, 68, 0.12);
+    border: 1px solid rgba(239, 68, 68, 0.35);
+    color: #fca5a5;
+    margin-bottom: 22px;
+}
+
+.tt-alert-icon-wrap {
+    color: #ef4444;
+    font-size: 20px;
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+
+.tt-alert-heading {
+    font-weight: 800;
+    font-size: 13px;
+    margin-bottom: 2px;
+    color: #fff;
+}
+
+.tt-alert-message {
+    font-size: 12.5px;
+    line-height: 1.4;
+}
+
+/* Form Styles */
+.tt-auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.tt-field-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.tt-label-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.tt-field-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: #e5d4d6;
+    letter-spacing: 0.3px;
+}
+
+.tt-field-label .material-symbols-outlined {
+    font-size: 16px;
+    color: var(--tt-red-light);
+}
+
+.tt-forgot-link {
+    font-size: 12px;
+    color: #bfa4a7;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.tt-forgot-link:hover {
+    color: #fff;
+    text-decoration: underline;
+}
+
+.tt-input-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.tt-form-input {
+    width: 100%;
+    height: 48px;
+    padding: 0 16px;
+    border-radius: 12px;
+    background: rgba(14, 3, 5, 0.75);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: #ffffff;
+    font-size: 14px;
+    outline: none;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    box-sizing: border-box;
+}
+
+.tt-form-input:focus {
+    background: rgba(22, 5, 9, 0.9);
+    border-color: var(--tt-red);
+    box-shadow: 0 0 0 3px rgba(226, 69, 63, 0.25), 0 0 20px rgba(226, 69, 63, 0.2);
+}
+
+.tt-form-input::placeholder {
+    color: rgba(255, 255, 255, 0.25);
+    font-size: 13px;
+}
+
+.tt-password-input {
+    padding-right: 48px;
+}
+
+.tt-pwd-toggle-btn {
+    position: absolute;
+    right: 12px;
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.4);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px;
+    border-radius: 8px;
+    transition: color 0.2s, background 0.2s;
+}
+
+.tt-pwd-toggle-btn:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.tt-pwd-toggle-btn .material-symbols-outlined {
+    font-size: 19px;
+}
+
+.tt-field-error-text {
+    font-size: 12px;
+    color: #f87171;
+    font-weight: 600;
+}
+
+/* Security Notice */
+.tt-security-notice {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    font-size: 11.5px;
+    color: #a3898c;
+}
+
+.tt-security-notice .material-symbols-outlined {
+    font-size: 16px;
+    color: #34d399;
+}
+
+/* Submit Button */
+.tt-submit-group {
+    margin-top: 6px;
+}
+
+.tt-submit-btn {
+    position: relative;
+    width: 100%;
+    height: 52px;
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: linear-gradient(135deg, var(--tt-red) 0%, #a61c17 100%);
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 900;
+    letter-spacing: 0.8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    overflow: hidden;
+    box-shadow: 
+        0 10px 24px -6px rgba(226, 69, 63, 0.5),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.tt-submit-btn:hover {
+    background: linear-gradient(135deg, var(--tt-red-light) 0%, var(--tt-red) 100%);
+    box-shadow: 
+        0 14px 32px -4px rgba(226, 69, 63, 0.7),
+        0 0 30px rgba(226, 69, 63, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    transform: translateY(-2px);
+}
+
+.tt-submit-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 12px rgba(226, 69, 63, 0.4);
+}
+
+.tt-btn-text {
+    position: relative;
+    z-index: 2;
+}
+
+.tt-btn-icon {
+    position: relative;
+    z-index: 2;
+    font-size: 18px;
+    transition: transform 0.2s ease;
+}
+
+.tt-submit-btn:hover .tt-btn-icon {
+    transform: translateX(4px);
+}
+
+.tt-auth-footer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 24px;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    color: rgba(255, 255, 255, 0.3);
+}
+
+.tt-footer-sep {
+    opacity: 0.4;
+}
+
+/* Bottom Footer */
+.tt-login-bottom {
+    position: relative;
+    z-index: 10;
+    text-align: center;
+    padding: 16px 20px;
+    font-size: 11.5px;
+    color: rgba(255, 255, 255, 0.35);
+    border-top: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+/* ========================================================
+   RESPONSIVE DESIGN BREAKPOINTS
+   ======================================================== */
+@media (max-width: 960px) {
+    .tt-console-card {
+        flex-direction: column;
+        max-width: 520px;
+    }
+
+    .tt-warrior-panel {
+        width: 100%;
+        padding: 24px;
+        border-right: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .tt-warrior-art-wrap {
+        padding: 4px 0;
+    }
+
+    .tt-warrior-img {
+        max-width: 180px;
+    }
+
+    .tt-warrior-telemetry {
+        display: none;
+    }
+
+    .tt-auth-panel {
+        padding: 32px 28px;
+    }
+}
+
+@media (max-width: 560px) {
+    .tt-login-topbar {
+        padding: 14px 18px;
+        flex-direction: column;
+        gap: 12px;
+        align-items: flex-start;
+    }
+
+    .tt-topbar-right {
+        width: 100%;
+        justify-content: flex-start;
+    }
+
+    .tt-warrior-panel {
+        display: none;
+    }
+
+    .tt-auth-panel {
+        padding: 28px 20px;
+    }
+
+    .tt-auth-title {
+        font-size: 22px;
+    }
+}
+</style>
+{% endblock %}
