@@ -1086,3 +1086,316 @@ msgstr "شما در ترکیب تیم هستید"
 #, python-format
 msgid "%(team)s picked you for %(tournament)s."
 msgstr "%(team)s شما را برای %(tournament)s انتخاب کرد."
+
+
+msgid "Store & esports back office"
+msgstr "سامانه مدیریت فروشگاه و مسابقات"
+
+msgid "Storefront"
+msgstr "فروشگاه"
+
+msgid "API documentation"
+msgstr "مستندات API"
+
+msgid "Dashboard"
+msgstr "داشبورد"
+
+msgid "Sales"
+msgstr "فروش و مالی"
+
+msgid "Wallets"
+msgstr "کیف‌های پول"
+
+msgid "Wallet ledger"
+msgstr "تراکنش‌های کیف پول"
+
+msgid "Carts"
+msgstr "سبدهای خرید"
+
+msgid "Store"
+msgstr "فروشگاه محصولات"
+
+msgid "Products"
+msgstr "محصولات"
+
+msgid "Games"
+msgstr "بازی‌ها"
+
+msgid "Categories"
+msgstr "دسته‌بندی‌ها"
+
+msgid "Platforms"
+msgstr "پلتفرم‌ها"
+
+msgid "Reviews"
+msgstr "دیدگاه‌ها"
+
+msgid "Wishlists"
+msgstr "علاقه‌مندی‌ها"
+
+msgid "Esports"
+msgstr "ورزش‌های الکترونیک"
+
+msgid "Matches"
+msgstr "مسابقات"
+
+msgid "Registrations"
+msgstr "ثبت‌نام‌ها"
+
+msgid "Seasons"
+msgstr "فصل‌ها"
+
+msgid "Player stats"
+msgstr "آمار بازیکنان"
+
+msgid "Team stats"
+msgstr "آمار تیم‌ها"
+
+msgid "Community"
+msgstr "جامعه کاربری"
+
+msgid "Users"
+msgstr "کاربران"
+
+msgid "Team invitations"
+msgstr "دعوت‌نامه‌های تیمی"
+
+msgid "Friendships"
+msgstr "دوستی‌ها"
+
+msgid "Game accounts"
+msgstr "اکانت‌های بازی"
+
+msgid "Badges"
+msgstr "مدال‌ها و نشان‌ها"
+
+msgid "Rank tiers"
+msgstr "سطوح رنک"
+
+msgid "Content"
+msgstr "محتوا"
+
+msgid "Promos & banners"
+msgstr "تخفیف‌ها و بنرها"
+
+msgid "Announcements"
+msgstr "اطلاعیه‌ها"
+
+msgid "Contact channels"
+msgstr "راه‌های ارتباطی"
+
+msgid "Site settings"
+msgstr "تنظیمات سایت"
+
+msgid "Security"
+msgstr "امنیت و دسترسی"
+
+msgid "Groups & roles"
+msgstr "گروه‌ها و دسترسی‌ها"
+
+msgid "OTP codes"
+msgstr "کدهای یکبار مصرف"
+
+msgid "Active sessions (tokens)"
+msgstr "نشست‌های فعال (توکن‌ها)"
+
+msgid "Revoked tokens"
+msgstr "توکن‌های باطل‌شده"
+
+msgid "Development"
+msgstr "محیط توسعه"
+
+msgid "Production"
+msgstr "محیط عملیاتی"
+
+msgid "new"
+msgstr "جدید"
+
+msgid "Revenue · last 30 days"
+msgstr "درآمد · ۳۰ روز اخیر"
+
+msgid "New users · last 30 days"
+msgstr "کاربران جدید · ۳۰ روز اخیر"
+
+msgid "Orders to fulfil"
+msgstr "سفارش‌های آماده ارسال"
+
+msgid "Live tournaments"
+msgstr "تورنومنت‌های فعال"
+
+msgid "Live matches"
+msgstr "مسابقات زنده"
+
+msgid "Low stock variants"
+msgstr "موجودی رو به اتمام"
+
+msgid "Reviews awaiting approval"
+msgstr "دیدگاه‌های در انتظار بررسی"
+
+msgid "Here is what is happening across the Titan store and tournaments."
+msgstr "گزارش جامع وضعیت فروشگاه و تورنومنت‌های تایتان."
+
+msgid "Welcome back, %(name)s"
+msgstr "%(name)s عزیز، به پنل مدیریت خوش آمدید"
+
+msgid "Revenue"
+msgstr "درآمد"
+
+msgid "Paid orders, last 14 days"
+msgstr "سفارش‌های پرداخت‌شده، ۱۴ روز گذشته"
+
+msgid "Wallet float"
+msgstr "موجودی در گردش کیف پول"
+
+msgid "Order statuses"
+msgstr "وضعیت سفارش‌ها"
+
+msgid "Orders by status"
+msgstr "سفارش‌ها بر اساس وضعیت"
+
+msgid "All time"
+msgstr "کل دوره"
+
+msgid "No orders yet."
+msgstr "هنوز سفارشی ثبت نشده است."
+
+msgid "payments awaiting gateway"
+msgstr "پرداخت در انتظار درگاه"
+
+msgid "hidden reviews"
+msgstr "دیدگاه مخفی"
+
+msgid "Latest orders"
+msgstr "آخرین سفارش‌ها"
+
+msgid "Most recent purchases"
+msgstr "جدیدترین خریدهای ثبت‌شده"
+
+msgid "View all"
+msgstr "مشاهده همه"
+
+msgid "Customer"
+msgstr "مشتری"
+
+msgid "Total"
+msgstr "مبلغ کل"
+
+msgid "Status"
+msgstr "وضعیت"
+
+msgid "Upcoming & live tournaments"
+msgstr "تورنومنت‌های پیش‌رو و زنده"
+
+msgid "Registration fill rate"
+msgstr "درصد تکمیل ظرفیت ثبت‌نام"
+
+msgid "Entrants"
+msgstr "شرکت‌کنندگان"
+
+msgid "No scheduled tournaments."
+msgstr "تورنومنتی زمان‌بندی نشده است."
+
+msgid "Top products"
+msgstr "کالاهای برتر"
+
+msgid "By paid revenue"
+msgstr "بر اساس درآمد حاصله"
+
+msgid "Product"
+msgstr "محصول"
+
+msgid "Units"
+msgstr "تعداد"
+
+msgid "No sales yet."
+msgstr "هنوز فروشی ثبت نشده است."
+
+msgid "Low stock"
+msgstr "موجودی کم"
+
+msgid "%(n)s units or fewer"
+msgstr "%(n)s عدد یا کمتر"
+
+msgid "Item"
+msgstr "کالا"
+
+msgid "In stock"
+msgstr "موجودی انبار"
+
+msgid "Everything is well stocked."
+msgstr "موجودی انبار در وضعیت مناسب است."
+
+msgid "Out-of-stock items"
+msgstr "کالاهای ناموجود"
+
+msgid "Active players"
+msgstr "بازیکنان فعال"
+
+msgid "Recent orders"
+msgstr "سفارش‌های اخیر"
+
+msgid "Top products by quantity sold"
+msgstr "پرفروش‌ترین کالاها"
+
+msgid "Pending review"
+msgstr "در انتظار بررسی"
+
+msgid "Waiting for admin approval"
+msgstr "در انتظار تأیید ادمین"
+
+msgid "Date"
+msgstr "تاریخ"
+
+msgid "Log in"
+msgstr "ورود به حساب"
+
+msgid "TITAN // SECURE GATEWAY"
+msgstr "درگاه امن تایتان"
+
+msgid "TITAN CONTROL PANEL"
+msgstr "کنسول مدیریت تایتان"
+
+msgid "Enter administrative credentials to access operations console."
+msgstr "جهت دسترسی به کنسول مدیریت، اطلاعات کاربری خود را وارد کنید."
+
+msgid "Username or Phone"
+msgstr "نام کاربری یا شماره موبایل"
+
+msgid "Enter username or phone"
+msgstr "نام کاربری یا شماره موبایل را وارد کنید"
+
+msgid "Password"
+msgstr "رمز عبور"
+
+msgid "Forgot password?"
+msgstr "فراموشی رمز عبور"
+
+msgid "End-to-end encrypted session. Access attempts are recorded."
+msgstr "نشست رمزنگاری‌شده. تمامی فعالیت‌ها ثبت و مانیتور می‌شوند."
+
+msgid "AUTHENTICATE & ENTER"
+msgstr "احراز هویت و ورود به پنل"
+
+msgid "Authentication Failed"
+msgstr "خطای احراز هویت"
+
+msgid "Please enter a correct username and password. Note that both fields may be case-sensitive."
+msgstr "لطفاً نام کاربری و رمز عبور معتبر وارد کنید. دقت کنید که حروف بزرگ و کوچک حساس هستند."
+
+msgid "Switch to Light mode"
+msgstr "تغییر به تم روشن"
+
+msgid "Switch to Dark mode"
+msgstr "تغییر به تم تاریک"
+
+msgid "Light"
+msgstr "روشن"
+
+msgid "Dark"
+msgstr "تاریک"
+
+msgid "Return to site"
+msgstr "بازگشت به سایت"
+
+msgid "Forgotten your password or username?"
+msgstr "رمز عبور یا نام کاربری را فراموش کرده‌اید؟"
