@@ -21,9 +21,9 @@
         <div class="tt-topbar-left">
             <span class="tt-status-pill">
                 <span class="tt-status-pulse"></span>
-                <span>TITAN // SECURE GATEWAY</span>
+                <span>{% trans "TITAN // SECURE GATEWAY" %}</span>
             </span>
-            <span class="tt-version-tag">V2.4 • PROTOCOL ACTIVE</span>
+            <span class="tt-version-tag">{% trans "V2.4 • PROTOCOL ACTIVE" %}</span>
         </div>
 
         <nav class="tt-topbar-right">
@@ -95,7 +95,7 @@
                 <div class="tt-warrior-hud-top">
                     <span class="tt-hud-badge">
                         <span class="material-symbols-outlined">shield</span>
-                        <span>VANGUARD PROTOCOL</span>
+                        <span>{% trans "VANGUARD PROTOCOL" %}</span>
                     </span>
                     <span class="tt-hud-code">DEF-SYS // 01</span>
                 </div>
@@ -112,16 +112,16 @@
 
                 <div class="tt-warrior-telemetry">
                     <div class="tt-telemetry-row">
-                        <span class="tt-telemetry-label">SECURITY LEVEL</span>
-                        <span class="tt-telemetry-val tt-val-crimson">RESTRICTED 05</span>
+                        <span class="tt-telemetry-label">{% trans "SECURITY LEVEL" %}</span>
+                        <span class="tt-telemetry-val tt-val-crimson">{% trans "RESTRICTED 05" %}</span>
                     </div>
                     <div class="tt-telemetry-row">
-                        <span class="tt-telemetry-label">CIPHER</span>
+                        <span class="tt-telemetry-label">{% trans "CIPHER" %}</span>
                         <span class="tt-telemetry-val">AES-256-GCM</span>
                     </div>
                     <div class="tt-telemetry-row">
-                        <span class="tt-telemetry-label">FIREWALL INTEGRITY</span>
-                        <span class="tt-telemetry-val tt-val-emerald">100% OPERATIONAL</span>
+                        <span class="tt-telemetry-label">{% trans "FIREWALL INTEGRITY" %}</span>
+                        <span class="tt-telemetry-val tt-val-emerald">{% trans "100% OPERATIONAL" %}</span>
                     </div>
                 </div>
             </div>
@@ -141,9 +141,9 @@
                     <div class="tt-header-text">
                         <div class="tt-header-kicker">
                             <span class="tt-kicker-dot"></span>
-                            <span>AUTHORIZED PERSONNEL ONLY</span>
+                            <span>{% trans "AUTHORIZED PERSONNEL ONLY" %}</span>
                         </div>
-                        <h1 class="tt-auth-title">TITAN CONTROL PANEL</h1>
+                        <h1 class="tt-auth-title">{% trans "TITAN CONTROL PANEL" %}</h1>
                         <p class="tt-auth-subtitle">
                             {% trans "Enter administrative credentials to access operations console." %}
                         </p>
@@ -230,7 +230,7 @@
                                 type="button" 
                                 class="tt-pwd-toggle-btn" 
                                 id="tt-pwd-toggle" 
-                                title="Toggle password visibility"
+                                title="{% trans 'Toggle password visibility' %}"
                                 tabindex="-1"
                             >
                                 <span class="material-symbols-outlined" id="tt-pwd-icon">visibility</span>
@@ -259,9 +259,9 @@
                 </form>
 
                 <div class="tt-auth-footer">
-                    <span>TITAN ESPORTS & STORE CORE</span>
+                    <span>{% trans "TITAN ESPORTS & STORE CORE" %}</span>
                     <span class="tt-footer-sep">•</span>
-                    <span>ALL RIGHTS RESERVED</span>
+                    <span>{% trans "ALL RIGHTS RESERVED" %}</span>
                 </div>
             </div>
 
@@ -270,7 +270,7 @@
 
     <!-- Footer Copyright -->
     <footer class="tt-login-bottom">
-        <p>© {% now "Y" %} Titan Technologies. Authorized personnel only. Unauthorized access is prohibited.</p>
+        <p>{% trans "Titan Technologies. Authorized personnel only. Unauthorized access is prohibited." %}</p>
     </footer>
 </div>
 

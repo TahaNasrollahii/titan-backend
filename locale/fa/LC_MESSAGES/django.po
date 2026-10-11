@@ -1399,3 +1399,478 @@ msgstr "بازگشت به سایت"
 
 msgid "Forgotten your password or username?"
 msgstr "رمز عبور یا نام کاربری را فراموش کرده‌اید؟"
+
+
+msgid "V2.4 • PROTOCOL ACTIVE"
+msgstr "نسخه ۲.۴ • پروتکل فعال"
+
+msgid "VANGUARD PROTOCOL"
+msgstr "پروتکل ونگارد"
+
+msgid "DEF-SYS // 01"
+msgstr "سیستم دفاعی // ۰۱"
+
+msgid "SECURITY LEVEL"
+msgstr "سطح امنیت"
+
+msgid "RESTRICTED 05"
+msgstr "محرمانه ۰۵"
+
+msgid "CIPHER"
+msgstr "الگوریتم رمزنگاری"
+
+msgid "FIREWALL INTEGRITY"
+msgstr "یکپارچگی فایروال"
+
+msgid "100% OPERATIONAL"
+msgstr "۱۰۰٪ فعال و عملیاتی"
+
+msgid "AUTHORIZED PERSONNEL ONLY"
+msgstr "فقط پرسنل مجاز"
+
+msgid "TITAN ESPORTS & STORE CORE"
+msgstr "هسته مدیریت مسابقات و فروشگاه تایتان"
+
+msgid "ALL RIGHTS RESERVED"
+msgstr "تمامی حقوق محفوظ است"
+
+msgid "Titan Technologies. Authorized personnel only. Unauthorized access is prohibited."
+msgstr "فناوری تایتان. فقط پرسنل مجاز. هرگونه دسترسی غیرمجاز پیگرد قانونی دارد."
+
+msgid "Toggle password visibility"
+msgstr "نمایش/مخفی‌سازی رمز عبور"
+
+msgid "Switch to English"
+msgstr "تغییر زبان به انگلیسی"
+
+msgid "Switch to Persian"
+msgstr "تغییر زبان به فارسی"
+
+msgid "All applications"
+msgstr "تمام بخش‌های مدیریت"
+
+msgid "Filters"
+msgstr "فیلترها"
+
+msgid "Apply Filters"
+msgstr "اعمال فیلترها"
+
+msgid "Clear all filters"
+msgstr "پاک کردن فیلترها"
+
+msgid "Reset filters"
+msgstr "بازنشانی فیلترها"
+
+msgid "Search apps and models..."
+msgstr "جستجو در بخش‌ها و مدل‌ها..."
+
+msgid "Type to search"
+msgstr "برای جستجو تایپ کنید..."
+
+msgid "Add"
+msgstr "افزودن"
+
+msgid "Add row"
+msgstr "افزودن ردیف"
+
+msgid "Change"
+msgstr "ویرایش"
+
+msgid "Change password"
+msgstr "تغییر رمز عبور"
+
+msgid "Delete"
+msgstr "حذف"
+
+msgid "Save"
+msgstr "ذخیره"
+
+msgid "Save and add another"
+msgstr "ذخیره و ایجاد مورد دیگر"
+
+msgid "Save and continue editing"
+msgstr "ذخیره و ادامه ویرایش"
+
+msgid "Save and view"
+msgstr "ذخیره و مشاهده"
+
+msgid "Save as new"
+msgstr "ذخیره به عنوان مورد جدید"
+
+msgid "Action"
+msgstr "عملیات"
+
+msgid "Run"
+msgstr "اجرا"
+
+msgid "Run the selected action"
+msgstr "اجرای عملیات انتخاب‌شده"
+
+msgid "History"
+msgstr "تاریخچه تغییرات"
+
+msgid "View on site"
+msgstr "مشاهده در سایت"
+
+msgid "View site"
+msgstr "مشاهده سایت"
+
+msgid "Log out"
+msgstr "خروج از حساب"
+
+msgid "Log in again"
+msgstr "ورود مجدد"
+
+msgid "Recent actions"
+msgstr "فعالیت‌های اخیر"
+
+msgid "Recent searches"
+msgstr "جستجوهای اخیر"
+
+msgid "Toggle sidebar"
+msgstr "تغییر وضعیت سایدبار"
+
+msgid "Toggle filter"
+msgstr "تغییر وضعیت فیلتر"
+
+msgid "Toggle dark/light mode"
+msgstr "تغییر حالت تم تیره/روشن"
+
+msgid "Close"
+msgstr "بستن"
+
+msgid "Cancel"
+msgstr "انصراف"
+
+msgid "Submit"
+msgstr "ارسال"
+
+msgid "Summary"
+msgstr "خلاصه"
+
+msgid "Yes, I’m sure"
+msgstr "بله، اطمینان دارم"
+
+msgid "Yes, I'm sure"
+msgstr "بله، اطمینان دارم"
+
+msgid "No, take me back"
+msgstr "خیر، بازگشت"
+
+msgid "This item will be deleted."
+msgstr "این مورد حذف خواهد شد."
+
+msgid "Home"
+msgstr "خانه"
+
+msgid "General"
+msgstr "عمومی"
+
+msgid "Navigate"
+msgstr "ناوبری"
+
+msgid "Next"
+msgstr "بعدی"
+
+msgid "Previous"
+msgstr "قبلی"
+
+msgid "No data"
+msgstr "داده‌ای وجود ندارد"
+
+msgid "No results found"
+msgstr "نتیجه‌ای یافت نشد"
+
+msgid "Nothing matched your search"
+msgstr "موردی با جستجوی شما مطابقت نداشت"
+
+msgid "Select"
+msgstr "انتخاب"
+
+msgid "Show all"
+msgstr "نمایش همه"
+
+msgid "Show counts"
+msgstr "نمایش تعداد"
+
+msgid "Hide counts"
+msgstr "مخفی‌سازی تعداد"
+
+msgid "Image preview"
+msgstr "پیش‌نمایش تصویر"
+
+msgid "Record picture"
+msgstr "تصویر رکورد"
+
+msgid "Choose file to upload"
+msgstr "انتخاب فایل برای آپلود"
+
+msgid "Click to download"
+msgstr "برای دانلود کلیک کنید"
+
+msgid "Click to cancel"
+msgstr "برای لغو کلیک کنید"
+
+msgid "Available shortcuts"
+msgstr "کلیدهای میانبر در دسترس"
+
+msgid "Global shortcuts"
+msgstr "کلیدهای میانبر عمومی"
+
+msgid "Changelist shortcuts"
+msgstr "کلیدهای میانبر لیست"
+
+msgid "Command tool shortcuts"
+msgstr "کلیدهای میانبر خط فرمان"
+
+msgid "Open command tool"
+msgstr "باز کردن ابزار فرمان"
+
+msgid "Open shortcuts list"
+msgstr "مشاهده لیست میانبرها"
+
+msgid "Create new record"
+msgstr "ایجاد رکورد جدید"
+
+msgid "Clear selection"
+msgstr "پاک کردن انتخاب"
+
+msgid "Click here to select the objects across all pages"
+msgstr "انتخاب تمام موارد در همه صفحات"
+
+msgid "Date/time"
+msgstr "تاریخ و زمان"
+
+msgid "True"
+msgstr "بله"
+
+msgid "False"
+msgstr "خیر"
+
+msgid "Unknown"
+msgstr "نامشخص"
+
+msgid "User"
+msgstr "کاربر"
+
+msgid "View"
+msgstr "مشاهده"
+
+msgid "announcement"
+msgstr "اطلاعیه"
+
+msgid "announcements"
+msgstr "اطلاعیه‌ها"
+
+msgid "badge"
+msgstr "مدال"
+
+msgid "badges"
+msgstr "مدال‌ها"
+
+msgid "cart"
+msgstr "سبد خرید"
+
+msgid "carts"
+msgstr "سبدهای خرید"
+
+msgid "cart item"
+msgstr "آیتم سبد خرید"
+
+msgid "cart items"
+msgstr "آیتم‌های سبد خرید"
+
+msgid "contact channel"
+msgstr "کانال ارتباطی"
+
+msgid "contact channels"
+msgstr "کانال‌های ارتباطی"
+
+msgid "friendship"
+msgstr "دوستی"
+
+msgid "friendships"
+msgstr "دوستی‌ها"
+
+msgid "game"
+msgstr "بازی"
+
+msgid "games"
+msgstr "بازی‌ها"
+
+msgid "game account"
+msgstr "اکانت بازی"
+
+msgid "game accounts"
+msgstr "اکانت‌های بازی"
+
+msgid "match"
+msgstr "مسابقه"
+
+msgid "notification"
+msgstr "اعلان"
+
+msgid "notifications"
+msgstr "اعلان‌ها"
+
+msgid "otp code"
+msgstr "کد تأیید"
+
+msgid "otp codes"
+msgstr "کدهای تأیید"
+
+msgid "order"
+msgstr "سفارش"
+
+msgid "orders"
+msgstr "سفارش‌ها"
+
+msgid "order item"
+msgstr "آیتم سفارش"
+
+msgid "order items"
+msgstr "آیتم‌های سفارش"
+
+msgid "payment"
+msgstr "پرداخت"
+
+msgid "payments"
+msgstr "پرداخت‌ها"
+
+msgid "platform"
+msgstr "پلتفرم"
+
+msgid "platforms"
+msgstr "پلتفرم‌ها"
+
+msgid "product"
+msgstr "محصول"
+
+msgid "products"
+msgstr "محصولات"
+
+msgid "product category"
+msgstr "دسته‌بندی محصول"
+
+msgid "product image"
+msgstr "تصویر محصول"
+
+msgid "product images"
+msgstr "تصاویر محصولات"
+
+msgid "product variant"
+msgstr "تنوع محصول"
+
+msgid "product variants"
+msgstr "تنوع‌های محصولات"
+
+msgid "promo"
+msgstr "تخفیف / پرومو"
+
+msgid "promos"
+msgstr "تخفیف‌ها و پروموها"
+
+msgid "rank tier"
+msgstr "سطح رنک"
+
+msgid "rank tiers"
+msgstr "سطوح رنک"
+
+msgid "registration"
+msgstr "ثبت‌نام"
+
+msgid "registrations"
+msgstr "ثبت‌نام‌ها"
+
+msgid "registration member"
+msgstr "عضو ثبت‌نامی"
+
+msgid "registration members"
+msgstr "اعضای ثبت‌نامی"
+
+msgid "review"
+msgstr "دیدگاه"
+
+msgid "reviews"
+msgstr "دیدگاه‌ها"
+
+msgid "season"
+msgstr "فصل"
+
+msgid "seasons"
+msgstr "فصل‌ها"
+
+msgid "site setting"
+msgstr "تنظیمات سایت"
+
+msgid "site settings"
+msgstr "تنظیمات سایت"
+
+msgid "team"
+msgstr "تیم"
+
+msgid "teams"
+msgstr "تیم‌ها"
+
+msgid "team invitation"
+msgstr "دعوت‌نامه تیمی"
+
+msgid "team invitations"
+msgstr "دعوت‌نامه‌های تیمی"
+
+msgid "team membership"
+msgstr "عضویت تیمی"
+
+msgid "team memberships"
+msgstr "عضویت‌های تیمی"
+
+msgid "tournament"
+msgstr "تورنومنت"
+
+msgid "tournaments"
+msgstr "تورنومنت‌ها"
+
+msgid "tournament prize"
+msgstr "جایزه تورنومنت"
+
+msgid "tournament prizes"
+msgstr "جوایز تورنومنت‌ها"
+
+msgid "user badge"
+msgstr "مدال کاربر"
+
+msgid "user badges"
+msgstr "مدال‌های کاربران"
+
+msgid "wallet"
+msgstr "کیف پول"
+
+msgid "wallets"
+msgstr "کیف‌های پول"
+
+msgid "wallet transaction"
+msgstr "تراکنش کیف پول"
+
+msgid "wallet transactions"
+msgstr "تراکنش‌های کیف پول"
+
+msgid "wishlist item"
+msgstr "آیتم علاقه‌مندی"
+
+msgid "wishlist items"
+msgstr "آیتم‌های علاقه‌مندی"
+
+msgid "group"
+msgstr "گروه"
+
+msgid "groups"
+msgstr "گروه‌ها"
+
+msgid "Authentication and Authorization"
+msgstr "احراز هویت و دسترسی‌ها"
+
+msgid "Outstanding tokens"
+msgstr "توکن‌های فعال"
+
+msgid "Blacklisted tokens"
+msgstr "توکن‌های باطل‌شده"
