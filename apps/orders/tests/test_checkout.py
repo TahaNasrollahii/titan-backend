@@ -249,3 +249,17 @@ class TestOrders:
         detail = auth_client.get(reverse("order-detail", args=[order.number])).json()
         assert detail["status"] == "completed"
         assert detail["items"][0]["deliveredCode"] == "AAAA-BBBB-CCCC"
+
+    def test_fake_gateway_checkout_auto_approves(self, settings, auth_client, user):
+        settings.PAYMENT_GATEWAY = "fake"
+        product = ProductFactory(price=150_000, stock=2)
+        services.add_to_cart(user, product)
+
+        response = auth_client.post(CHECKOUT_URL, {"paymentMethod": "gateway"}, format="json")
+        assert response.status_code == 201
+        body = response.json()
+        assert body["paymentUrl"] is None
+        assert body["order"]["status"] == "paid"
+        assert not CartItem.objects.exists()
+        product.refresh_from_db()
+        assert product.stock == 1

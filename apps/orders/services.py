@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from datetime import date
 
+from django.conf import settings
 from django.db import IntegrityError, transaction
 from django.db.models import F, Q
 from django.utils import timezone
@@ -13,7 +14,7 @@ from apps.core.utils import random_code
 from apps.notifications.services import Kind, notify
 from apps.payments import registry
 from apps.payments.models import Payment, PaymentMethod, WalletTransaction
-from apps.payments.services import credit, pay_with_wallet, start_gateway_payment
+from apps.payments.services import credit, pay_with_fake, pay_with_wallet, start_gateway_payment
 
 from .models import MAX_QUANTITY_PER_LINE, Cart, CartItem, Order, OrderItem
 
@@ -232,6 +233,21 @@ def checkout(user: User, *, payment_method: str, game_account: GameAccount | Non
                 amount=order.total,
                 purpose=Payment.Purpose.ORDER,
                 debit_kind=WalletTransaction.Kind.ORDER_PAYMENT,
+                object_id=order.pk,
+                reference=order.number,
+                description=_("Payment for order %(number)s") % {"number": order.number},
+            )
+        order.refresh_from_db()
+        return CheckoutResult(order=order)
+
+    # In fake gateway / test mode, auto-approve immediately without redirecting to a gateway
+    if settings.PAYMENT_GATEWAY == "fake":
+        with transaction.atomic():
+            order = _place_order(user, payment_method, game_account)
+            pay_with_fake(
+                user,
+                amount=order.total,
+                purpose=Payment.Purpose.ORDER,
                 object_id=order.pk,
                 reference=order.number,
                 description=_("Payment for order %(number)s") % {"number": order.number},

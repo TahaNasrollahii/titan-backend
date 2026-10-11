@@ -1,3 +1,4 @@
+import uuid
 from dataclasses import dataclass
 from urllib.parse import urlencode
 
@@ -123,6 +124,32 @@ def pay_with_wallet(
     )
     debit(user, amount, kind=debit_kind, description=description, reference=f"payment:{payment.pk}")
     _mark_paid(payment, ref_id=f"WALLET-{payment.pk}")
+    registry.handler_for(purpose).on_paid(payment)
+    return payment
+
+
+@transaction.atomic
+def pay_with_fake(
+    user: User,
+    *,
+    amount: int,
+    purpose: str,
+    object_id: int | None = None,
+    reference: str = "",
+    description: str = "",
+) -> Payment:
+    """Auto-approve a test payment immediately without redirecting to an online gateway."""
+    payment = _create_payment(
+        user,
+        amount=amount,
+        gateway="fake",
+        purpose=purpose,
+        object_id=object_id,
+        reference=reference,
+        description=description,
+    )
+    payment.authority = f"FAKE-{uuid.uuid4().hex}"
+    _mark_paid(payment, ref_id=f"FAKE-{payment.pk}", card_pan="6037-99**-****-0000")
     registry.handler_for(purpose).on_paid(payment)
     return payment
 

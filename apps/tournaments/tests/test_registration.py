@@ -430,3 +430,15 @@ class TestWithdraw:
 
         assert response.status_code == 204
         assert get_wallet(old_captain).balance == 40_000
+
+    def test_fake_gateway_registration_auto_confirms(self, settings, auth_client, user):
+        settings.PAYMENT_GATEWAY = "fake"
+        tournament = TournamentFactory(entry_fee=50_000)
+
+        response = auth_client.post(
+            register_url(tournament), {"paymentMethod": "gateway"}, format="json"
+        )
+        assert response.status_code == 201
+        body = response.json()
+        assert body["paymentUrl"] is None
+        assert body["registration"]["status"] == "confirmed"

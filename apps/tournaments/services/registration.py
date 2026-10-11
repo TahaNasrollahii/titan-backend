@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 
+from django.conf import settings
 from django.db import IntegrityError, transaction
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
@@ -9,7 +10,7 @@ from apps.core.exceptions import ConflictError, DomainError, ExternalServiceErro
 from apps.notifications.services import Kind, notify, notify_many
 from apps.payments import registry
 from apps.payments.models import Payment, PaymentMethod, WalletTransaction
-from apps.payments.services import credit, pay_with_wallet, start_gateway_payment
+from apps.payments.services import credit, pay_with_fake, pay_with_wallet, start_gateway_payment
 from apps.teams.models import Team, TeamMembership
 from apps.teams.services import teams_with_members
 
@@ -184,6 +185,22 @@ def register(
                     amount=tournament.entry_fee,
                     purpose=Payment.Purpose.TOURNAMENT_REGISTRATION,
                     debit_kind=WalletTransaction.Kind.TOURNAMENT_FEE,
+                    object_id=registration.pk,
+                    reference=tournament.slug,
+                    description=description,
+                )
+        registration.refresh_from_db()
+        return RegistrationResult(registration=registration)
+
+    # In fake gateway / test mode, auto-approve immediately without redirecting to a gateway
+    if settings.PAYMENT_GATEWAY == "fake":
+        with transaction.atomic():
+            registration = _create_registration(user, tournament, team, members)
+            if not tournament.is_free:
+                pay_with_fake(
+                    user,
+                    amount=tournament.entry_fee,
+                    purpose=Payment.Purpose.TOURNAMENT_REGISTRATION,
                     object_id=registration.pk,
                     reference=tournament.slug,
                     description=description,
