@@ -46,11 +46,11 @@ class NotificationAdmin(ModelAdmin):
     actions = ["mark_read"]
     actions_list = ["broadcast"]
 
-    @display(description=_("kind"), label=KIND_LABELS, ordering="kind")
+    @display(description="Kind", label=KIND_LABELS, ordering="kind")
     def kind_label(self, obj: Notification):
         return obj.kind, obj.get_kind_display()
 
-    @display(description=_("read"), label={True: SUCCESS, False: WARNING}, ordering="is_read")
+    @display(description="Read", label={True: SUCCESS, False: WARNING}, ordering="is_read")
     def read_label(self, obj: Notification):
         return (True, _("Read")) if obj.is_read else (False, _("Unread"))
 

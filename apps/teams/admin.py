@@ -78,19 +78,19 @@ class TeamAdmin(ModelAdmin):
     def get_queryset(self, request):
         return super().get_queryset(request).annotate(member_count=Count("memberships"))
 
-    @display(description=_("team"), header=True, ordering="name")
+    @display(description="Team", header=True, ordering="name")
     def team(self, obj: Team):
         return [obj.name, obj.invite_code, initials(obj.name), image_header(obj.logo)]
 
-    @admin.display(description=_("members"), ordering="member_count")
+    @admin.display(description="Members", ordering="member_count")
     def members(self, obj: Team) -> str:
         return f"{obj.member_count}/{MAX_TEAM_MEMBERS}"
 
-    @admin.display(description=_("W–L"))
+    @admin.display(description="W–L")
     def record(self, obj: Team) -> str:
         return f"{obj.wins}–{obj.losses}"
 
-    @display(description=_("status"), label={True: SUCCESS, False: DANGER}, ordering="dissolved_at")
+    @display(description="Status", label={True: SUCCESS, False: DANGER}, ordering="dissolved_at")
     def status_label(self, obj: Team):
         return (True, _("Active")) if obj.is_active else (False, _("Dissolved"))
 
@@ -103,6 +103,6 @@ class TeamInvitationAdmin(ModelAdmin):
     search_fields = ["team__name", "invited_user__username", "invited_user__phone"]
     autocomplete_fields = ["team", "invited_user", "invited_by"]
 
-    @display(description=_("status"), label=INVITATION_LABELS, ordering="status")
+    @display(description="Status", label=INVITATION_LABELS, ordering="status")
     def status_label(self, obj: TeamInvitation):
         return obj.status, obj.get_status_display()

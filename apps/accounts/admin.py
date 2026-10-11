@@ -102,21 +102,21 @@ class UserAdmin(DjangoUserAdmin, ModelAdmin):
     def get_queryset(self, request):
         return super().get_queryset(request).select_related("wallet")
 
-    @display(description=_("player"), header=True, ordering="username")
+    @display(description="Player", header=True, ordering="username")
     def player(self, obj: User):
         avatar = {"path": obj.avatar.url} if obj.avatar else None
         return [obj.display_name, obj.full_name or obj.email, initials(obj.display_name), avatar]
 
-    @display(description=_("rank"), label=True)
+    @display(description="Rank", label=True)
     def rank(self, obj: User):
         tier = tier_for_points(obj.points)
         return tier.name if tier else None
 
-    @display(description=_("presence"), label=PRESENCE_LABELS)
+    @display(description="Presence", label=PRESENCE_LABELS)
     def presence_label(self, obj: User):
         return obj.presence, User.Presence(obj.presence).label
 
-    @display(description=_("role"), label={"superuser": DANGER, "staff": INFO})
+    @display(description="Role", label={"superuser": DANGER, "staff": INFO})
     def role(self, obj: User):
         if obj.is_superuser:
             return "superuser", _("Superuser")
@@ -124,7 +124,7 @@ class UserAdmin(DjangoUserAdmin, ModelAdmin):
             return "staff", _("Staff")
         return None
 
-    @admin.display(description=_("wallet"))
+    @admin.display(description="Wallet")
     def wallet_balance(self, obj: User):
         wallet = getattr(obj, "wallet", None)
         if wallet is None:
@@ -149,7 +149,7 @@ class GameAccountAdmin(ModelAdmin):
             return ["revealed_password"]
         return []
 
-    @admin.display(description=_("password"))
+    @admin.display(description="Password")
     def revealed_password(self, obj: GameAccount) -> str:
         return format_html('<code class="tt-code">{}</code>', obj.password) if obj.password else "—"
 
@@ -162,7 +162,7 @@ class FriendshipAdmin(ModelAdmin):
     autocomplete_fields = ["from_user", "to_user"]
     list_select_related = ["from_user", "to_user"]
 
-    @display(description=_("status"), label=FRIENDSHIP_LABELS, ordering="status")
+    @display(description="Status", label=FRIENDSHIP_LABELS, ordering="status")
     def status_label(self, obj: Friendship):
         return obj.status, obj.get_status_display()
 
@@ -181,7 +181,7 @@ class OTPCodeAdmin(ModelAdmin):
     def has_change_permission(self, request, obj=None):
         return False
 
-    @display(description=_("state"), label={"used": SUCCESS, "expired": DANGER, "active": INFO})
+    @display(description="State", label={"used": SUCCESS, "expired": DANGER, "active": INFO})
     def state(self, obj: OTPCode):
         if obj.used_at:
             return "used", _("Used")
@@ -196,7 +196,7 @@ class RankTierAdmin(ModelAdmin):
     ordering = ["min_points"]
     prepopulated_fields = {"slug": ["name"]}
 
-    @admin.display(description=_("colours"))
+    @admin.display(description="Colours")
     def swatch(self, obj: RankTier):
         return format_html(
             '<span class="tt-swatch" style="background: linear-gradient(90deg, {}, {})"></span>',
@@ -214,6 +214,6 @@ class BadgeAdmin(ModelAdmin):
     def get_queryset(self, request):
         return super().get_queryset(request).annotate(award_count=Count("awards"))
 
-    @admin.display(description=_("awarded"), ordering="award_count")
+    @admin.display(description="Awarded", ordering="award_count")
     def awarded(self, obj: Badge) -> int:
         return obj.award_count

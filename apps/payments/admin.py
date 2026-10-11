@@ -50,7 +50,7 @@ class WalletTransactionInline(TabularInline):
     def has_add_permission(self, request, obj=None):
         return False
 
-    @admin.display(description=_("amount"))
+    @admin.display(description="Amount")
     def signed_amount(self, obj: WalletTransaction) -> str:
         return signed_toman(obj.amount)
 
@@ -85,12 +85,12 @@ class WalletAdmin(ModelAdmin):
     def has_add_permission(self, request):
         return False
 
-    @display(description=_("owner"), header=True, ordering="user__username")
+    @display(description="Owner", header=True, ordering="user__username")
     def owner(self, obj: Wallet):
         name = obj.user.display_name
         return [name, obj.user.phone, initials(name)]
 
-    @admin.display(description=_("balance"), ordering="balance")
+    @admin.display(description="Balance", ordering="balance")
     def balance_display(self, obj: Wallet) -> str:
         return toman(obj.balance)
 
@@ -149,11 +149,11 @@ class WalletTransactionAdmin(ModelAdmin):
     def has_delete_permission(self, request, obj=None):
         return False
 
-    @display(description=_("kind"), label=TRANSACTION_KIND_LABELS, ordering="kind")
+    @display(description="Kind", label=TRANSACTION_KIND_LABELS, ordering="kind")
     def kind_label(self, obj: WalletTransaction):
         return obj.kind, obj.get_kind_display()
 
-    @admin.display(description=_("amount"), ordering="amount")
+    @admin.display(description="Amount", ordering="amount")
     def signed_amount(self, obj: WalletTransaction) -> str:
         return signed_toman(obj.amount)
 
@@ -210,14 +210,14 @@ class PaymentAdmin(ModelAdmin):
     def has_delete_permission(self, request, obj=None):
         return False
 
-    @display(description=_("status"), label=PAYMENT_STATUS_LABELS, ordering="status")
+    @display(description="Status", label=PAYMENT_STATUS_LABELS, ordering="status")
     def status_label(self, obj: Payment):
         return obj.status, obj.get_status_display()
 
-    @display(description=_("purpose"), label=True, ordering="purpose")
+    @display(description="Purpose", label=True, ordering="purpose")
     def purpose_label(self, obj: Payment):
         return obj.get_purpose_display()
 
-    @admin.display(description=_("amount"), ordering="amount")
+    @admin.display(description="Amount", ordering="amount")
     def amount_display(self, obj: Payment) -> str:
         return toman(obj.amount)

@@ -56,7 +56,7 @@ class GroupAdmin(DjangoGroupAdmin, ModelAdmin):
     def get_queryset(self, request):
         return super().get_queryset(request).annotate(members=Count("user"))
 
-    @admin.display(description=_("members"), ordering="members")
+    @admin.display(description="Members", ordering="members")
     def member_count(self, obj: Group) -> int:
         return obj.members
 

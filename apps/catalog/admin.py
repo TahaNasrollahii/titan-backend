@@ -87,7 +87,7 @@ class GameAdmin(ModelAdmin):
             )
         )
 
-    @display(description=_("game"), header=True, ordering="title_en")
+    @display(description="Game", header=True, ordering="title_en")
     def game(self, obj: Game):
         return [
             obj.title_en,
@@ -96,15 +96,15 @@ class GameAdmin(ModelAdmin):
             image_header(obj.icon_image or obj.cover_image),
         ]
 
-    @display(description=_("kind"), label={Game.Kind.GAME: INFO, Game.Kind.SERVICE: WARNING}, ordering="kind")
+    @display(description="Kind", label={Game.Kind.GAME: INFO, Game.Kind.SERVICE: WARNING}, ordering="kind")
     def kind_label(self, obj: Game):
         return obj.kind, obj.get_kind_display()
 
-    @admin.display(description=_("products"), ordering="product_count")
+    @admin.display(description="Products", ordering="product_count")
     def products(self, obj: Game) -> int:
         return obj.product_count
 
-    @admin.display(description=_("tournaments"), ordering="tournament_count")
+    @admin.display(description="Tournaments", ordering="tournament_count")
     def tournaments(self, obj: Game) -> int:
         return obj.tournament_count
 
@@ -127,7 +127,7 @@ class ProductCategoryAdmin(ModelAdmin):
     def get_queryset(self, request):
         return super().get_queryset(request).annotate(product_count=Count("products"))
 
-    @admin.display(description=_("products"), ordering="product_count")
+    @admin.display(description="Products", ordering="product_count")
     def products(self, obj: ProductCategory) -> int:
         return obj.product_count
 
@@ -231,11 +231,11 @@ class ProductAdmin(ModelAdmin):
         services.sync_variant_summary(form.instance.pk)
 
     # ---- columns
-    @display(description=_("product"), header=True, ordering="title")
+    @display(description="Product", header=True, ordering="title")
     def product(self, obj: Product):
         return [obj.title, obj.category.name, initials(obj.title), image_header(obj.image)]
 
-    @admin.display(description=_("price"), ordering="price")
+    @admin.display(description="Price", ordering="price")
     def price_range(self, obj: Product) -> str:
         if obj.price is None:
             return "—"
@@ -243,11 +243,11 @@ class ProductAdmin(ModelAdmin):
             return f"{toman(obj.price)} – {toman(obj.price_max)}"
         return toman(obj.price)
 
-    @display(description=_("stock"), label=STOCK_LABELS, ordering="stock")
+    @display(description="Stock", label=STOCK_LABELS, ordering="stock")
     def stock_status(self, obj: Product):
         return stock_label(obj.stock)
 
-    @display(description=_("badges"), label=True)
+    @display(description="Badges", label=True)
     def flags(self, obj: Product):
         labels = []
         if obj.is_bestseller:
@@ -258,7 +258,7 @@ class ProductAdmin(ModelAdmin):
             labels.append(f"-{obj.discount_percent}%")
         return labels or None
 
-    @admin.display(description=_("rating"), ordering="rating_avg")
+    @admin.display(description="Rating", ordering="rating_avg")
     def rating(self, obj: Product) -> str:
         if not obj.review_count:
             return "—"
@@ -325,11 +325,11 @@ class ReviewAdmin(ModelAdmin):
         for review in queryset.select_related("product"):
             services.delete_review(review)
 
-    @display(description=_("author"), header=True, ordering="author_name")
+    @display(description="Author", header=True, ordering="author_name")
     def review(self, obj: Review):
         return [obj.author_name, obj.author_email, initials(obj.author_name)]
 
-    @admin.display(description=_("rating"), ordering="rating")
+    @admin.display(description="Rating", ordering="rating")
     def stars(self, obj: Review):
         return format_html(
             '<span class="tt-stars" title="{}/5">{}<span class="tt-stars-off">{}</span></span>',
@@ -338,11 +338,11 @@ class ReviewAdmin(ModelAdmin):
             "★" * (5 - obj.rating),
         )
 
-    @display(description=_("purchase"), label={True: SUCCESS})
+    @display(description="Purchase", label={True: SUCCESS})
     def verified(self, obj: Review):
         return (True, _("Verified")) if obj.verified_purchase else None
 
-    @display(description=_("status"), label={True: SUCCESS, False: DANGER}, ordering="is_approved")
+    @display(description="Status", label={True: SUCCESS, False: DANGER}, ordering="is_approved")
     def visibility(self, obj: Review):
         return (True, _("Visible")) if obj.is_approved else (False, _("Hidden"))
 

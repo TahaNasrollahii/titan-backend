@@ -110,20 +110,20 @@ class OrderAdmin(ModelAdmin):
         return False
 
     # ---- columns
-    @display(description=_("customer"), header=True, ordering="user__username")
+    @display(description="Customer", header=True, ordering="user__username")
     def customer(self, obj: Order):
         name = obj.user.display_name
         return [name, obj.user.phone, initials(name)]
 
-    @display(description=_("status"), label=ORDER_STATUS_LABELS, ordering="status")
+    @display(description="Status", label=ORDER_STATUS_LABELS, ordering="status")
     def status_label(self, obj: Order):
         return obj.status, obj.get_status_display()
 
-    @admin.display(description=_("items"), ordering="line_count")
+    @admin.display(description="Items", ordering="line_count")
     def item_count(self, obj: Order) -> int:
         return obj.line_count
 
-    @admin.display(description=_("total"), ordering="total")
+    @admin.display(description="Total", ordering="total")
     def amount(self, obj: Order) -> str:
         return toman(obj.total)
 
@@ -187,10 +187,10 @@ class CartAdmin(ModelAdmin):
     def get_queryset(self, request):
         return super().get_queryset(request).annotate(line_count=Count("items"), units=Sum("items__quantity"))
 
-    @admin.display(description=_("lines"), ordering="line_count")
+    @admin.display(description="Lines", ordering="line_count")
     def lines(self, obj: Cart) -> int:
         return obj.line_count
 
-    @admin.display(description=_("units"), ordering="units")
+    @admin.display(description="Units", ordering="units")
     def quantity(self, obj: Cart) -> int:
         return obj.units or 0

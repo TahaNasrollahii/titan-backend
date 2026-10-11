@@ -102,7 +102,7 @@
                 <a class="tt-link" href="{% url 'admin:orders_order_changelist' %}">{% trans "View all" %} →</a>
             </div>
             <table class="tt-table">
-                <thead><tr><th>{% trans "Order" %}</th><th>{% trans "Customer" %}</th><th>{% trans "Total" %}</th><th>{% trans "Status" %}</th></tr></thead>
+                <thead><tr><th>Order</th><th>Customer</th><th>Total</th><th>Status</th></tr></thead>
                 <tbody>
                 {% for order in latest_orders %}
                     <tr>
@@ -127,7 +127,7 @@
                 <a class="tt-link" href="{% url 'admin:tournaments_tournament_changelist' %}">{% trans "View all" %} →</a>
             </div>
             <table class="tt-table">
-                <thead><tr><th>{% trans "Tournament" %}</th><th>{% trans "Status" %}</th><th>{% trans "Entrants" %}</th></tr></thead>
+                <thead><tr><th>Tournament</th><th>Status</th><th>Entrants</th></tr></thead>
                 <tbody>
                 {% for t in upcoming_tournaments %}
                     <tr>
@@ -156,7 +156,7 @@
                 </div>
             </div>
             <table class="tt-table">
-                <thead><tr><th>{% trans "Product" %}</th><th>{% trans "Units" %}</th><th>{% trans "Revenue" %}</th></tr></thead>
+                <thead><tr><th>Product</th><th>Units</th><th>Revenue</th></tr></thead>
                 <tbody>
                 {% for p in top_products %}
                     <tr>
@@ -180,7 +180,7 @@
                 <a class="tt-link" href="{% url 'admin:catalog_product_changelist' %}">{% trans "Products" %} →</a>
             </div>
             <table class="tt-table">
-                <thead><tr><th>{% trans "Item" %}</th><th>{% trans "In stock" %}</th></tr></thead>
+                <thead><tr><th>Item</th><th>In stock</th></tr></thead>
                 <tbody>
                 {% for item in low_stock %}
                     <tr>

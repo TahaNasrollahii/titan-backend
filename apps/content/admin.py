@@ -59,19 +59,19 @@ class PromoAdmin(ModelAdmin):
         ),
     )
 
-    @display(description=_("promo"), header=True, ordering="title")
+    @display(description="Promo", header=True, ordering="title")
     def promo(self, obj: Promo):
         return [obj.title, obj.subtitle, initials(obj.title), image_header(obj.image or obj.background_image)]
 
-    @display(description=_("placement"), label=True, ordering="placement")
+    @display(description="Placement", label=True, ordering="placement")
     def placement_label(self, obj: Promo):
         return obj.get_placement_display()
 
-    @admin.display(description=_("price"), ordering="price")
+    @admin.display(description="Price", ordering="price")
     def price_display(self, obj: Promo) -> str:
         return toman(obj.price) if obj.price else "—"
 
-    @display(description=_("on storefront"), label=WINDOW_LABELS)
+    @display(description="On storefront", label=WINDOW_LABELS)
     def visibility(self, obj: Promo):
         return window_state(obj)
 
@@ -84,7 +84,7 @@ class AnnouncementAdmin(ModelAdmin):
     search_fields = ["title", "text"]
     fields = ["title", "text", ("icon", "link"), ("starts_at", "ends_at"), ("is_active", "sort_order")]
 
-    @display(description=_("on storefront"), label=WINDOW_LABELS)
+    @display(description="On storefront", label=WINDOW_LABELS)
     def visibility(self, obj: Announcement):
         return window_state(obj)
 
@@ -106,7 +106,7 @@ class ContactChannelAdmin(ModelAdmin):
         "sort_order",
     ]
 
-    @display(description=_("channel"), header=True, ordering="title")
+    @display(description="Channel", header=True, ordering="title")
     def channel(self, obj: ContactChannel):
         return [obj.title, obj.description, initials(obj.title), image_header(obj.icon)]
 

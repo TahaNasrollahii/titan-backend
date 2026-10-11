@@ -54,11 +54,11 @@ def entrant_name(registration: Registration | None) -> str:
 
 
 class MatchSidesMixin:
-    @admin.display(description=_("side A"))
+    @admin.display(description="Side A")
     def side_a(self, obj: Match) -> str:
         return entrant_name(obj.participant_a)
 
-    @admin.display(description=_("side B"))
+    @admin.display(description="Side B")
     def side_b(self, obj: Match) -> str:
         return entrant_name(obj.participant_b)
 
@@ -83,7 +83,7 @@ class SeasonAdmin(ModelAdmin):
     ordering = ["-number"]
     search_fields = ["name"]
 
-    @display(description=_("current"), label={True: SUCCESS}, ordering="is_current")
+    @display(description="Current", label={True: SUCCESS}, ordering="is_current")
     def current(self, obj: Season):
         return (True, _("Current")) if obj.is_current else None
 
@@ -106,7 +106,7 @@ class RegistrationInline(ReadOnlyTabularInline):
     def get_queryset(self, request):
         return super().get_queryset(request).select_related("team", "player")
 
-    @admin.display(description=_("entrant"))
+    @admin.display(description="Entrant")
     def entrant(self, obj: Registration) -> str:
         return obj.display_name
 
@@ -215,7 +215,7 @@ class TournamentAdmin(ModelAdmin):
         )
 
     # ---- columns
-    @display(description=_("tournament"), header=True, ordering="title")
+    @display(description="Tournament", header=True, ordering="title")
     def tournament(self, obj: Tournament):
         return [
             obj.title,
@@ -224,16 +224,16 @@ class TournamentAdmin(ModelAdmin):
             image_header(obj.cover_image),
         ]
 
-    @display(description=_("status"), label=TOURNAMENT_STATUS_LABELS, ordering="state")
+    @display(description="Status", label=TOURNAMENT_STATUS_LABELS, ordering="state")
     def status_label(self, obj: Tournament):
         status = obj.public_status
         return status, Tournament.Status(status).label
 
-    @admin.display(description=_("entrants"), ordering="confirmed_count")
+    @admin.display(description="Entrants", ordering="confirmed_count")
     def entrants(self, obj: Tournament) -> str:
         return f"{obj.confirmed_count}/{obj.max_participants}"
 
-    @admin.display(description=_("prize pool"), ordering="prize_pool")
+    @admin.display(description="Prize pool", ordering="prize_pool")
     def prize(self, obj: Tournament) -> str:
         if obj.prize_currency == "USD":
             return f"${obj.prize_pool:,}"
@@ -306,11 +306,11 @@ class RegistrationAdmin(ModelAdmin):
     )
     inlines = [RegistrationMemberInline]
 
-    @display(description=_("status"), label=REGISTRATION_STATUS_LABELS, ordering="status")
+    @display(description="Status", label=REGISTRATION_STATUS_LABELS, ordering="status")
     def status_label(self, obj: Registration):
         return obj.status, obj.get_status_display()
 
-    @admin.display(description=_("fee paid"), ordering="entry_fee_paid")
+    @admin.display(description="Fee paid", ordering="entry_fee_paid")
     def entry_fee_display(self, obj: Registration) -> str:
         return toman(obj.entry_fee_paid) if obj.entry_fee_paid else _("Free")
 
@@ -370,20 +370,20 @@ class MatchAdmin(MatchSidesMixin, ModelAdmin):
         except DomainError as error:
             self.message_user(request, str(error.detail), level=messages.ERROR)
 
-    @display(description=_("match"), header=True, ordering="round")
+    @display(description="Match", header=True, ordering="round")
     def match(self, obj: Match):
         return [
             obj.tournament.title,
             _("Round %(round)s · match %(n)s") % {"round": obj.round, "n": obj.position + 1},
         ]
 
-    @admin.display(description=_("score"))
+    @admin.display(description="Score")
     def score(self, obj: Match) -> str:
         if obj.score_a is None or obj.score_b is None:
             return "–"
         return f"{obj.score_a} : {obj.score_b}"
 
-    @display(description=_("status"), label=MATCH_STATUS_LABELS, ordering="status")
+    @display(description="Status", label=MATCH_STATUS_LABELS, ordering="status")
     def status_label(self, obj: Match):
         return obj.status, obj.get_status_display()
 
@@ -398,7 +398,7 @@ class StatsAdmin(ModelAdmin):
     list_filter_submit = True
     ordering = ["-points", "-wins"]
 
-    @admin.display(description=_("win rate"))
+    @admin.display(description="Win rate")
     def win_rate_display(self, obj) -> str:
         return f"{obj.win_rate}%"
 
