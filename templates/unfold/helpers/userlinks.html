@@ -1,0 +1,57 @@
+{% load i18n static unfold %}
+
+{% if not is_popup %}
+    <div class="flex flex-row gap-2 sm:gap-3 items-center ml-auto rtl:ml-0 rtl:mr-auto">
+        {% if environment %}
+            {% include "unfold/helpers/label.html" with text=environment.0 type=environment.1 %}
+        {% endif %}
+
+        {# ---------- Quick Language Toggle (FA / EN) ---------- #}
+        {% get_current_language as CURRENT_LANG %}
+        <form action="{% url 'set_language' %}" method="post" class="inline-flex m-0 p-0">
+            {% csrf_token %}
+            <input name="next" type="hidden" value="{{ request.get_full_path }}">
+            {% if CURRENT_LANG == 'fa' %}
+                <input name="language" type="hidden" value="en">
+                <button 
+                    type="submit" 
+                    class="cursor-pointer flex flex-row items-center gap-1.5 px-2.5 py-1.5 rounded-default text-xs font-semibold bg-base-100 border border-base-200 hover:bg-base-200 text-font-important-light transition-all dark:bg-base-800 dark:border-base-700 dark:hover:bg-base-700 dark:text-font-important-dark"
+                    title="Switch to English"
+                >
+                    <span class="text-sm">🇬🇧</span>
+                    <span>English</span>
+                </button>
+            {% else %}
+                <input name="language" type="hidden" value="fa">
+                <button 
+                    type="submit" 
+                    class="cursor-pointer flex flex-row items-center gap-1.5 px-2.5 py-1.5 rounded-default text-xs font-semibold bg-base-100 border border-base-200 hover:bg-base-200 text-font-important-light transition-all dark:bg-base-800 dark:border-base-700 dark:hover:bg-base-700 dark:text-font-important-dark font-sans"
+                    title="تغییر زبان به فارسی"
+                >
+                    <span class="text-sm">🇮🇷</span>
+                    <span>فارسی</span>
+                </button>
+            {% endif %}
+        </form>
+
+        {# ---------- Quick Dark / Light Mode Toggle ---------- #}
+        {% if not theme %}
+            <button 
+                type="button" 
+                class="cursor-pointer flex items-center justify-center w-8 h-8 rounded-default bg-base-100 border border-base-200 hover:bg-base-200 text-font-important-light transition-all dark:bg-base-800 dark:border-base-700 dark:hover:bg-base-700 dark:text-font-important-dark"
+                x-on:click="adminTheme = (adminTheme === 'dark' ? 'light' : 'dark')"
+                x-bind:title="adminTheme === 'dark' ? '{% trans "Switch to Light mode" %}' : '{% trans "Switch to Dark mode" %}'"
+            >
+                <span class="material-symbols-outlined text-[19px]">
+                    <span x-text="adminTheme === 'dark' ? 'light_mode' : 'dark_mode'"></span>
+                </span>
+            </button>
+        {% endif %}
+
+        {% action_list %}
+
+        {% if nav_global_side %}
+            {{ nav_global_side }}
+        {% endif %}
+    </div>
+{% endif %}

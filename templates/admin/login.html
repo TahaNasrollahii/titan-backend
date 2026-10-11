@@ -27,6 +27,38 @@
         </div>
 
         <nav class="tt-topbar-right">
+            {# Quick Language Switcher (FA / EN) #}
+            {% get_current_language as CURRENT_LANG %}
+            <form action="{% url 'set_language' %}" method="post" class="tt-lang-form">
+                {% csrf_token %}
+                <input name="next" type="hidden" value="{{ request.get_full_path }}">
+                {% if CURRENT_LANG == 'fa' %}
+                    <input name="language" type="hidden" value="en">
+                    <button type="submit" class="tt-top-toggle-btn" title="Switch to English">
+                        <span>🇬🇧</span>
+                        <span>English</span>
+                    </button>
+                {% else %}
+                    <input name="language" type="hidden" value="fa">
+                    <button type="submit" class="tt-top-toggle-btn font-sans" title="تغییر زبان به فارسی">
+                        <span>🇮🇷</span>
+                        <span>فارسی</span>
+                    </button>
+                {% endif %}
+            </form>
+
+            {# Quick Theme Switcher #}
+            <button 
+                type="button" 
+                class="tt-top-theme-btn" 
+                x-on:click="adminTheme = (adminTheme === 'dark' ? 'light' : 'dark')"
+                x-bind:title="adminTheme === 'dark' ? '{% trans "Switch to Light mode" %}' : '{% trans "Switch to Dark mode" %}'"
+            >
+                <span class="material-symbols-outlined tt-theme-icon">
+                    <span x-text="adminTheme === 'dark' ? 'light_mode' : 'dark_mode'"></span>
+                </span>
+            </button>
+
             {% if site_url %}
                 <a href="{{ site_url }}" class="tt-top-link" target="_blank" rel="noreferrer">
                     <span class="material-symbols-outlined">storefront</span>
@@ -1031,6 +1063,128 @@ body.login {
     .tt-auth-title {
         font-size: 22px;
     }
+}
+
+/* ---------- Topbar Language & Theme Buttons ---------- */
+.tt-lang-form {
+    margin: 0;
+    padding: 0;
+    display: inline-flex;
+}
+
+.tt-top-toggle-btn,
+.tt-top-theme-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.tt-top-toggle-btn:hover,
+.tt-top-theme-btn:hover {
+    background: rgba(255, 255, 255, 0.14);
+    border-color: rgba(255, 255, 255, 0.25);
+    transform: translateY(-1px);
+}
+
+.tt-top-theme-btn {
+    padding: 6px 10px;
+}
+
+.tt-theme-icon {
+    font-size: 18px !important;
+}
+
+/* ---------- Light Mode Overrides for Login ---------- */
+html:not(.dark) body.login {
+    background-color: #f7f3f4 !important;
+    color: #1f0b11 !important;
+}
+
+html:not(.dark) .tt-login-root {
+    background: radial-gradient(circle at 50% 15%, #f6e3e6 0%, #ede3e5 70%);
+}
+
+html:not(.dark) .tt-login-topbar {
+    background: rgba(255, 255, 255, 0.75);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+html:not(.dark) .tt-top-link,
+html:not(.dark) .tt-top-toggle-btn,
+html:not(.dark) .tt-top-theme-btn {
+    background: rgba(0, 0, 0, 0.04);
+    border-color: rgba(0, 0, 0, 0.1);
+    color: #3b1720 !important;
+}
+
+html:not(.dark) .tt-top-link:hover,
+html:not(.dark) .tt-top-toggle-btn:hover,
+html:not(.dark) .tt-top-theme-btn:hover {
+    background: rgba(0, 0, 0, 0.08);
+    border-color: rgba(0, 0, 0, 0.18);
+    color: #000000 !important;
+}
+
+html:not(.dark) .tt-console-card {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.96) 0%, rgba(250, 244, 245, 0.98) 100%);
+    border-color: rgba(226, 69, 63, 0.3);
+    box-shadow: 0 28px 80px -20px rgba(74, 22, 32, 0.2), 0 0 30px rgba(226, 69, 63, 0.12);
+}
+
+html:not(.dark) .tt-warrior-panel {
+    background: radial-gradient(circle at 50% 60%, rgba(168, 85, 247, 0.14) 0%, transparent 65%),
+                linear-gradient(180deg, #3d101a 0%, #1a050b 100%);
+}
+
+html:not(.dark) .tt-auth-title {
+    color: #21090f;
+}
+
+html:not(.dark) .tt-auth-subtitle {
+    color: #6b4d54;
+}
+
+html:not(.dark) .tt-field-label {
+    color: #3f1c24;
+}
+
+html:not(.dark) .tt-form-input {
+    background: #ffffff;
+    border-color: rgba(0, 0, 0, 0.15);
+    color: #1c060b;
+}
+
+html:not(.dark) .tt-form-input:focus {
+    background: #ffffff;
+    border-color: var(--tt-red);
+}
+
+html:not(.dark) .tt-form-input::placeholder {
+    color: rgba(0, 0, 0, 0.35);
+}
+
+html:not(.dark) .tt-pwd-toggle-btn {
+    color: rgba(0, 0, 0, 0.45);
+}
+
+html:not(.dark) .tt-security-notice {
+    background: rgba(0, 0, 0, 0.03);
+    border-color: rgba(0, 0, 0, 0.07);
+    color: #6b4d54;
+}
+
+html:not(.dark) .tt-auth-footer,
+html:not(.dark) .tt-login-bottom {
+    color: rgba(0, 0, 0, 0.45);
 }
 </style>
 {% endblock %}

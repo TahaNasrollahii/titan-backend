@@ -81,6 +81,11 @@ UNFOLD = {
     "SHOW_HISTORY": True,
     "SHOW_VIEW_ON_SITE": False,
     "SHOW_BACK_BUTTON": True,
+    "SHOW_LANGUAGES": True,
+    "LANGUAGE_FLAGS": {
+        "fa": "🇮🇷",
+        "en": "🇬🇧",
+    },
     "ENVIRONMENT": f"{CALLBACKS}.environment_callback",
     "DASHBOARD_CALLBACK": f"{CALLBACKS}.dashboard_callback",
     "STYLES": [lambda request: static("admin/titan/titan.css")],
