@@ -128,6 +128,8 @@ class OTPCode(models.Model):
     class Meta:
         ordering = ["-created_at"]
         indexes = [models.Index(fields=["phone", "purpose", "-created_at"])]
+        verbose_name = _("OTP code")
+        verbose_name_plural = _("OTP codes")
 
     def __str__(self) -> str:
         return f"{self.phone} ({self.purpose})"
@@ -150,6 +152,8 @@ class GameAccount(TimeStampedModel):
 
     class Meta:
         ordering = ["created_at"]
+        verbose_name = _("Game account")
+        verbose_name_plural = _("Game accounts")
         permissions = [("reveal_password", "Can reveal game account passwords")]
 
     def __str__(self) -> str:
@@ -171,6 +175,8 @@ class Friendship(TimeStampedModel):
     status = models.CharField(max_length=10, choices=Status.choices, default=Status.PENDING, db_index=True)
 
     class Meta:
+        verbose_name = _("Friendship")
+        verbose_name_plural = _("Friendships")
         constraints = [
             models.UniqueConstraint(fields=["from_user", "to_user"], name="unique_friendship_direction"),
             models.CheckConstraint(condition=~Q(from_user=models.F("to_user")), name="no_self_friendship"),
@@ -192,6 +198,8 @@ class RankTier(models.Model):
 
     class Meta:
         ordering = ["min_points"]
+        verbose_name = _("Rank tier")
+        verbose_name_plural = _("Rank tiers")
 
     def __str__(self) -> str:
         return self.name
@@ -205,6 +213,8 @@ class Badge(models.Model):
 
     class Meta:
         ordering = ["name"]
+        verbose_name = _("Badge")
+        verbose_name_plural = _("Badges")
 
     def __str__(self) -> str:
         return self.name
@@ -217,6 +227,8 @@ class UserBadge(models.Model):
 
     class Meta:
         ordering = ["awarded_at"]
+        verbose_name = _("User badge")
+        verbose_name_plural = _("User badges")
         constraints = [models.UniqueConstraint(fields=["user", "badge"], name="unique_user_badge")]
 
     def __str__(self) -> str:

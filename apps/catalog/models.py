@@ -35,6 +35,8 @@ class Game(TimeStampedModel):
 
     class Meta:
         ordering = ["sort_order", "title_en"]
+        verbose_name = _("Game")
+        verbose_name_plural = _("Games")
 
     def __str__(self) -> str:
         return self.title_en
@@ -50,6 +52,8 @@ class Platform(models.Model):
 
     class Meta:
         ordering = ["sort_order", "name"]
+        verbose_name = _("Platform")
+        verbose_name_plural = _("Platforms")
 
     def __str__(self) -> str:
         return self.name
@@ -62,7 +66,8 @@ class ProductCategory(models.Model):
 
     class Meta:
         ordering = ["sort_order", "name"]
-        verbose_name_plural = _("product categories")
+        verbose_name = _("Category")
+        verbose_name_plural = _("Categories")
 
     def __str__(self) -> str:
         return self.name
@@ -135,6 +140,8 @@ class Product(TimeStampedModel):
 
     class Meta:
         ordering = ["-popularity", "-created_at"]
+        verbose_name = _("Product")
+        verbose_name_plural = _("Products")
         indexes = [models.Index(fields=["price"]), models.Index(fields=["is_active", "-popularity"])]
         constraints = [
             models.CheckConstraint(
@@ -187,6 +194,8 @@ class ProductVariant(models.Model):
 
     class Meta:
         ordering = ["sort_order", "price"]
+        verbose_name = _("Product variant")
+        verbose_name_plural = _("Product variants")
         constraints = [
             models.UniqueConstraint(fields=["product", "label"], name="unique_variant_label"),
             models.CheckConstraint(
@@ -215,6 +224,8 @@ class ProductImage(models.Model):
 
     class Meta:
         ordering = ["sort_order", "id"]
+        verbose_name = _("Product image")
+        verbose_name_plural = _("Product images")
 
     def __str__(self) -> str:
         return self.alt or f"Image #{self.pk}"
@@ -232,6 +243,8 @@ class Review(TimeStampedModel):
 
     class Meta:
         ordering = ["-created_at"]
+        verbose_name = _("Review")
+        verbose_name_plural = _("Reviews")
         constraints = [
             models.UniqueConstraint(fields=["product", "user"], name="unique_review_per_user"),
             models.CheckConstraint(condition=Q(rating__gte=1, rating__lte=5), name="review_rating_range"),
@@ -248,6 +261,8 @@ class WishlistItem(models.Model):
 
     class Meta:
         ordering = ["-created_at"]
+        verbose_name = _("Wishlist item")
+        verbose_name_plural = _("Wishlist items")
         constraints = [models.UniqueConstraint(fields=["user", "product"], name="unique_wishlist_item")]
 
     def __str__(self) -> str:

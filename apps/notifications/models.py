@@ -25,6 +25,8 @@ class Notification(models.Model):
     class Meta:
         ordering = ["-created_at"]
         indexes = [models.Index(fields=["user", "is_read", "-created_at"])]
+        verbose_name = _("Notification")
+        verbose_name_plural = _("Notifications")
 
     def __str__(self) -> str:
         return f"{self.user}: {self.title}"

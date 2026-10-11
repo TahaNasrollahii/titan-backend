@@ -31,6 +31,8 @@ class Season(models.Model):
 
     class Meta:
         ordering = ["-number"]
+        verbose_name = _("Season")
+        verbose_name_plural = _("Seasons")
         constraints = [
             models.UniqueConstraint(
                 fields=["is_current"], condition=Q(is_current=True), name="one_current_season"
@@ -103,6 +105,8 @@ class Tournament(TimeStampedModel):
 
     class Meta:
         ordering = ["starts_at"]
+        verbose_name = _("Tournament")
+        verbose_name_plural = _("Tournaments")
         constraints = [
             models.CheckConstraint(
                 condition=Q(registration_closes_at__gte=models.F("registration_opens_at")),
@@ -158,6 +162,8 @@ class TournamentPrize(models.Model):
 
     class Meta:
         ordering = ["place"]
+        verbose_name = _("Tournament prize")
+        verbose_name_plural = _("Tournament prizes")
         constraints = [models.UniqueConstraint(fields=["tournament", "place"], name="unique_prize_place")]
 
     def __str__(self) -> str:
@@ -218,6 +224,8 @@ class Registration(TimeStampedModel):
 
     class Meta:
         ordering = ["seed", "created_at"]
+        verbose_name = _("Registration")
+        verbose_name_plural = _("Registrations")
         constraints = [
             models.CheckConstraint(
                 condition=(
@@ -256,6 +264,8 @@ class RegistrationMember(models.Model):
     )
 
     class Meta:
+        verbose_name = _("Registration member")
+        verbose_name_plural = _("Registration members")
         constraints = [
             models.UniqueConstraint(fields=["registration", "user"], name="unique_registration_member")
         ]
@@ -302,7 +312,8 @@ class Match(TimeStampedModel):
 
     class Meta:
         ordering = ["round", "position"]
-        verbose_name_plural = _("matches")
+        verbose_name = _("Match")
+        verbose_name_plural = _("Matches")
         constraints = [
             models.UniqueConstraint(fields=["tournament", "round", "position"], name="unique_match_slot")
         ]
@@ -340,7 +351,8 @@ class PlayerStats(StatsBase):
 
     class Meta:
         ordering = ["-points", "-wins"]
-        verbose_name_plural = _("player stats")
+        verbose_name = _("Player stats")
+        verbose_name_plural = _("Player stats")
         constraints = [models.UniqueConstraint(fields=["user", "game", "season"], name="unique_player_stats")]
 
     def __str__(self) -> str:
@@ -352,7 +364,8 @@ class TeamStats(StatsBase):
 
     class Meta:
         ordering = ["-points", "-wins"]
-        verbose_name_plural = _("team stats")
+        verbose_name = _("Team stats")
+        verbose_name_plural = _("Team stats")
         constraints = [models.UniqueConstraint(fields=["team", "game", "season"], name="unique_team_stats")]
 
     def __str__(self) -> str:

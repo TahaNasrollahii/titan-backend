@@ -16,6 +16,10 @@ class Wallet(TimeStampedModel):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="wallet")
     balance = models.PositiveBigIntegerField(_("balance (toman)"), default=0)
 
+    class Meta:
+        verbose_name = _("Wallet")
+        verbose_name_plural = _("Wallets")
+
     def __str__(self) -> str:
         return f"{self.user} — {self.balance:,}"
 
@@ -39,6 +43,8 @@ class WalletTransaction(models.Model):
 
     class Meta:
         ordering = ["-created_at", "-id"]
+        verbose_name = _("Wallet transaction")
+        verbose_name_plural = _("Wallet transactions")
 
     def __str__(self) -> str:
         return f"{self.kind} {self.amount:+,}"
@@ -78,6 +84,8 @@ class Payment(TimeStampedModel):
     class Meta:
         ordering = ["-created_at"]
         indexes = [models.Index(fields=["purpose", "object_id"])]
+        verbose_name = _("Payment")
+        verbose_name_plural = _("Payments")
 
     def __str__(self) -> str:
         return f"#{self.pk} {self.purpose} {self.amount:,} ({self.status})"

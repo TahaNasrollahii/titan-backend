@@ -128,7 +128,7 @@ msgstr "پذیرفته شده"
 
 #: .\apps\accounts\models.py:163 .\apps\teams\models.py:101
 msgid "Declined"
-msgstr "رد شده"
+msgstr "رد‌شده"
 
 #: .\apps\accounts\serializers.py:128
 msgid "This game ID is already taken."
@@ -385,11 +385,11 @@ msgstr "سیستم"
 
 #: .\apps\notifications\models.py:9
 msgid "Tournament"
-msgstr "تورنمنت"
+msgstr "تورنومنت"
 
 #: .\apps\notifications\models.py:10 .\apps\teams\services.py:230
 msgid "Team invitation"
-msgstr "دعوت به تیم"
+msgstr "دعوت‌نامه تیمی"
 
 #: .\apps\notifications\models.py:11 .\apps\tournaments\models.py:46
 msgid "Team"
@@ -434,7 +434,7 @@ msgstr "در انتظار پرداخت"
 
 #: .\apps\orders\models.py:62 .\apps\payments\models.py:55
 msgid "Paid"
-msgstr "پرداخت شده"
+msgstr "پرداخت‌شده"
 
 #: .\apps\orders\models.py:63
 msgid "Processing"
@@ -443,13 +443,13 @@ msgstr "در حال پردازش"
 #: .\apps\orders\models.py:64 .\apps\tournaments\models.py:56
 #: .\apps\tournaments\models.py:66 .\apps\tournaments\models.py:259
 msgid "Completed"
-msgstr "تکمیل شده"
+msgstr "تکمیل‌شده"
 
 #: .\apps\orders\models.py:65 .\apps\payments\models.py:57
 #: .\apps\teams\models.py:102 .\apps\tournaments\models.py:57
 #: .\apps\tournaments\models.py:67 .\apps\tournaments\models.py:173
 msgid "Cancelled"
-msgstr "لغو شده"
+msgstr "لغو‌شده"
 
 #: .\apps\orders\models.py:66
 msgid "Payment failed"
@@ -457,7 +457,7 @@ msgstr "پرداخت ناموفق"
 
 #: .\apps\orders\models.py:67
 msgid "Refunded"
-msgstr "بازگشت وجه"
+msgstr "مسترد‌شده"
 
 #: .\apps\orders\models.py:78
 msgid "Sum of pre-discount prices."
@@ -607,7 +607,7 @@ msgstr "شارژ کیف پول"
 
 #: .\apps\payments\models.py:54
 msgid "Initiated"
-msgstr "ایجاد شده"
+msgstr "آغازشده"
 
 #: .\apps\payments\models.py:56
 msgid "Failed"
@@ -778,7 +778,7 @@ msgstr "براکت برای %(t)s ساخته شد."
 
 #: .\apps\tournaments\apps.py:8
 msgid "Tournaments"
-msgstr "تورنمنت‌ها"
+msgstr "تورنومنت‌ها"
 
 #: .\apps\tournaments\models.py:13
 msgid "Toman"
@@ -798,12 +798,12 @@ msgstr "حذفی تک‌مرحله‌ای"
 
 #: .\apps\tournaments\models.py:54 .\apps\tournaments\models.py:257
 msgid "Scheduled"
-msgstr "زمان‌بندی شده"
+msgstr "زمان‌بندی‌شده"
 
 #: .\apps\tournaments\models.py:55 .\apps\tournaments\models.py:65
 #: .\apps\tournaments\models.py:258
 msgid "Live"
-msgstr "در جریان"
+msgstr "در حال برگزاری"
 
 #: .\apps\tournaments\models.py:62
 msgid "Coming soon"
@@ -822,10 +822,6 @@ msgid "Players per team; 1 for solo."
 msgstr "تعداد بازیکنان هر تیم؛ برای تک‌نفره ۱."
 
 #: .\apps\tournaments\models.py:79
-msgid "e.g. \"5v5 — knockout\""
-msgstr "e.g. \"5v5 — knockout\""
-
-#: .\apps\tournaments\models.py:84
 msgid "entry fee (toman)"
 msgstr "هزینه ورود (تومان)"
 
@@ -839,7 +835,7 @@ msgstr "امتیاز رنک برای هر بازیکن در این جایگاه.
 
 #: .\apps\tournaments\models.py:171
 msgid "Confirmed"
-msgstr "تایید شده"
+msgstr "تأییدشده"
 
 #: .\apps\tournaments\models.py:172
 msgid "Withdrawn"
@@ -1014,8 +1010,7 @@ msgstr "مبلغ ثبت‌نام بازگردانده شد"
 #: .\apps\tournaments\services\registration.py:236
 #, python-format
 msgid "%(tournament)s filled up; your entry fee was refunded to your wallet."
-msgstr ""
-"ظرفیت %(tournament)s تکمیل شد و هزینه ورود به کیف پول شما بازگردانده شد."
+msgstr "ظرفیت %(tournament)s تکمیل شد؛ هزینه ورودی به کیف پول شما بازگردانده شد."
 
 #: .\apps\tournaments\services\results.py:99
 #: .\apps\tournaments\services\results.py:114
@@ -1092,7 +1087,7 @@ msgid "Store & esports back office"
 msgstr "سامانه مدیریت فروشگاه و مسابقات"
 
 msgid "Storefront"
-msgstr "فروشگاه"
+msgstr "فروشگاه اصلی"
 
 msgid "API documentation"
 msgstr "مستندات API"
@@ -1107,7 +1102,7 @@ msgid "Wallets"
 msgstr "کیف‌های پول"
 
 msgid "Wallet ledger"
-msgstr "تراکنش‌های کیف پول"
+msgstr "دفترکل کیف پول"
 
 msgid "Carts"
 msgstr "سبدهای خرید"
@@ -1131,7 +1126,7 @@ msgid "Reviews"
 msgstr "دیدگاه‌ها"
 
 msgid "Wishlists"
-msgstr "علاقه‌مندی‌ها"
+msgstr "لیست‌های علاقه‌مندی"
 
 msgid "Esports"
 msgstr "ورزش‌های الکترونیک"
@@ -1167,16 +1162,16 @@ msgid "Game accounts"
 msgstr "اکانت‌های بازی"
 
 msgid "Badges"
-msgstr "مدال‌ها و نشان‌ها"
+msgstr "مدال‌ها"
 
 msgid "Rank tiers"
-msgstr "سطوح رنک"
+msgstr "سطوح رتبه‌بندی"
 
 msgid "Content"
 msgstr "محتوا"
 
 msgid "Promos & banners"
-msgstr "تخفیف‌ها و بنرها"
+msgstr "پروموشن‌ها و بنرها"
 
 msgid "Announcements"
 msgstr "اطلاعیه‌ها"
@@ -1194,7 +1189,7 @@ msgid "Groups & roles"
 msgstr "گروه‌ها و دسترسی‌ها"
 
 msgid "OTP codes"
-msgstr "کدهای یکبار مصرف"
+msgstr "کدهای یک‌بار مصرف"
 
 msgid "Active sessions (tokens)"
 msgstr "نشست‌های فعال (توکن‌ها)"
@@ -1218,10 +1213,10 @@ msgid "New users · last 30 days"
 msgstr "کاربران جدید · ۳۰ روز اخیر"
 
 msgid "Orders to fulfil"
-msgstr "سفارش‌های آماده ارسال"
+msgstr "سفارش‌های نیازمند اقدام"
 
 msgid "Live tournaments"
-msgstr "تورنومنت‌های فعال"
+msgstr "تورنومنت‌های زنده"
 
 msgid "Live matches"
 msgstr "مسابقات زنده"
@@ -1233,10 +1228,10 @@ msgid "Reviews awaiting approval"
 msgstr "دیدگاه‌های در انتظار بررسی"
 
 msgid "Here is what is happening across the Titan store and tournaments."
-msgstr "گزارش جامع وضعیت فروشگاه و تورنومنت‌های تایتان."
+msgstr "گزارش وضعیت جاری فروشگاه و تورنومنت‌های تایتان."
 
 msgid "Welcome back, %(name)s"
-msgstr "%(name)s عزیز، به پنل مدیریت خوش آمدید"
+msgstr "خوش آمدید، %(name)s"
 
 msgid "Revenue"
 msgstr "درآمد"
@@ -1245,7 +1240,7 @@ msgid "Paid orders, last 14 days"
 msgstr "سفارش‌های پرداخت‌شده، ۱۴ روز گذشته"
 
 msgid "Wallet float"
-msgstr "موجودی در گردش کیف پول"
+msgstr "موجودی کل کیف‌های پول"
 
 msgid "Order statuses"
 msgstr "وضعیت سفارش‌ها"
@@ -1260,10 +1255,10 @@ msgid "No orders yet."
 msgstr "هنوز سفارشی ثبت نشده است."
 
 msgid "payments awaiting gateway"
-msgstr "پرداخت در انتظار درگاه"
+msgstr "پرداخت‌های در انتظار درگاه"
 
 msgid "hidden reviews"
-msgstr "دیدگاه مخفی"
+msgstr "دیدگاه‌های مخفی"
 
 msgid "Latest orders"
 msgstr "آخرین سفارش‌ها"
@@ -1287,19 +1282,19 @@ msgid "Upcoming & live tournaments"
 msgstr "تورنومنت‌های پیش‌رو و زنده"
 
 msgid "Registration fill rate"
-msgstr "درصد تکمیل ظرفیت ثبت‌نام"
+msgstr "میزان تکمیل ظرفیت ثبت‌نام"
 
 msgid "Entrants"
 msgstr "شرکت‌کنندگان"
 
 msgid "No scheduled tournaments."
-msgstr "تورنومنتی زمان‌بندی نشده است."
+msgstr "هیچ تورنومنت زمان‌بندی‌شده‌ای وجود ندارد."
 
 msgid "Top products"
-msgstr "کالاهای برتر"
+msgstr "محصولات پرفروش"
 
 msgid "By paid revenue"
-msgstr "بر اساس درآمد حاصله"
+msgstr "بر اساس درآمد پرداخت‌شده"
 
 msgid "Product"
 msgstr "محصول"
@@ -1317,13 +1312,13 @@ msgid "%(n)s units or fewer"
 msgstr "%(n)s عدد یا کمتر"
 
 msgid "Item"
-msgstr "کالا"
+msgstr "آیتم"
 
 msgid "In stock"
 msgstr "موجودی انبار"
 
 msgid "Everything is well stocked."
-msgstr "موجودی انبار در وضعیت مناسب است."
+msgstr "تمامی کالاها موجودی کافی دارند."
 
 msgid "Out-of-stock items"
 msgstr "کالاهای ناموجود"
@@ -1874,3 +1869,1032 @@ msgstr "توکن‌های فعال"
 
 msgid "Blacklisted tokens"
 msgstr "توکن‌های باطل‌شده"
+
+msgid "paid or processing"
+msgstr "پرداخت‌شده یا در حال پردازش"
+
+msgid "vs previous 30 days"
+msgstr "نسبت به ۳۰ روز قبل"
+
+msgid "New players · last 30 days"
+msgstr "بازیکنان جدید · ۳۰ روز اخیر"
+
+msgid "Revenue (toman)"
+msgstr "درآمد (تومان)"
+
+
+msgid "%(count)s matches live right now"
+msgstr "%(count)s مسابقه در حال برگزاری"
+
+msgid "1 match live right now"
+msgstr "۱ مسابقه در حال برگزاری"
+
+msgid "Add product"
+msgstr "افزودن محصول"
+
+msgid "New tournament"
+msgstr "تورنومنت جدید"
+
+msgid "New promo"
+msgstr "پروموشن جدید"
+
+msgid "Announcement"
+msgstr "اطلاعیه"
+
+msgid "Payments awaiting gateway"
+msgstr "پرداخت‌های در انتظار درگاه"
+
+msgid "Hidden reviews"
+msgstr "دیدگاه‌های مخفی"
+
+msgid "{{ n }} units or fewer"
+msgstr "{{ n }} عدد یا کمتر"
+
+msgid "Welcome back, {{ name }}"
+msgstr "خوش آمدید، {{ name }}"
+
+msgid "Open selection"
+msgstr "باز کردن مورد انتخاب‌شده"
+
+msgid "Open selection in new tab"
+msgstr "باز کردن مورد انتخاب‌شده در تب جدید"
+
+msgid "API Docs"
+msgstr "مستندات API"
+
+msgid "Active"
+msgstr "فعال"
+
+msgid "Hidden"
+msgstr "مخفی"
+
+msgid "Disabled"
+msgstr "غیرفعال"
+
+msgid "Ended"
+msgstr "پایان‌یافته"
+
+msgid "Expired"
+msgstr "منقضی‌شده"
+
+msgid "Verified"
+msgstr "تأییدشده"
+
+msgid "Read"
+msgstr "خوانده‌شده"
+
+msgid "Unread"
+msgstr "خوانده‌نشده"
+
+msgid "Used"
+msgstr "استفاده‌شده"
+
+msgid "Current"
+msgstr "جاری"
+
+msgid "Free"
+msgstr "رایگان"
+
+msgid "Unlimited"
+msgstr "نامحدود"
+
+msgid "Out of stock"
+msgstr "ناموجود"
+
+msgid "Best seller"
+msgstr "پرفروش‌ترین"
+
+msgid "Visible"
+msgstr "نمایان"
+
+msgid "Dissolved"
+msgstr "منحل‌شده"
+
+msgid "Debit (remove money)"
+msgstr "برداشت (کسر موجودی)"
+
+msgid "Credit (add money)"
+msgstr "واریز (افزایش موجودی)"
+
+msgid "Check-in"
+msgstr "اعلام حضور (Check-in)"
+
+msgid "Double elimination"
+msgstr "حذفی دو‌مرحله‌ای"
+
+msgid "Round robin"
+msgstr "دوره‌ای"
+
+msgid "Instant"
+msgstr "آنی"
+
+msgid "Manual"
+msgstr "دستی"
+
+msgid "Card to card"
+msgstr "کارت به کارت"
+
+msgid "Gateway"
+msgstr "درگاه بانکی"
+
+msgid "Blacklisted Token"
+msgstr "توکن مسدودشده"
+
+msgid "Blacklisted Tokens"
+msgstr "توکن‌های مسدودشده"
+
+msgid "Outstanding Token"
+msgstr "توکن فعال"
+
+msgid "Outstanding Tokens"
+msgstr "توکن‌های فعال"
+
+msgid "Token Blacklist"
+msgstr "لیست سیاه توکن‌ها"
+
+msgid "Otp codes"
+msgstr "کدهای یک‌بار مصرف"
+
+msgid "Promos"
+msgstr "پروموشن‌ها"
+
+msgid "Wallet transactions"
+msgstr "تراکنش‌های کیف پول"
+
+msgid "Wishlist items"
+msgstr "آیتم‌های علاقه‌مندی"
+
+msgid "Game account"
+msgstr "اکانت بازی"
+
+msgid "Review"
+msgstr "دیدگاه"
+
+msgid "Record"
+msgstr "رکورد"
+
+msgid "Administration"
+msgstr "مدیریت"
+
+msgid "accent color"
+msgstr "رنگ تأکیدی"
+
+msgid "accent gradient"
+msgstr "گرادیان تأکیدی"
+
+msgid "action label"
+msgstr "متن دکمه عملیات"
+
+msgid "alt"
+msgstr "متن جایگزین (Alt)"
+
+msgid "amount"
+msgstr "مبلغ"
+
+msgid "app label"
+msgstr "برچسب برنامه"
+
+msgid "attempts"
+msgstr "تعداد تلاش‌ها"
+
+msgid "author"
+msgstr "نویسنده"
+
+msgid "authority"
+msgstr "شناسه مرجع (Authority)"
+
+msgid "avatar"
+msgstr "آواتار"
+
+msgid "avatar seed"
+msgstr "سید آواتار"
+
+msgid "awarded"
+msgstr "اعطاشده"
+
+msgid "awarded at"
+msgstr "تاریخ اعطا"
+
+msgid "background gradient"
+msgstr "گرادیان پس‌زمینه"
+
+msgid "background image"
+msgstr "تصویر پس‌زمینه"
+
+msgid "balance"
+msgstr "موجودی"
+
+msgid "balance after"
+msgstr "موجودی پس از تراکنش"
+
+msgid "best of"
+msgstr "بهترین از (Best of)"
+
+msgid "blacklisted at"
+msgstr "تاریخ مسدودسازی"
+
+msgid "body"
+msgstr "متن اصلی"
+
+msgid "card pan"
+msgstr "شماره کارت (ماسک‌شده)"
+
+msgid "category"
+msgstr "دسته‌بندی"
+
+msgid "channel"
+msgstr "کانال ارتباطی"
+
+msgid "character image"
+msgstr "تصویر کاراکتر"
+
+msgid "code hash"
+msgstr "هش کد"
+
+msgid "color from"
+msgstr "رنگ شروع"
+
+msgid "color to"
+msgstr "رنگ پایان"
+
+msgid "colours"
+msgstr "رنگ‌ها"
+
+msgid "comment"
+msgstr "دیدگاه"
+
+msgid "completed at"
+msgstr "تاریخ تکمیل"
+
+msgid "confirmed at"
+msgstr "تاریخ تأیید"
+
+msgid "cover image"
+msgstr "تصویر کاور"
+
+msgid "created at"
+msgstr "تاریخ ایجاد"
+
+msgid "created by"
+msgstr "ایجادشده توسط"
+
+msgid "current"
+msgstr "جاری"
+
+msgid "current game"
+msgstr "بازی جاری"
+
+msgid "customer"
+msgstr "مشتری"
+
+msgid "data"
+msgstr "داده‌ها"
+
+msgid "date joined"
+msgstr "تاریخ عضویت"
+
+msgid "delivered at"
+msgstr "تاریخ تحویل"
+
+msgid "delivered code"
+msgstr "کد تحویل داده شده"
+
+msgid "delivery info"
+msgstr "اطلاعات تحویل"
+
+msgid "delivery type"
+msgstr "نوع تحویل"
+
+msgid "description"
+msgstr "توضیحات"
+
+msgid "discount"
+msgstr "تخفیف"
+
+msgid "discount label"
+msgstr "برچسب تخفیف"
+
+msgid "dissolved at"
+msgstr "تاریخ انحلال"
+
+msgid "earnings irt"
+msgstr "درآمد به تومان"
+
+msgid "earnings usd"
+msgstr "درآمد به دلار"
+
+msgid "ends at"
+msgstr "تاریخ پایان"
+
+msgid "entrant"
+msgstr "شرکت‌کننده"
+
+msgid "entrants"
+msgstr "شرکت‌کنندگان"
+
+msgid "entry fee original"
+msgstr "ورودی اولیه"
+
+msgid "entry fee paid"
+msgstr "ورودی پرداخت‌شده"
+
+msgid "expires at"
+msgstr "تاریخ انقضا"
+
+msgid "favorite game"
+msgstr "بازی موردعلاقه"
+
+msgid "features"
+msgstr "ویژگی‌ها"
+
+msgid "fee paid"
+msgstr "کارمزد پرداخت‌شده"
+
+msgid "final placement"
+msgstr "جایگاه نهایی"
+
+msgid "format"
+msgstr "فرمت"
+
+msgid "format label"
+msgstr "عنوان فرمت"
+
+msgid "from user"
+msgstr "از کاربر"
+
+msgid "game account title"
+msgstr "عنوان اکانت بازی"
+
+msgid "game account username"
+msgstr "نام کاربری اکانت بازی"
+
+msgid "gateway"
+msgstr "درگاه پرداخت"
+
+msgid "gateway response"
+msgstr "پاسخ درگاه"
+
+msgid "genre"
+msgstr "سبک"
+
+msgid "glow"
+msgstr "درخشش (Glow)"
+
+msgid "has variants"
+msgstr "دارای تنوع محصول"
+
+msgid "icon"
+msgstr "آیکون"
+
+msgid "icon image"
+msgstr "تصویر آیکون"
+
+msgid "id"
+msgstr "شناسه"
+
+msgid "image"
+msgstr "تصویر"
+
+msgid "invite code"
+msgstr "کد دعوت"
+
+msgid "invited by"
+msgstr "دعوت‌شده توسط"
+
+msgid "invited user"
+msgstr "کاربر دعوت‌شده"
+
+msgid "is active"
+msgstr "فعال"
+
+msgid "is approved"
+msgstr "تأییدشده"
+
+msgid "is bestseller"
+msgstr "پرفروش"
+
+msgid "is current"
+msgstr "جاری"
+
+msgid "is featured"
+msgstr "ویژه"
+
+msgid "is new"
+msgstr "جدید"
+
+msgid "is online"
+msgstr "آنلاین"
+
+msgid "is primary"
+msgstr "اصلی"
+
+msgid "is read"
+msgstr "خوانده‌شده"
+
+msgid "is staff"
+msgstr "دسترسی پرسنل"
+
+msgid "items"
+msgstr "آیتم‌ها"
+
+msgid "items — enter redeem codes here before marking the order delivered"
+msgstr "آیتم‌ها — پیش از تغییر وضعیت به تحویل‌شده، کدهای فعال‌سازی را اینجا وارد کنید"
+
+msgid "joined at"
+msgstr "تاریخ پیوستن"
+
+msgid "jti"
+msgstr "شناسه توکن (JTI)"
+
+msgid "key"
+msgstr "کلید"
+
+msgid "kind"
+msgstr "نوع"
+
+msgid "label"
+msgstr "عنوان"
+
+msgid "last seen"
+msgstr "آخرین بازدید"
+
+msgid "layout"
+msgstr "چیدمان"
+
+msgid "level"
+msgstr "سطح"
+
+msgid "line total"
+msgstr "مجموع سطر"
+
+msgid "lines"
+msgstr "ردیف‌ها"
+
+msgid "link"
+msgstr "لینک"
+
+msgid "lobby code"
+msgstr "کد لابی"
+
+msgid "logo"
+msgstr "لوگو"
+
+msgid "logo image"
+msgstr "تصویر لوگو"
+
+msgid "losses"
+msgstr "باخت‌ها"
+
+msgid "matches played"
+msgstr "مسابقات انجام‌شده"
+
+msgid "max participants"
+msgstr "حداکثر شرکت‌کنندگان"
+
+msgid "members"
+msgstr "اعضا"
+
+msgid "min points"
+msgstr "حداقل امتیاز"
+
+msgid "next match"
+msgstr "مسابقه بعدی"
+
+msgid "next slot"
+msgstr "اسلات بعدی"
+
+msgid "number"
+msgstr "شماره"
+
+msgid "object id"
+msgstr "شناسه شیء"
+
+msgid "on storefront"
+msgstr "در فروشگاه"
+
+msgid "option"
+msgstr "گزینه"
+
+msgid "options (price points)"
+msgstr "گزینه‌ها (قیمت‌ها)"
+
+msgid "original price"
+msgstr "قیمت اصلی"
+
+msgid "ornament"
+msgstr "تزیین"
+
+msgid "owner"
+msgstr "مالک"
+
+msgid "paid at"
+msgstr "تاریخ پرداخت"
+
+msgid "participant a"
+msgstr "شرکت‌کننده الف"
+
+msgid "participant b"
+msgstr "شرکت‌کننده ب"
+
+msgid "payment method"
+msgstr "روش پرداخت"
+
+msgid "phone"
+msgstr "شماره تماس"
+
+msgid "place"
+msgstr "مقام"
+
+msgid "placement"
+msgstr "رتبه"
+
+msgid "player"
+msgstr "بازیکن"
+
+msgid "points"
+msgstr "امتیاز"
+
+msgid "popularity"
+msgstr "محبوبیت"
+
+msgid "position"
+msgstr "موقعیت"
+
+msgid "presence"
+msgstr "وضعیت حضور"
+
+msgid "presence status"
+msgstr "وضعیت آنلاین بودن"
+
+msgid "price"
+msgstr "قیمت"
+
+msgid "price max"
+msgstr "حداکثر قیمت"
+
+msgid "prize currency"
+msgstr "واحد جایزه"
+
+msgid "prize pool"
+msgstr "مجموع جوایز"
+
+msgid "purchase"
+msgstr "خرید"
+
+msgid "purpose"
+msgstr "هدف / کاربرد"
+
+msgid "quantity"
+msgstr "تعداد"
+
+msgid "rank"
+msgstr "رتبه"
+
+msgid "rating"
+msgstr "امتیاز"
+
+msgid "rating avg"
+msgstr "میانگین امتیاز"
+
+msgid "read"
+msgstr "خوانده‌شده"
+
+msgid "ref id"
+msgstr "کد پیگیری"
+
+msgid "reference"
+msgstr "مرجع"
+
+msgid "region"
+msgstr "منطقه"
+
+msgid "registered by"
+msgstr "ثبت‌نام شده توسط"
+
+msgid "registration closes at"
+msgstr "پایان مهلت ثبت‌نام"
+
+msgid "registration opens at"
+msgstr "آغاز مهلت ثبت‌نام"
+
+msgid "review count"
+msgstr "تعداد دیدگاه‌ها"
+
+msgid "role"
+msgstr "نقش"
+
+msgid "round"
+msgstr "دور"
+
+msgid "rules"
+msgstr "قوانین"
+
+msgid "scheduled at"
+msgstr "زمان‌بندی‌شده در"
+
+msgid "score"
+msgstr "امتیاز"
+
+msgid "score a"
+msgstr "امتیاز الف"
+
+msgid "score b"
+msgstr "امتیاز ب"
+
+msgid "seed"
+msgstr "سید"
+
+msgid "side A"
+msgstr "طرف الف"
+
+msgid "side B"
+msgstr "طرف ب"
+
+msgid "side a"
+msgstr "طرف الف"
+
+msgid "side b"
+msgstr "طرف ب"
+
+msgid "slug"
+msgstr "نامک (Slug)"
+
+msgid "sort order"
+msgstr "ترتیب نمایش"
+
+msgid "specs"
+msgstr "مشخصات"
+
+msgid "staff note"
+msgstr "یادداشت پرسنل"
+
+msgid "starts at"
+msgstr "تاریخ شروع"
+
+msgid "state"
+msgstr "وضعیت"
+
+msgid "status"
+msgstr "وضعیت"
+
+msgid "stock"
+msgstr "موجودی"
+
+msgid "stream url"
+msgstr "لینک استریم"
+
+msgid "subtitle"
+msgstr "زیرعنوان"
+
+msgid "subtotal"
+msgstr "جمع جزء"
+
+msgid "tags"
+msgstr "برچسب‌ها"
+
+msgid "team size"
+msgstr "اندازه تیم"
+
+msgid "text"
+msgstr "متن"
+
+msgid "to user"
+msgstr "به کاربر"
+
+msgid "token"
+msgstr "توکن"
+
+msgid "total"
+msgstr "مجموع"
+
+msgid "tournaments played"
+msgstr "تورنومنت‌های بازی‌شده"
+
+msgid "tournaments won"
+msgstr "تورنومنت‌های برده‌شده"
+
+msgid "unit original price"
+msgstr "قیمت اصلی هر واحد"
+
+msgid "unit price"
+msgstr "قیمت هر واحد"
+
+msgid "units"
+msgstr "تعداد واحدها"
+
+msgid "updated at"
+msgstr "تاریخ به‌روزرسانی"
+
+msgid "url"
+msgstr "آدرس اینترنتی (URL)"
+
+msgid "used at"
+msgstr "تاریخ استفاده"
+
+msgid "value"
+msgstr "مقدار"
+
+msgid "variant"
+msgstr "تنوع"
+
+msgid "variant label"
+msgstr "عنوان تنوع"
+
+msgid "verified purchase"
+msgstr "خرید تأییدشده"
+
+msgid "viewer count"
+msgstr "تعداد بینندگان"
+
+msgid "win rate"
+msgstr "درصد برد"
+
+msgid "winner"
+msgstr "برنده"
+
+msgid "wins"
+msgstr "بردها"
+
+msgid "xp"
+msgstr "امتیاز تجربه (XP)"
+
+msgid "Activate selected products"
+msgstr "فعال‌سازی محصولات انتخاب‌شده"
+
+msgid "Deactivate selected products"
+msgstr "غیرفعال‌سازی محصولات انتخاب‌شده"
+
+msgid "Approve selected reviews"
+msgstr "تأیید دیدگاه‌های انتخاب‌شده"
+
+msgid "Hide selected reviews"
+msgstr "مخفی‌سازی دیدگاه‌های انتخاب‌شده"
+
+msgid "Start processing"
+msgstr "آغاز پردازش سفارش"
+
+msgid "Mark as delivered"
+msgstr "علامت‌گذاری به عنوان تحویل داده شده"
+
+msgid "Toggle best-seller badge"
+msgstr "تغییر نشان پرفروش‌ترین"
+
+msgid "Adjust balance"
+msgstr "تنظیم موجودی"
+
+msgid "Adjust wallet balance"
+msgstr "تنظیم موجودی کیف پول"
+
+msgid "Apply adjustment"
+msgstr "اعمال تغییر موجودی"
+
+msgid "Broadcast"
+msgstr "ارسال همگانی"
+
+msgid "Broadcast a notification"
+msgstr "ارسال اعلان همگانی"
+
+msgid "Broadcast to all players"
+msgstr "ارسال اعلان به تمام بازیکنان"
+
+msgid "Generate bracket & start"
+msgstr "تولید جدول مسابقات و شروع"
+
+msgid "Mark as read"
+msgstr "علامت‌گذاری به عنوان خوانده‌شده"
+
+
+
+
+msgid "%(number)s delivered."
+msgstr "%(number)s تحویل داده شد."
+
+msgid "Order marked as processing."
+msgstr "سفارش در وضعیت در حال پردازش قرار گرفت."
+
+msgid "Wallet adjusted."
+msgstr "موجودی کیف پول با موفقیت به‌روزرسانی شد."
+
+
+msgid "Creates a manual adjustment entry in the wallet ledger."
+msgstr "یک ردیف تراکنش دستی در دفترکل کیف پول ایجاد می‌کند."
+
+msgid "Entering both scores completes the match and advances the winner."
+msgstr "ورود هر دو امتیاز مسابقه را تکمیل کرده و برنده را به دور بعد منتقل می‌کند."
+
+msgid "Only paid orders can move to processing."
+msgstr "فقط سفارش‌های پرداخت‌شده می‌توانند به وضعیت در حال پردازش بروند."
+
+msgid "Round %(round)s · match %(n)s"
+msgstr "دور %(round)s · مسابقه %(n)s"
+
+msgid "Sends a system notification to every active player."
+msgstr "یک اعلان سیستمی به تمام بازیکنان فعال ارسال می‌کند."
+
+msgid "Shown to the player in their wallet history."
+msgstr "در تاریخچه کیف پول بازیکن نمایش داده می‌شود."
+
+msgid "View on storefront"
+msgstr "مشاهده در فروشگاه"
+
+msgid "Fees & prizes"
+msgstr "هزینه‌ها و جوایز"
+
+msgid "Pricing & stock"
+msgstr "قیمت‌گذاری و موجودی"
+
+msgid "Merchandising"
+msgstr "بازاریابی و فروش"
+
+msgid "Show / hide"
+msgstr "نمایش / مخفی‌سازی"
+
+msgid "Artwork"
+msgstr "تصاویر و طرح‌ها"
+
+msgid "Lobby"
+msgstr "لابی"
+
+msgid "Timeline"
+msgstr "خط زمانی"
+
+msgid "W–L"
+msgstr "برد-باخت"
+
+msgid "Amounts"
+msgstr "مبالغ"
+
+msgid "Amount (toman)"
+msgstr "مبلغ (تومان)"
+
+msgid "Delivery"
+msgstr "تحویل"
+
+msgid "Direction"
+msgstr "جهت"
+
+msgid "Target"
+msgstr "هدف"
+
+msgid "Visibility"
+msgstr "وضعیت نمایش"
+
+msgid "Staff"
+msgstr "پرسنل"
+
+msgid "Superuser"
+msgstr "مدیر ارشد"
+
+msgid "Send"
+msgstr "ارسال"
+
+msgid "Message"
+msgstr "پیام"
+
+msgid "Title"
+msgstr "عنوان"
+
+msgid "Offer"
+msgstr "پیشنهاد ویژه"
+
+msgid "New"
+msgstr "جدید"
+
+msgid "Accent"
+msgstr "رنگ تأکیدی"
+
+msgid "Reason"
+msgstr "علت"
+
+msgid "Rules"
+msgstr "قوانین"
+
+msgid "Schedule"
+msgstr "زمان‌بندی"
+
+msgid "Result"
+msgstr "نتیجه"
+
+msgid "Format"
+msgstr "فرمت"
+
+msgid "OTP code"
+msgstr "کد یک‌بار مصرف"
+
+msgid "Friendship"
+msgstr "دوستی"
+
+msgid "Rank tier"
+msgstr "سطح رتبه‌بندی"
+
+msgid "Badge"
+msgstr "مدال"
+
+msgid "User badge"
+msgstr "مدال کاربر"
+
+msgid "User badges"
+msgstr "مدال‌های کاربر"
+
+msgid "Platform"
+msgstr "پلتفرم"
+
+msgid "Category"
+msgstr "دسته‌بندی"
+
+msgid "Product variant"
+msgstr "تنوع محصول"
+
+msgid "Product variants"
+msgstr "تنوع‌های محصول"
+
+msgid "Product image"
+msgstr "تصویر محصول"
+
+msgid "Product images"
+msgstr "تصاویر محصول"
+
+msgid "Wishlist item"
+msgstr "آیتم علاقه‌مندی"
+
+msgid "Wallet transaction"
+msgstr "تراکنش کیف پول"
+
+msgid "Cart"
+msgstr "سبد خرید"
+
+msgid "Cart item"
+msgstr "آیتم سبد خرید"
+
+msgid "Cart items"
+msgstr "آیتم‌های سبد خرید"
+
+msgid "Order item"
+msgstr "آیتم سفارش"
+
+msgid "Order items"
+msgstr "آیتم‌های سفارش"
+
+msgid "Team membership"
+msgstr "عضویت تیم"
+
+msgid "Team memberships"
+msgstr "عضویت‌های تیم"
+
+msgid "Season"
+msgstr "فصل"
+
+msgid "Tournament prize"
+msgstr "جایزه تورنومنت"
+
+msgid "Tournament prizes"
+msgstr "جوایز تورنومنت"
+
+msgid "Registration"
+msgstr "ثبت‌نام"
+
+msgid "Registration member"
+msgstr "عضو ثبت‌نام"
+
+msgid "Registration members"
+msgstr "اعضای ثبت‌نام"
+
+msgid "Match"
+msgstr "مسابقه"
+
+msgid "Notification"
+msgstr "اعلان"
+
+msgid "Promo"
+msgstr "پروموشن"
+
+msgid "Contact channel"
+msgstr "راه ارتباطی"
+
+msgid "Site setting"
+msgstr "تنظیم سایت"
+
+msgid "%(count)s match live right now"
+msgid_plural "%(count)s matches live right now"
+msgstr[0] "%(count)s مسابقه در حال برگزاری"
+msgstr[1] "%(count)s مسابقه در حال برگزاری"
+
+msgid "%(count)d notification(s) marked as read."
+msgid_plural "%(count)d notification(s) marked as read."
+msgstr[0] "%(count)d اعلان به عنوان خوانده‌شده علامت‌گذاری شد."
+msgstr[1] "%(count)d اعلان به عنوان خوانده‌شده علامت‌گذاری شد."
+
+msgid "%(count)d product(s) activated."
+msgid_plural "%(count)d product(s) activated."
+msgstr[0] "%(count)d محصول فعال شد."
+msgstr[1] "%(count)d محصول فعال شد."
+
+msgid "%(count)d product(s) hidden from the store."
+msgid_plural "%(count)d product(s) hidden from the store."
+msgstr[0] "%(count)d محصول در فروشگاه مخفی شد."
+msgstr[1] "%(count)d محصول در فروشگاه مخفی شد."
+
+msgid "Sent to %(count)d player(s)."
+msgid_plural "Sent to %(count)d player(s)."
+msgstr[0] "به %(count)d بازیکن ارسال شد."
+msgstr[1] "به %(count)d بازیکن ارسال شد."

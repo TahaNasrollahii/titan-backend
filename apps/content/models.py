@@ -56,6 +56,8 @@ class Promo(TimeStampedModel):
 
     class Meta:
         ordering = ["placement", "sort_order", "-created_at"]
+        verbose_name = _("Promo")
+        verbose_name_plural = _("Promos")
 
     def __str__(self) -> str:
         return f"[{self.placement}] {self.title}"
@@ -77,6 +79,8 @@ class Announcement(TimeStampedModel):
 
     class Meta:
         ordering = ["sort_order", "-created_at"]
+        verbose_name = _("Announcement")
+        verbose_name_plural = _("Announcements")
 
     def __str__(self) -> str:
         return self.title
@@ -104,6 +108,8 @@ class ContactChannel(models.Model):
 
     class Meta:
         ordering = ["sort_order", "id"]
+        verbose_name = _("Contact channel")
+        verbose_name_plural = _("Contact channels")
 
     def __str__(self) -> str:
         return self.title
@@ -118,6 +124,8 @@ class SiteSetting(models.Model):
 
     class Meta:
         ordering = ["key"]
+        verbose_name = _("Site setting")
+        verbose_name_plural = _("Site settings")
 
     def __str__(self) -> str:
         return self.key

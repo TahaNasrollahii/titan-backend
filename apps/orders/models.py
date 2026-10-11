@@ -14,6 +14,10 @@ MAX_QUANTITY_PER_LINE = 20
 class Cart(TimeStampedModel):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="cart")
 
+    class Meta:
+        verbose_name = _("Cart")
+        verbose_name_plural = _("Carts")
+
     def __str__(self) -> str:
         return f"Cart of {self.user}"
 
@@ -30,6 +34,8 @@ class CartItem(TimeStampedModel):
 
     class Meta:
         ordering = ["created_at", "id"]
+        verbose_name = _("Cart item")
+        verbose_name_plural = _("Cart items")
         constraints = [
             models.UniqueConstraint(fields=["cart", "product", "variant"], name="unique_cart_line"),
             models.UniqueConstraint(
@@ -92,6 +98,8 @@ class Order(TimeStampedModel):
     class Meta:
         ordering = ["-created_at"]
         indexes = [models.Index(fields=["user", "-created_at"])]
+        verbose_name = _("Order")
+        verbose_name_plural = _("Orders")
 
     def __str__(self) -> str:
         return self.number
@@ -122,6 +130,8 @@ class OrderItem(models.Model):
 
     class Meta:
         ordering = ["id"]
+        verbose_name = _("Order item")
+        verbose_name_plural = _("Order items")
 
     def __str__(self) -> str:
         return f"{self.quantity} x {self.title}"

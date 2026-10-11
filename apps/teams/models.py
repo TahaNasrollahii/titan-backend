@@ -42,6 +42,8 @@ class Team(TimeStampedModel):
 
     class Meta:
         ordering = ["name"]
+        verbose_name = _("Team")
+        verbose_name_plural = _("Teams")
         constraints = [
             models.UniqueConstraint(
                 Lower("name"), condition=Q(dissolved_at__isnull=True), name="unique_active_team_name"
@@ -75,6 +77,8 @@ class TeamMembership(models.Model):
 
     class Meta:
         ordering = ["joined_at"]
+        verbose_name = _("Team membership")
+        verbose_name_plural = _("Team memberships")
         constraints = [
             models.UniqueConstraint(fields=["team", "user"], name="unique_team_member"),
             models.UniqueConstraint(
@@ -102,6 +106,8 @@ class TeamInvitation(TimeStampedModel):
 
     class Meta:
         ordering = ["-created_at"]
+        verbose_name = _("Team invitation")
+        verbose_name_plural = _("Team invitations")
         constraints = [
             models.UniqueConstraint(
                 fields=["team", "invited_user"],
