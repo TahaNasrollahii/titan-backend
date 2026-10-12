@@ -13,8 +13,10 @@ def _isolated_media(settings, tmp_path):
 @pytest.fixture(autouse=True)
 def _clean_sms_outbox():
     InMemorySMSBackend.outbox.clear()
+    InMemorySMSBackend.notices.clear()
     yield
     InMemorySMSBackend.outbox.clear()
+    InMemorySMSBackend.notices.clear()
 
 
 @pytest.fixture(autouse=True)

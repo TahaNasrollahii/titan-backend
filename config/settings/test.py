@@ -25,6 +25,8 @@ ZARINPAL_SANDBOX = True
 
 REST_FRAMEWORK = {
     **REST_FRAMEWORK,
-    "DEFAULT_THROTTLE_RATES": {"anon": "10000/min", "user": "10000/min", "otp_ip": "10000/min"},
+    "DEFAULT_THROTTLE_RATES": {
+        **dict.fromkeys(REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"], "10000/min"),
+    },
 }
 LOGGING = {"version": 1, "disable_existing_loggers": False, "root": {"level": "CRITICAL"}}

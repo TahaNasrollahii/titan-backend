@@ -17,6 +17,13 @@ def _can_view(app_label: str, model: str):
     return lambda request: request.user.has_perm(f"{app_label}.view_{model}")
 
 
+def _desk_url(request) -> str:
+    """The live-chat desk lives on the storefront (``/desk``)."""
+    from django.conf import settings
+
+    return f"{settings.FRONTEND_URL}/desk"
+
+
 def _item(title, icon: str, app_label: str, model: str, badge: str | None = None) -> dict:
     item = {
         "title": title,
@@ -134,6 +141,23 @@ UNFOLD = {
                     _item(_("Platforms"), "devices", "catalog", "platform"),
                     _item(_("Reviews"), "reviews", "catalog", "review", f"{CALLBACKS}.hidden_reviews_badge"),
                     _item(_("Wishlists"), "favorite", "catalog", "wishlistitem"),
+                ],
+            },
+            {
+                "title": _("Support"),
+                "separator": True,
+                "collapsible": True,
+                "items": [
+                    {
+                        "title": _("Live chat desk"),
+                        "icon": "support_agent",
+                        "link": _desk_url,
+                        "badge": f"{CALLBACKS}.waiting_chats_badge",
+                        "permission": lambda request: request.user.is_staff,
+                    },
+                    _item(_("Conversations"), "forum", "support", "conversation"),
+                    _item(_("Canned replies"), "quickreply", "support", "cannedreply"),
+                    _item(_("Support agents"), "badge", "support", "supportagent"),
                 ],
             },
             {

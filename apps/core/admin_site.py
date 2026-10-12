@@ -16,6 +16,7 @@ from apps.accounts.models import User
 from apps.catalog.models import Product, ProductVariant, Review
 from apps.orders.models import Order, OrderItem
 from apps.payments.models import Payment, Wallet
+from apps.support.models import Conversation
 from apps.tournaments.models import Match, Registration, Tournament
 
 from .admin import toman
@@ -56,6 +57,13 @@ def live_matches_badge(request):
 
 def hidden_reviews_badge(request):
     return Review.objects.filter(is_approved=False).count() or None
+
+
+def waiting_chats_badge(request):
+    return (
+        Conversation.objects.filter(status=Conversation.Status.OPEN, awaiting_since__isnull=False).count()
+        or None
+    )
 
 
 # ------------------------------------------------------------------ dashboard

@@ -104,6 +104,7 @@ apps/
   tournaments/     seasons, tournaments, registration, bracket engine, results, stats, leaderboards
   notifications/   per-user notifications
   content/         promos/banners, announcements, contact channels, site settings
+  support/         live chat: visitor conversations, the staff desk, canned replies, SMS alerts
 ```
 
 ### Layering
@@ -188,6 +189,22 @@ Price sorting and the `price_min`/`price_max` filters use the starting price.
    - champions get a badge
    - per-season player and team stats update the leaderboards
 
+**Live support chat:**
+1. The widget (bottom-right of every page) asks for first name, last name and mobile number, then
+   `POST support/chat/start/` returns a `token`. Every other visitor call sends it as `X-Support-Token`.
+   Logged-in visitors are linked to their account; the token, not the login, identifies the chat.
+2. Both sides poll one endpoint with a cursor: visitors `GET support/chat/sync/?after=<last id>`, staff
+   `GET support/desk/sync/?conversation=<id>&after=<last id>`. Polling works on Vercel's serverless functions;
+   the payloads are shaped so a WebSocket push can replace polling later without changing the clients' state.
+3. Every message carries a client-generated `clientId` (UUID). Re-sending it returns the stored message (200)
+   instead of creating a duplicate, so clients can retry freely after a dropped connection.
+4. An agent's first reply claims an unassigned conversation and posts "<name> joined the conversation".
+   Agents can also claim, transfer, return to the queue, close, and add internal notes visitors never see.
+5. Agents are online while their availability switch is on and the desk is open (150 s grace for background
+   tabs). When a visitor writes and nobody is online, opted-in agents get one SMS per conversation (10-minute
+   cooldown per agent). When an agent answers a visitor who has left the page, the visitor gets an SMS.
+6. After closing, the visitor can rate the conversation 1–5 with an optional comment.
+
 **Presence:** the client calls `POST me/heartbeat {status: online|away|in_game, game?}` about every 60
 seconds. Users go `offline` after 2 minutes of silence.
 
@@ -215,6 +232,8 @@ seconds. Users go `offline` after 2 minutes of silence.
 | Leaderboards | `GET leaderboards/players/?game=&season=` · `GET leaderboards/teams/?game=&season=` |
 | Notifications | `GET notifications/?unread=1` · `GET notifications/unread-count/` · `POST notifications/{id}/read/` · `POST notifications/read-all/` · `DELETE notifications/{id}/` |
 | Content | `GET content/promos/?placement=` · `GET content/announcements/` · `GET content/contact/` |
+| Live chat (visitor) | `GET support/status/` · `POST support/chat/start/` · `GET support/chat/sync/?after=` · `POST support/chat/messages/` (JSON or multipart image) · `POST support/chat/read/` · `POST support/chat/typing/` · `POST support/chat/close/` · `POST support/chat/rate/` |
+| Live chat (staff) | `GET support/desk/sync/?conversation=&after=` · `GET support/desk/conversations/?status=&mine=&search=` · `POST support/desk/conversations/{id}/messages/` (`internal: true` for notes) · `…/assign/` · `…/close/` · `…/read/` · `…/typing/` · `GET/PATCH support/desk/me/` · `GET support/desk/agents/` · `GET/POST support/desk/canned-replies/` · `PATCH/DELETE support/desk/canned-replies/{id}/` |
 | Aggregates | `GET home/` · `GET search/?q=` |
 
 Useful filters:
@@ -267,6 +286,9 @@ See `titan-front/README.md` for how the client is organised.
   - Required env vars: `SECRET_KEY`, `FIELD_ENCRYPTION_KEY`, `ALLOWED_HOSTS`, `DATABASE_URL`,
     `FRONTEND_URL`, `CORS_ALLOWED_ORIGINS`, `ZARINPAL_MERCHANT_ID`, `PAYMENT_CALLBACK_URL`.
   - Also set `SMS_BACKEND=apps.accounts.sms.KavenegarSMSBackend` and `KAVENEGAR_API_KEY`.
+  - Live chat SMS uses two Kavenegar templates with one token (the ticket, e.g. `T-1042`):
+    `KAVENEGAR_SUPPORT_ALERT_TEMPLATE` (to agents: a visitor is waiting) and
+    `KAVENEGAR_SUPPORT_REPLY_TEMPLATE` (to visitors: support answered).
   - Set `ZARINPAL_SANDBOX=False`.
 - **Image:** `docker build -t titan-api .` builds a multi-stage, non-root image. It runs gunicorn,
   serves static files through WhiteNoise, and has a healthcheck on `/api/health/`.
@@ -338,3 +360,6 @@ light and dark modes. The public API stays Persian; `AdminEnglishMiddleware` swi
     services.
   - The full ledger is under *Wallet ledger*.
 - **Notifications:** **"Broadcast to all players"** sends a system notification to every active player.
+- **Live chat:** agents answer on the storefront at `/desk` (staff only; *Support → Live chat desk* in the sidebar,
+  with a badge for conversations waiting for a reply). The admin keeps the conversation history with messages,
+  agent profiles (public name, SMS alerts) and canned replies.

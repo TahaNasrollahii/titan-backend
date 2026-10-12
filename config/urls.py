@@ -16,6 +16,7 @@ api_v1 = [
     path("", include("apps.teams.urls")),
     path("", include("apps.tournaments.urls")),
     path("", include("apps.content.urls")),
+    path("", include("apps.support.urls")),
     path("", include("apps.core.urls")),
 ]
 

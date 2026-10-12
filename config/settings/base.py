@@ -4,6 +4,7 @@ from datetime import timedelta
 from pathlib import Path
 
 import environ
+from corsheaders.defaults import default_headers
 
 from config.lazy import gettext_lazy as _
 
@@ -48,6 +49,7 @@ LOCAL_APPS = [
     "apps.tournaments",
     "apps.notifications",
     "apps.content",
+    "apps.support",
 ]
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
@@ -138,6 +140,10 @@ REST_FRAMEWORK = {
         "anon": env("THROTTLE_ANON", default="120/min"),
         "user": env("THROTTLE_USER", default="600/min"),
         "otp_ip": env("THROTTLE_OTP_IP", default="20/hour"),
+        # Live chat. Visitors are keyed by their chat token, not IP: mobile carriers share IPs widely.
+        "support_start": env("THROTTLE_SUPPORT_START", default="30/hour"),
+        "support_poll": env("THROTTLE_SUPPORT_POLL", default="180/min"),
+        "support_send": env("THROTTLE_SUPPORT_SEND", default="40/min"),
     },
 }
 
@@ -171,6 +177,8 @@ SPECTACULAR_SETTINGS = {
         "MatchStatusEnum": "apps.tournaments.models.Match.Status",
         "InvitationStatusEnum": "apps.teams.models.TeamInvitation.Status",
         "FriendshipStatusEnum": "apps.accounts.models.Friendship.Status",
+        "ConversationStatusEnum": "apps.support.models.Conversation.Status",
+        "SupportMessageKindEnum": "apps.support.models.Message.Kind",
     },
 }
 
@@ -178,6 +186,8 @@ SPECTACULAR_SETTINGS = {
 FRONTEND_URL = env("FRONTEND_URL", default="http://localhost:3000").rstrip("/")
 CORS_ALLOWED_ORIGINS = env.list("CORS_ALLOWED_ORIGINS", default=[FRONTEND_URL])
 CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[FRONTEND_URL])
+# The live-chat widget identifies visitors with this header.
+CORS_ALLOW_HEADERS = (*default_headers, "x-support-token")
 
 # ---------------------------------------------------------------- domain settings
 FIELD_ENCRYPTION_KEY = env("FIELD_ENCRYPTION_KEY")
@@ -194,6 +204,9 @@ OTP_TEST_CODE = env("OTP_TEST_CODE", default="1234")
 SMS_BACKEND = env("SMS_BACKEND", default="apps.accounts.sms.ConsoleSMSBackend")
 KAVENEGAR_API_KEY = env("KAVENEGAR_API_KEY", default="")
 KAVENEGAR_OTP_TEMPLATE = env("KAVENEGAR_OTP_TEMPLATE", default="titan-otp")
+# Kavenegar templates with one token (the ticket, e.g. T-1042) for live-chat texts.
+KAVENEGAR_SUPPORT_ALERT_TEMPLATE = env("KAVENEGAR_SUPPORT_ALERT_TEMPLATE", default="titan-support-alert")
+KAVENEGAR_SUPPORT_REPLY_TEMPLATE = env("KAVENEGAR_SUPPORT_REPLY_TEMPLATE", default="titan-support-reply")
 
 PAYMENT_GATEWAY = env("PAYMENT_GATEWAY", default="zarinpal")
 ZARINPAL_MERCHANT_ID = env("ZARINPAL_MERCHANT_ID", default="")
@@ -204,6 +217,15 @@ WALLET_TOPUP_MIN = 10_000
 WALLET_TOPUP_MAX = 50_000_000
 
 PRESENCE_TIMEOUT_SECONDS = 120
+
+# Live support chat
+# The desk polls every few seconds, but browsers slow timers in background tabs to about one a minute,
+# so an agent with the desk in another tab still counts as online for this long.
+SUPPORT_AGENT_TIMEOUT_SECONDS = 150
+SUPPORT_VISITOR_TIMEOUT_SECONDS = 30
+SUPPORT_TYPING_SECONDS = 6
+SUPPORT_MESSAGE_MAX_LENGTH = 2000
+SUPPORT_ALERT_COOLDOWN_SECONDS = env.int("SUPPORT_ALERT_COOLDOWN_SECONDS", default=600)
 SEED_ADMIN_PASSWORD = env("SEED_ADMIN_PASSWORD", default="")
 
 # ---------------------------------------------------------------- logging

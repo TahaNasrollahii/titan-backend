@@ -2898,3 +2898,133 @@ msgid "Sent to %(count)d player(s)."
 msgid_plural "Sent to %(count)d player(s)."
 msgstr[0] "به %(count)d بازیکن ارسال شد."
 msgstr[1] "به %(count)d بازیکن ارسال شد."
+
+#: apps/support
+msgid "Live support"
+msgstr "پشتیبانی آنلاین"
+
+msgid "public name"
+msgstr "نام نمایشی"
+
+msgid "The name visitors see, e.g. Sara. Defaults to the first word of the full name."
+msgstr "نامی که کاربران می‌بینند، مثلاً سارا. پیش‌فرض: اولین کلمه‌ی نام کامل."
+
+msgid "available"
+msgstr "در دسترس"
+
+msgid "SMS alerts"
+msgstr "هشدار پیامکی"
+
+msgid "Text this agent when a visitor writes and nobody is online."
+msgstr "وقتی کاربری پیام می‌دهد و هیچ پشتیبانی آنلاین نیست، به این پشتیبان پیامک بزن."
+
+msgid "Support agent"
+msgstr "پشتیبان"
+
+msgid "Support agents"
+msgstr "پشتیبان‌ها"
+
+msgid "Support"
+msgstr "پشتیبانی"
+
+msgid "Open"
+msgstr "باز"
+
+msgid "Closed"
+msgstr "بسته"
+
+msgid "first name"
+msgstr "نام"
+
+msgid "last name"
+msgstr "نام خانوادگی"
+
+msgid "Set when the visitor was logged in."
+msgstr "اگر کاربر وارد حسابش شده باشد پر می‌شود."
+
+msgid "started on"
+msgstr "صفحه‌ی شروع"
+
+msgid "Oldest visitor message that has not been answered yet."
+msgstr "قدیمی‌ترین پیام کاربر که هنوز پاسخ داده نشده."
+
+msgid "Last message the visitor has seen."
+msgstr "آخرین پیامی که کاربر دیده است."
+
+msgid "Last message support has seen."
+msgstr "آخرین پیامی که پشتیبانی دیده است."
+
+msgid "When agents were texted about it."
+msgstr "زمان ارسال پیامک هشدار به پشتیبان‌ها."
+
+msgid "When the visitor was last texted about a reply."
+msgstr "آخرین زمان ارسال پیامک پاسخ به کاربر."
+
+msgid "Conversation"
+msgstr "گفتگو"
+
+msgid "Conversations"
+msgstr "گفتگوها"
+
+msgid "Visitor"
+msgstr "کاربر"
+
+msgid "Agent"
+msgstr "پشتیبان"
+
+msgid "Internal note"
+msgstr "یادداشت داخلی"
+
+msgid "Sent by the client so a retried request is not stored twice."
+msgstr "شناسه‌ای که کلاینت می‌فرستد تا ارسال دوباره، پیام تکراری نسازد."
+
+msgid "Messages"
+msgstr "پیام‌ها"
+
+msgid "shortcut"
+msgstr "میان‌بر"
+
+msgid "Canned reply"
+msgstr "پاسخ آماده"
+
+msgid "Canned replies"
+msgstr "پاسخ‌های آماده"
+
+msgid "This conversation was not found. Start a new one."
+msgstr "این گفتگو پیدا نشد. یک گفتگوی جدید شروع کنید."
+
+msgid "This conversation has ended."
+msgstr "این گفتگو بسته شده است."
+
+msgid "End the conversation before rating it."
+msgstr "اول گفتگو را ببندید، بعد امتیاز بدهید."
+
+msgid "You have already rated this conversation."
+msgstr "قبلاً به این گفتگو امتیاز داده‌اید."
+
+msgid "Another agent has already taken this conversation."
+msgstr "همکار دیگری این گفتگو را برداشته است."
+
+msgid "Support ended the conversation."
+msgstr "پشتیبانی گفتگو را بست."
+
+msgid "The visitor ended the conversation."
+msgstr "کاربر گفتگو را بست."
+
+#, python-format
+msgid "Returned to the queue by %(name)s."
+msgstr "%(name)s گفتگو را به صف انتظار برگرداند."
+
+#, python-format
+msgid "%(name)s joined the conversation"
+msgstr "%(name)s به گفتگو پیوست"
+
+#, python-format
+msgid "Conversation transferred to %(name)s"
+msgstr "گفتگو به %(name)s منتقل شد"
+
+msgid "Enter a valid name."
+msgstr "یک نام معتبر وارد کنید."
+
+msgid "Write a message or attach an image."
+msgstr "پیامی بنویسید یا تصویری پیوست کنید."
