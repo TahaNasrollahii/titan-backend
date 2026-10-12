@@ -5,8 +5,13 @@ started. Staff (``support/desk/…``) use their normal JWT. Both sides poll one 
 ``after=<last message id>`` and receive only what changed.
 """
 
+import logging
+
+from django.conf import settings
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
+
+logger = logging.getLogger(__name__)
 
 from drf_spectacular.utils import OpenApiParameter, extend_schema
 from rest_framework import generics, mixins, status, viewsets
@@ -14,8 +19,17 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.throttling import SimpleRateThrottle
 from rest_framework.views import APIView
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from apps.core.permissions import IsStaff
+
+
+class OptionalJWTAuthentication(JWTAuthentication):
+    def authenticate(self, request):
+        try:
+            return super().authenticate(request)
+        except Exception:
+            return None
 
 from . import selectors, services
 from .models import CannedReply, Conversation, Message
@@ -52,11 +66,20 @@ def _after_param(request) -> int:
 
 
 def public_status() -> dict:
-    agents = list(selectors.online_agents()[:5])
+    try:
+        agents = list(selectors.online_agents()[:5])
+    except Exception as e:
+        logger.warning("Failed to query online agents: %s", e)
+        agents = []
+    try:
+        avg = services.average_response_seconds()
+    except Exception as e:
+        logger.warning("Failed to query average response seconds: %s", e)
+        avg = None
     return {
         "online": bool(agents),
         "agents": agents,
-        "avg_response_seconds": services.average_response_seconds(),
+        "avg_response_seconds": avg,
     }
 
 
@@ -80,6 +103,11 @@ class SendThrottle(SupportTokenThrottle):
 
 class StartThrottle(SimpleRateThrottle):
     scope = "support_start"
+
+    def allow_request(self, request, view):
+        if settings.DEBUG:
+            return True
+        return super().allow_request(request, view)
 
     def get_cache_key(self, request, view):
         return self.cache_format % {"scope": self.scope, "ident": self.get_ident(request)}
@@ -118,18 +146,22 @@ class StatusView(APIView):
 class StartView(VisitorView):
     """Start a chat with a name and mobile number. Logged-in visitors are linked to their account."""
 
-    authentication_classes = APIView.authentication_classes
+    authentication_classes = [OptionalJWTAuthentication]
     throttle_classes = [StartThrottle]
 
     def post(self, request):
         serializer = StartInputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        conversation, token = services.start_conversation(user=request.user, **serializer.validated_data)
-        payload = {"token": token, **self.sync_payload(conversation)}
-        return Response(
-            StartResponseSerializer(payload, context={"request": request}).data,
-            status=status.HTTP_201_CREATED,
-        )
+        try:
+            conversation, token = services.start_conversation(user=request.user, **serializer.validated_data)
+            payload = {"token": token, **self.sync_payload(conversation)}
+            return Response(
+                StartResponseSerializer(payload, context={"request": request}).data,
+                status=status.HTTP_201_CREATED,
+            )
+        except Exception as e:
+            logger.exception("Failed to start support conversation: %s", e)
+            raise
 
 
 @extend_schema(tags=["support"], parameters=[_token, _after], responses=VisitorSyncSerializer)

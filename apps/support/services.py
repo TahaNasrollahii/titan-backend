@@ -321,21 +321,36 @@ def notify_visitor_if_away(conversation: Conversation) -> bool:
 # ------------------------------------------------------------------ public status
 def average_response_seconds() -> int | None:
     """Mean time to the first agent reply over the last week (cached for five minutes)."""
-    cached = cache.get(RESPONSE_STATS_CACHE_KEY)
-    if cached is not None:
-        return cached or None
-    since = timezone.now() - timedelta(days=RESPONSE_STATS_DAYS)
-    rows = (
-        Conversation.objects.filter(created_at__gte=since)
-        .annotate(
-            first_visitor=Min("messages__created_at", filter=Q(messages__kind=Kind.VISITOR)),
-            first_agent=Min("messages__created_at", filter=Q(messages__kind=Kind.AGENT)),
+    try:
+        cached = cache.get(RESPONSE_STATS_CACHE_KEY)
+        if cached is not None:
+            return cached or None
+        since = timezone.now() - timedelta(days=RESPONSE_STATS_DAYS)
+        rows = (
+            Conversation.objects.filter(created_at__gte=since)
+            .annotate(
+                first_visitor=Min("messages__created_at", filter=Q(messages__kind=Kind.VISITOR)),
+                first_agent=Min("messages__created_at", filter=Q(messages__kind=Kind.AGENT)),
+            )
+            .filter(first_visitor__isnull=False, first_agent__isnull=False)
+            .order_by("-created_at")
+            .values_list("first_visitor", "first_agent")[:RESPONSE_STATS_SAMPLE]
         )
-        .filter(first_visitor__isnull=False, first_agent__isnull=False)
-        .order_by("-created_at")
-        .values_list("first_visitor", "first_agent")[:RESPONSE_STATS_SAMPLE]
-    )
-    waits = [(agent - visitor).total_seconds() for visitor, agent in rows if agent >= visitor]
-    seconds = round(sum(waits) / len(waits)) if waits else 0
-    cache.set(RESPONSE_STATS_CACHE_KEY, seconds, 300)
-    return seconds or None
+        waits = []
+        for visitor, agent in rows:
+            if isinstance(visitor, str):
+                from django.utils.dateparse import parse_datetime
+
+                visitor = parse_datetime(visitor)
+            if isinstance(agent, str):
+                from django.utils.dateparse import parse_datetime
+
+                agent = parse_datetime(agent)
+            if visitor and agent and agent >= visitor:
+                waits.append((agent - visitor).total_seconds())
+        seconds = round(sum(waits) / len(waits)) if waits else 0
+        cache.set(RESPONSE_STATS_CACHE_KEY, seconds, 300)
+        return seconds or None
+    except Exception as e:
+        logger.warning("Failed to calculate average_response_seconds: %s", e)
+        return None
