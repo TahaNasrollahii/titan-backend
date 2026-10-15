@@ -5,6 +5,11 @@
     {% trans "Log in" %} | {{ site_title|default:"Titan Admin" }}
 {% endblock %}
 
+{% block extrahead %}
+    {{ block.super }}
+    <meta name="robots" content="noindex, nofollow, noarchive">
+{% endblock %}
+
 {% block base %}
 <div class="tt-login-root">
     <!-- Ambient Background Glows & Cyber Grid -->

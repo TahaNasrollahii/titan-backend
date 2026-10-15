@@ -3,6 +3,11 @@
 
 {% block title %}{% trans "Dashboard" %} | {{ site_title|default:_('Django site admin') }}{% endblock %}
 
+{% block extrahead %}
+    {{ block.super }}
+    <meta name="robots" content="noindex, nofollow, noarchive">
+{% endblock %}
+
 {% block branding %}
     {% include "unfold/helpers/site_branding.html" %}
 {% endblock %}
