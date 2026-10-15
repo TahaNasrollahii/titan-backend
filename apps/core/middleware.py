@@ -40,3 +40,27 @@ class AdminEnglishMiddleware:
         response.headers.setdefault("Content-Language", admin_lang)
         return response
 
+
+class SecurityHeadersMiddleware:
+    """Enforce defensive security headers (CSP, Permissions-Policy) on backend responses."""
+
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        response = self.get_response(request)
+        if "Content-Security-Policy" not in response.headers:
+            response.headers["Content-Security-Policy"] = (
+                "default-src 'self'; "
+                "img-src 'self' data: https: blob:; "
+                "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
+                "font-src 'self' data: https://fonts.gstatic.com; "
+                "script-src 'self' 'unsafe-inline'; "
+                "frame-ancestors 'none'; "
+                "object-src 'none'; "
+                "base-uri 'self';"
+            )
+        if "Permissions-Policy" not in response.headers:
+            response.headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=(), browsing-topics=()"
+        return response
+

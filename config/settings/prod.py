@@ -12,14 +12,24 @@ ALLOWED_HOSTS = env.list("ALLOWED_HOSTS")
 if env("OTP_TEST_CODE", default="") and not env.bool("ALLOW_OTP_TEST_CODE", default=False):
     raise ImproperlyConfigured("OTP_TEST_CODE must not be set in production.")
 
+# Prevent fake payment auto-approval in production
+if env("PAYMENT_GATEWAY", default="zarinpal") == "fake" and not env.bool("ALLOW_FAKE_PAYMENT", default=False):
+    raise ImproperlyConfigured("PAYMENT_GATEWAY='fake' is forbidden in production.")
+
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 SECURE_SSL_REDIRECT = env.bool("SECURE_SSL_REDIRECT", default=True)
 SECURE_HSTS_SECONDS = env.int("SECURE_HSTS_SECONDS", default=60 * 60 * 24 * 365)
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_HSTS_PRELOAD = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"
+SECURE_CROSS_ORIGIN_OPENER_POLICY = "same-origin"
 SESSION_COOKIE_SECURE = True
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE = "Lax"
 CSRF_COOKIE_SECURE = True
+CSRF_COOKIE_HTTPONLY = True
+CSRF_COOKIE_SAMESITE = "Lax"
 X_FRAME_OPTIONS = "DENY"
 
 # WhiteNoise serves the collected static files (admin, API docs) right after the security middleware.

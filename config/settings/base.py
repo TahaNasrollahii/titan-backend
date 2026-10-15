@@ -55,6 +55,7 @@ INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "apps.core.middleware.SecurityHeadersMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.locale.LocaleMiddleware",
@@ -140,6 +141,8 @@ REST_FRAMEWORK = {
         "anon": env("THROTTLE_ANON", default="120/min"),
         "user": env("THROTTLE_USER", default="600/min"),
         "otp_ip": env("THROTTLE_OTP_IP", default="20/hour"),
+        "checkout": env("THROTTLE_CHECKOUT", default="30/hour"),
+        "wallet_topup": env("THROTTLE_WALLET_TOPUP", default="30/hour"),
         # Live chat. Visitors are keyed by their chat token, not IP: mobile carriers share IPs widely.
         "support_start": env("THROTTLE_SUPPORT_START", default="30/hour"),
         "support_poll": env("THROTTLE_SUPPORT_POLL", default="180/min"),
@@ -198,8 +201,8 @@ OTP_MAX_ATTEMPTS = 5
 OTP_RESEND_COOLDOWN_SECONDS = env.int("OTP_RESEND_COOLDOWN_SECONDS", default=60)
 OTP_MAX_PER_HOUR = env.int("OTP_MAX_PER_HOUR", default=5)
 # Testing only: when set, every OTP is this fixed code. Must stay empty in production.
-# Forces reload
-OTP_TEST_CODE = env("OTP_TEST_CODE", default="1234")
+OTP_TEST_CODE = env("OTP_TEST_CODE", default="")
+ALLOW_OTP_TEST_CODE = env.bool("ALLOW_OTP_TEST_CODE", default=False)
 
 SMS_BACKEND = env("SMS_BACKEND", default="apps.accounts.sms.ConsoleSMSBackend")
 KAVENEGAR_API_KEY = env("KAVENEGAR_API_KEY", default="")
