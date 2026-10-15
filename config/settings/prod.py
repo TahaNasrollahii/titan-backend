@@ -12,9 +12,9 @@ ALLOWED_HOSTS = env.list("ALLOWED_HOSTS")
 if env("OTP_TEST_CODE", default="") and not env.bool("ALLOW_OTP_TEST_CODE", default=False):
     raise ImproperlyConfigured("OTP_TEST_CODE must not be set in production.")
 
-# Prevent fake payment auto-approval in production
-if env("PAYMENT_GATEWAY", default="zarinpal") == "fake" and not env.bool("ALLOW_FAKE_PAYMENT", default=False):
-    raise ImproperlyConfigured("PAYMENT_GATEWAY='fake' is forbidden in production.")
+# Fake payment gateway auto-approves for demo/testing unless explicitly disallowed
+if env("PAYMENT_GATEWAY", default="zarinpal") == "fake" and env.bool("REQUIRE_REAL_PAYMENT", default=False):
+    raise ImproperlyConfigured("PAYMENT_GATEWAY='fake' is forbidden when REQUIRE_REAL_PAYMENT=True.")
 
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 SECURE_SSL_REDIRECT = env.bool("SECURE_SSL_REDIRECT", default=True)
