@@ -19,3 +19,6 @@ schema.yml
 .env.*
 !.env.example
 .env*
+login.json
+*.tokens.json
+token*.json

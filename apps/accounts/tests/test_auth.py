@@ -196,6 +196,7 @@ class TestTokens:
 class TestFixedTestCode:
     def test_fixed_code_logs_in(self, api_client, settings):
         settings.OTP_TEST_CODE = "1234"
+        settings.ALLOW_OTP_TEST_CODE = True
         request_code(api_client)
 
         response = verify(api_client, "1234")
