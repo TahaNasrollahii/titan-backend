@@ -1,3 +1,6 @@
+import uuid
+from pathlib import Path
+
 from django.conf import settings
 from django.db import models
 from django.db.models import Q
@@ -10,6 +13,11 @@ from apps.core.validators import IMAGE_VALIDATORS
 
 INVITE_CODE_LENGTH = 8
 MAX_TEAM_MEMBERS = 10
+
+
+def team_logo_upload_path(instance, filename: str) -> str:
+    ext = Path(filename).suffix.lower()
+    return f"teams/{uuid.uuid4().hex}{ext}"
 
 
 def new_invite_code() -> str:
@@ -25,7 +33,7 @@ class Team(TimeStampedModel):
     """A standing group of players. Tournaments pick a lineup from its members at registration."""
 
     name = models.CharField(_("name"), max_length=40)
-    logo = models.ImageField(upload_to="teams/", blank=True, validators=IMAGE_VALIDATORS)
+    logo = models.ImageField(upload_to=team_logo_upload_path, blank=True, validators=IMAGE_VALIDATORS)
     invite_code = models.CharField(max_length=16, unique=True, default=new_invite_code)
     created_by = models.ForeignKey(
         settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL, related_name="+"

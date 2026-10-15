@@ -5,6 +5,8 @@ Error payload shape (camelCased by the renderer)::
     {"detail": "<localized message>", "code": "<machine code>", "errors": {...field errors}}
 """
 
+import logging
+
 from django.core.exceptions import PermissionDenied
 from django.http import Http404
 from django.utils.translation import gettext_lazy as _
@@ -12,6 +14,8 @@ from django.utils.translation import gettext_lazy as _
 from rest_framework import exceptions, status
 from rest_framework.response import Response
 from rest_framework.views import exception_handler
+
+logger = logging.getLogger(__name__)
 
 
 class DomainError(Exception):
@@ -55,7 +59,11 @@ def api_exception_handler(exc, context):
 
     response = exception_handler(exc, context)
     if response is None:
-        return None
+        logger.exception("Unhandled server error: %s", exc)
+        return Response(
+            {"detail": _("Internal server error. Please try again later."), "code": "server_error"},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
 
     if isinstance(exc, exceptions.ValidationError):
         errors = exc.detail if isinstance(exc.detail, dict) else {"non_field_errors": exc.detail}

@@ -1,5 +1,7 @@
 import random
+import uuid
 from datetime import timedelta
+from pathlib import Path
 
 from django.conf import settings
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
@@ -19,6 +21,11 @@ username_validator = RegexValidator(
     _("Username may contain 3-32 English letters, digits, dots and underscores."),
     code="invalid_username",
 )
+
+
+def avatar_upload_path(instance, filename: str) -> str:
+    ext = Path(filename).suffix.lower()
+    return f"avatars/{uuid.uuid4().hex}{ext}"
 
 
 def random_avatar_seed() -> int:
@@ -62,7 +69,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     )
     full_name = models.CharField(_("full name"), max_length=120, blank=True)
     email = models.EmailField(_("email"), blank=True)
-    avatar = models.ImageField(upload_to="avatars/", blank=True, validators=IMAGE_VALIDATORS)
+    avatar = models.ImageField(upload_to=avatar_upload_path, blank=True, validators=IMAGE_VALIDATORS)
     avatar_seed = models.PositiveSmallIntegerField(default=random_avatar_seed)
 
     level = models.PositiveIntegerField(default=1)

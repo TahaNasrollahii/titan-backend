@@ -6,6 +6,7 @@ from drf_spectacular.utils import OpenApiParameter, extend_schema
 from rest_framework import generics, status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.throttling import ScopedRateThrottle
 from rest_framework.views import APIView
 
 from apps.core.exceptions import DomainError
@@ -48,6 +49,8 @@ class WalletTransactionListView(generics.ListAPIView):
 @extend_schema(tags=["wallet"], request=TopupSerializer, responses={201: PaymentStartSerializer})
 class WalletTopupView(APIView):
     permission_classes = [IsAuthenticated]
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "wallet_topup"
 
     def post(self, request):
         serializer = TopupSerializer(data=request.data)

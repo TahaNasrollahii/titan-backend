@@ -80,7 +80,7 @@ def test_seed_uploads_images_after_its_transaction(tmp_path, monkeypatch):
     # Slow remote storage must not hold a connection idle inside the seeding transaction.
     assets = tmp_path / "public"
     assets.mkdir()
-    (assets / "pc.png").write_bytes(b"png")
+    (assets / "pc.webp").write_bytes(b"webp")
     seeding_connection = connections["default"]  # uploads run on worker threads, so pin this thread's
     outer_depth = len(seeding_connection.atomic_blocks)
     save_depths = []
@@ -94,7 +94,7 @@ def test_seed_uploads_images_after_its_transaction(tmp_path, monkeypatch):
     call_command("seed", "--assets-dir", str(assets), "--admin-password", "pw", stdout=StringIO())
 
     icon = Platform.objects.get(slug="pc").icon
-    assert icon.name == "platforms/public-pc.png"
+    assert icon.name == "platforms/public-pc.webp"
     assert default_storage.exists(icon.name)
     assert save_depths == [outer_depth]
 
