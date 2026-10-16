@@ -7,12 +7,18 @@ from django.http import HttpResponse
 
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 
+from apps.core.admin_auth import TitanAdminAuthenticationForm
 from apps.core.views import HealthCheckView
+
+admin.site.login_form = TitanAdminAuthenticationForm
 
 
 def robots_txt(request):
+    admin_slug = getattr(settings, "ADMIN_URL", "manage-titan").strip("/")
+    admin_path = f"/{admin_slug}/"
     lines = [
         "User-agent: *",
+        f"Disallow: {admin_path}",
         "Disallow: /admin/",
         "Disallow: /api/docs/",
         "Disallow: /api/redoc/",
@@ -45,11 +51,14 @@ api_v1 = [
     path("", include("apps.core.urls")),
 ]
 
+admin_slug = getattr(settings, "ADMIN_URL", "manage-titan").strip("/")
+admin_route = f"{admin_slug}/" if admin_slug else "admin/"
+
 urlpatterns = [
     path("robots.txt", robots_txt, name="robots_txt"),
     path(".well-known/security.txt", security_txt, name="security_txt"),
     path("i18n/", include("django.conf.urls.i18n")),
-    path("admin/", admin.site.urls),
+    path(admin_route, admin.site.urls),
     path("api/health/", HealthCheckView.as_view(), name="health"),
     path("api/v1/", include(api_v1)),
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),

@@ -8,14 +8,18 @@ class AdminEnglishMiddleware:
     Must run after ``LocaleMiddleware`` so it manages admin/API language scopes.
     """
 
-    ADMIN_PREFIX = "/admin/"
     LANGUAGE = "en"
 
     def __init__(self, get_response):
         self.get_response = get_response
 
+    @property
+    def admin_prefix(self):
+        admin_slug = getattr(settings, "ADMIN_URL", "manage-titan").strip("/")
+        return f"/{admin_slug}/"
+
     def __call__(self, request):
-        if not request.path.startswith(self.ADMIN_PREFIX):
+        if not (request.path.startswith(self.admin_prefix) or request.path.startswith("/admin/")):
             lang = translation.get_language_from_request(request) or "fa"
             translation.activate(lang)
             request.LANGUAGE_CODE = lang
@@ -42,7 +46,7 @@ class AdminEnglishMiddleware:
 
 
 class SecurityHeadersMiddleware:
-    """Enforce defensive security headers (CSP, Permissions-Policy) on backend responses."""
+    """Enforce defensive security headers (CSP, Permissions-Policy, X-Robots-Tag) on backend responses."""
 
     def __init__(self, get_response):
         self.get_response = get_response
@@ -62,5 +66,17 @@ class SecurityHeadersMiddleware:
             )
         if "Permissions-Policy" not in response.headers:
             response.headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=(), browsing-topics=()"
-        return response
 
+        # Ensure admin, API documentation, and private routes are strictly forbidden from indexing
+        admin_slug = getattr(settings, "ADMIN_URL", "manage-titan").strip("/")
+        admin_prefix = f"/{admin_slug}/"
+        if (
+            request.path.startswith(admin_prefix)
+            or request.path.startswith("/admin/")
+            or request.path.startswith("/api/docs/")
+            or request.path.startswith("/api/redoc/")
+            or request.path.startswith("/api/schema/")
+        ):
+            response.headers["X-Robots-Tag"] = "noindex, nofollow, noarchive"
+
+        return response

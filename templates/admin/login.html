@@ -247,6 +247,31 @@
                         {% endif %}
                     </div>
 
+                    <!-- 2FA Verification Field -->
+                    <div class="tt-field-group">
+                        <label for="id_otp_code" class="tt-field-label">
+                            <span class="material-symbols-outlined">security</span>
+                            <span>{% trans "2FA Verification Code (Staff)" %}</span>
+                        </label>
+                        <div class="tt-input-container">
+                            <input 
+                                type="text" 
+                                name="otp_code" 
+                                id="id_otp_code" 
+                                value="{{ form.otp_code.value|default:'' }}"
+                                placeholder="{% trans '6-digit authenticator code' %}" 
+                                class="tt-form-input font-mono" 
+                                autocomplete="one-time-code"
+                                inputmode="numeric"
+                                maxlength="6"
+                            />
+                            <span class="tt-input-focus-border"></span>
+                        </div>
+                        {% if form.otp_code.errors %}
+                            <span class="tt-field-error-text">{{ form.otp_code.errors.0 }}</span>
+                        {% endif %}
+                    </div>
+
                     <!-- Security Notice Pill -->
                     <div class="tt-security-notice">
                         <span class="material-symbols-outlined">verified_user</span>
