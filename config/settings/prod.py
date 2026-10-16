@@ -8,13 +8,32 @@ from .base import LOGGING, MIDDLEWARE, env
 DEBUG = False
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS")
 
-# A fixed login code is a backdoor. Only throwaway demo deployments may opt in, explicitly.
-if env("OTP_TEST_CODE", default="") and not env.bool("ALLOW_OTP_TEST_CODE", default=False):
-    raise ImproperlyConfigured("OTP_TEST_CODE must not be set in production.")
+# ---------------------------------------------------------------- Security safeguards
+# OTP Test code is strictly forbidden in production (no bypass flag permitted)
+if env("OTP_TEST_CODE", default=""):
+    raise ImproperlyConfigured("OTP_TEST_CODE is strictly forbidden in production.")
 
-# Fake payment gateway auto-approves for demo/testing unless explicitly disallowed
-if env("PAYMENT_GATEWAY", default="zarinpal") == "fake" and env.bool("REQUIRE_REAL_PAYMENT", default=False):
-    raise ImproperlyConfigured("PAYMENT_GATEWAY='fake' is forbidden when REQUIRE_REAL_PAYMENT=True.")
+OTP_TEST_CODE = ""
+ALLOW_OTP_TEST_CODE = False
+
+# Fake payment gateway is strictly forbidden in production
+if env("PAYMENT_GATEWAY", default="zarinpal").lower() == "fake":
+    raise ImproperlyConfigured("PAYMENT_GATEWAY='fake' is strictly forbidden in production.")
+
+PAYMENT_GATEWAY = "zarinpal"
+
+# Zarinpal sandbox mode is strictly forbidden in production
+if env.bool("ZARINPAL_SANDBOX", default=False):
+    raise ImproperlyConfigured("ZARINPAL_SANDBOX=True is strictly forbidden in production.")
+
+ZARINPAL_SANDBOX = False
+
+# Real merchant ID must be configured in production
+_zarinpal_merchant = env("ZARINPAL_MERCHANT_ID", default="").strip()
+if not _zarinpal_merchant or _zarinpal_merchant == "00000000-0000-0000-0000-000000000000":
+    raise ImproperlyConfigured("A valid ZARINPAL_MERCHANT_ID must be configured in production.")
+
+ZARINPAL_MERCHANT_ID = _zarinpal_merchant
 
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 SECURE_SSL_REDIRECT = env.bool("SECURE_SSL_REDIRECT", default=True)

@@ -25,6 +25,4 @@ STORAGES = {**STORAGES, "default": {"BACKEND": "apps.core.storage.VercelBlobStor
 # The Blob SDK's HTTP client logs every request at INFO.
 LOGGING = {**LOGGING, "loggers": {**LOGGING["loggers"], "httpx2": {"level": "WARNING"}}}
 
-# Unlike prod, nothing is implied: the demo login code only exists when OTP_TEST_CODE is set
-# (and prod.py requires ALLOW_OTP_TEST_CODE alongside it).
-OTP_TEST_CODE = env("OTP_TEST_CODE", default="")
+# In serverless on Vercel, production settings strictly apply.
