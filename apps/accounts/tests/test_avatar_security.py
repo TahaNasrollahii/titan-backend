@@ -82,3 +82,4 @@ def test_parse_error_is_sanitized_in_production(settings):
         "detail": "Invalid request payload.",
         "code": "parse_error",
     }
+

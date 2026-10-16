@@ -23,3 +23,4 @@ class Migration(migrations.Migration):
     operations = [
         migrations.RunPython(create_cache_table, reverse_code=remove_cache_table),
     ]
+

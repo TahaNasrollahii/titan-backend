@@ -61,3 +61,4 @@ def test_prod_refuses_missing_merchant_id(monkeypatch):
     with pytest.raises(ImproperlyConfigured, match="A valid ZARINPAL_MERCHANT_ID must be configured in production."):
         import config.settings.prod
         importlib.reload(config.settings.prod)
+

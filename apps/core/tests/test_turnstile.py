@@ -47,3 +47,4 @@ def test_validate_turnstile_raises_validation_error_on_failure(settings):
 
     with pytest.raises(ValidationError, match="Security verification failed"):
         validate_turnstile(request)
+

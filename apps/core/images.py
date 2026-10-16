@@ -77,3 +77,4 @@ def validate_and_sanitize_image(uploaded_file, max_dimension=MAX_IMAGE_DIMENSION
         size=output_io.getbuffer().nbytes,
         charset=None,
     )
+

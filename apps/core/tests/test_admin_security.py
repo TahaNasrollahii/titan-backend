@@ -104,3 +104,4 @@ def test_support_desk_api_strictly_requires_is_staff():
     client.force_authenticate(user=staff)
     resp_ok = client.get("/api/v1/support/desk/agents/")
     assert resp_ok.status_code == 200
+

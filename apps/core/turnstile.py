@@ -64,3 +64,4 @@ def validate_turnstile(request):
 
     if not verify_turnstile_token(token, ip=client_ip):
         raise ValidationError({"detail": _("Security verification failed. Please try again.")})
+

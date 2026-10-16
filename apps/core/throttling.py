@@ -44,3 +44,4 @@ class ScopedRateThrottle(TrustedProxyThrottleMixin, BaseScopedRateThrottle):
 
 class SimpleRateThrottle(TrustedProxyThrottleMixin, BaseSimpleRateThrottle):
     pass
+
