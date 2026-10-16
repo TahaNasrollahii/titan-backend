@@ -239,6 +239,51 @@ class TestTokens:
         assert response.status_code == 400
         assert response.json()["code"] == "invalid_token"
 
+    def test_login_sets_httponly_refresh_cookie(self, api_client):
+        request_code(api_client)
+        resp = verify(api_client, InMemorySMSBackend.last_code_for(PHONE))
+        assert "refresh_token" in resp.cookies
+        cookie = resp.cookies["refresh_token"]
+        assert cookie["httponly"] is True
+        assert cookie.value != ""
+
+    def test_refresh_from_cookie_with_csrf_header(self, api_client):
+        request_code(api_client)
+        login_resp = verify(api_client, InMemorySMSBackend.last_code_for(PHONE))
+        api_client.cookies["refresh_token"] = login_resp.cookies["refresh_token"].value
+
+        # Cookie refresh without body, but with X-Requested-With header
+        resp = api_client.post(
+            reverse("token-refresh"),
+            {},
+            format="json",
+            HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+        )
+        assert resp.status_code == 200
+        assert "access" in resp.json()
+        assert "refresh_token" in resp.cookies
+
+    def test_refresh_from_cookie_without_csrf_header_rejected(self, api_client):
+        request_code(api_client)
+        login_resp = verify(api_client, InMemorySMSBackend.last_code_for(PHONE))
+        api_client.cookies["refresh_token"] = login_resp.cookies["refresh_token"].value
+
+        # Missing CSRF protection header
+        resp = api_client.post(reverse("token-refresh"), {}, format="json")
+        assert resp.status_code == 403
+        assert resp.json()["code"] == "csrf_missing"
+
+    def test_logout_clears_refresh_cookie(self, api_client):
+        request_code(api_client)
+        login_resp = verify(api_client, InMemorySMSBackend.last_code_for(PHONE))
+        api_client.cookies["refresh_token"] = login_resp.cookies["refresh_token"].value
+
+        logout_resp = api_client.post(reverse("logout"), {}, format="json")
+        assert logout_resp.status_code == 204
+        # Expired cookie indicates deletion
+        assert logout_resp.cookies["refresh_token"]["max-age"] == 0 or logout_resp.cookies["refresh_token"].value == ""
+
+
 
 class TestFixedTestCode:
     def test_fixed_code_logs_in(self, api_client, settings):

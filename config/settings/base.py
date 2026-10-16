@@ -206,8 +206,9 @@ SPECTACULAR_SETTINGS = {
 FRONTEND_URL = env("FRONTEND_URL", default="http://localhost:3000").rstrip("/")
 CORS_ALLOWED_ORIGINS = env.list("CORS_ALLOWED_ORIGINS", default=[FRONTEND_URL])
 CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[FRONTEND_URL])
-# The live-chat widget identifies visitors with this header, Turnstile with X-Turnstile-Token.
-CORS_ALLOW_HEADERS = (*default_headers, "x-support-token", "x-turnstile-token")
+CORS_ALLOW_CREDENTIALS = True
+# The live-chat widget identifies visitors with this header, Turnstile with X-Turnstile-Token, plus CSRF defense headers.
+CORS_ALLOW_HEADERS = (*default_headers, "x-support-token", "x-turnstile-token", "x-requested-with", "x-csrftoken")
 
 # ---------------------------------------------------------------- domain settings
 FIELD_ENCRYPTION_KEY = env("FIELD_ENCRYPTION_KEY")

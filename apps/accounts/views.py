@@ -70,6 +70,10 @@ class OTPRequestView(OTPThrottleMixin, APIView):
         return _otp_window_response(phone)
 
 
+from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
+from rest_framework_simplejwt.tokens import RefreshToken
+
+
 @extend_schema(tags=["auth"], request=OTPVerifySerializer, responses=AuthTokensSerializer)
 class OTPVerifyView(OTPThrottleMixin, APIView):
     permission_classes = [AllowAny]
@@ -89,18 +93,107 @@ class OTPVerifyView(OTPThrottleMixin, APIView):
             "is_new_user": created,
             "user": MeSerializer(user, context={"request": request}).data,
         }
-        return Response(payload)
+        response = Response(payload)
+        refresh_val = tokens.get("refresh")
+        if refresh_val:
+            response.set_cookie(
+                key="refresh_token",
+                value=refresh_val,
+                httponly=True,
+                secure=not settings.DEBUG,
+                samesite="None" if not settings.DEBUG else "Lax",
+                max_age=int(settings.SIMPLE_JWT["REFRESH_TOKEN_LIFETIME"].total_seconds()),
+                path="/api/v1/auth/",
+            )
+        return response
+
+
+@extend_schema(tags=["auth"], request=RefreshTokenSerializer, responses=AuthTokensSerializer)
+class CookieTokenRefreshView(APIView):
+    """Refreshes an access token from request body or HttpOnly cookie."""
+
+    permission_classes = [AllowAny]
+    authentication_classes: list = []
+
+    def post(self, request):
+        refresh_str = request.data.get("refresh")
+        from_cookie = False
+
+        if not refresh_str:
+            refresh_str = request.COOKIES.get("refresh_token")
+            from_cookie = True
+
+        if not refresh_str:
+            return Response(
+                {"detail": "Refresh token not provided.", "code": "token_not_provided"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if from_cookie:
+            # CSRF protection: require custom header for cookie-based refreshes
+            req_with = request.headers.get("X-Requested-With")
+            csrf_token = request.headers.get("X-CSRFToken")
+            if req_with != "XMLHttpRequest" and not csrf_token:
+                return Response(
+                    {"detail": "CSRF verification failed (missing security header).", "code": "csrf_missing"},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
+
+        try:
+            refresh = RefreshToken(refresh_str)
+            data = {"access": str(refresh.access_token)}
+
+            if settings.SIMPLE_JWT.get("ROTATE_REFRESH_TOKENS", True):
+                if settings.SIMPLE_JWT.get("BLACKLIST_AFTER_ROTATION", True):
+                    try:
+                        refresh.blacklist()
+                    except AttributeError:
+                        pass
+                refresh.set_jti()
+                refresh.set_exp()
+                refresh.set_iat()
+                new_refresh = str(refresh)
+                data["refresh"] = new_refresh
+            else:
+                new_refresh = refresh_str
+
+            response = Response(data, status=status.HTTP_200_OK)
+            if new_refresh:
+                response.set_cookie(
+                    key="refresh_token",
+                    value=new_refresh,
+                    httponly=True,
+                    secure=not settings.DEBUG,
+                    samesite="None" if not settings.DEBUG else "Lax",
+                    max_age=int(settings.SIMPLE_JWT["REFRESH_TOKEN_LIFETIME"].total_seconds()),
+                    path="/api/v1/auth/",
+                )
+            return response
+        except (TokenError, InvalidToken):
+            return Response(
+                {"detail": "Token is invalid or expired.", "code": "token_not_valid"},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
 
 
 @extend_schema(tags=["auth"], request=RefreshTokenSerializer, responses={204: None})
 class LogoutView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def post(self, request):
-        serializer = RefreshTokenSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        services.logout(serializer.validated_data["refresh"])
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        if request.data.get("refresh"):
+            serializer = RefreshTokenSerializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            services.logout(serializer.validated_data["refresh"])
+        elif request.COOKIES.get("refresh_token"):
+            try:
+                services.logout(request.COOKIES["refresh_token"])
+            except Exception:
+                pass
+
+        response = Response(status=status.HTTP_204_NO_CONTENT)
+        response.delete_cookie("refresh_token", path="/api/v1/auth/")
+        return response
 
 
 # ------------------------------------------------------------------ me
