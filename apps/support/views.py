@@ -17,7 +17,7 @@ from drf_spectacular.utils import OpenApiParameter, extend_schema
 from rest_framework import generics, mixins, status, viewsets
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
-from rest_framework.throttling import SimpleRateThrottle
+from apps.core.throttling import SimpleRateThrottle
 from rest_framework.views import APIView
 from rest_framework_simplejwt.authentication import JWTAuthentication
 

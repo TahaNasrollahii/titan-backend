@@ -114,8 +114,25 @@ MEDIA_URL = "media/"
 MEDIA_ROOT = Path(env("MEDIA_ROOT", default=str(BASE_DIR / "media")))
 MAX_UPLOAD_SIZE = 2 * 1024 * 1024  # 2 MB, per the frontend's upload hints
 
+# ---------------------------------------------------------------- cache
+CACHES = {
+    "default": {
+        "BACKEND": env(
+            "CACHE_BACKEND",
+            default="django.core.cache.backends.db.DatabaseCache",
+        ),
+        "LOCATION": env("CACHE_LOCATION", default="django_cache_table"),
+    }
+}
+if env("REDIS_URL", default=""):
+    CACHES["default"] = {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": env("REDIS_URL"),
+    }
+
 # ---------------------------------------------------------------- DRF
 REST_FRAMEWORK = {
+    "NUM_PROXIES": 1,
     "DEFAULT_AUTHENTICATION_CLASSES": ["rest_framework_simplejwt.authentication.JWTAuthentication"],
     "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAuthenticatedOrReadOnly"],
     "DEFAULT_RENDERER_CLASSES": ["djangorestframework_camel_case.render.CamelCaseJSONRenderer"],
@@ -134,8 +151,8 @@ REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "EXCEPTION_HANDLER": "apps.core.exceptions.api_exception_handler",
     "DEFAULT_THROTTLE_CLASSES": [
-        "rest_framework.throttling.AnonRateThrottle",
-        "rest_framework.throttling.UserRateThrottle",
+        "apps.core.throttling.AnonRateThrottle",
+        "apps.core.throttling.UserRateThrottle",
     ],
     "DEFAULT_THROTTLE_RATES": {
         "anon": env("THROTTLE_ANON", default="120/min"),
