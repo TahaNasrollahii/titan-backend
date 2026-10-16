@@ -150,10 +150,14 @@ class StartView(VisitorView):
     throttle_classes = [StartThrottle]
 
     def post(self, request):
+        from apps.core.turnstile import validate_turnstile
+        validate_turnstile(request)
         serializer = StartInputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+        # Exclude turnstile_token if present in validated_data
+        clean_data = {k: v for k, v in serializer.validated_data.items() if k != "turnstile_token"}
         try:
-            conversation, token = services.start_conversation(user=request.user, **serializer.validated_data)
+            conversation, token = services.start_conversation(user=request.user, **clean_data)
             payload = {"token": token, **self.sync_payload(conversation)}
             return Response(
                 StartResponseSerializer(payload, context={"request": request}).data,

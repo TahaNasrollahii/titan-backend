@@ -51,6 +51,9 @@ class OTPThrottleMixin:
     throttle_scope = "otp_ip"
 
 
+from apps.core.turnstile import validate_turnstile
+
+
 @extend_schema(tags=["auth"], request=PhoneSerializer, responses={201: OTPRequestResponseSerializer})
 class OTPRequestView(OTPThrottleMixin, APIView):
     """Send a login code to a mobile number (registers the number on first verify)."""
@@ -59,6 +62,7 @@ class OTPRequestView(OTPThrottleMixin, APIView):
     authentication_classes: list = []
 
     def post(self, request):
+        validate_turnstile(request)
         serializer = PhoneSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         phone = serializer.validated_data["phone"]
@@ -72,9 +76,12 @@ class OTPVerifyView(OTPThrottleMixin, APIView):
     authentication_classes: list = []
 
     def post(self, request):
+        validate_turnstile(request)
         serializer = OTPVerifySerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        user, created = services.login_with_otp(**serializer.validated_data)
+        # Exclude turnstile_token before passing to login_with_otp
+        clean_data = {k: v for k, v in serializer.validated_data.items() if k != "turnstile_token"}
+        user, created = services.login_with_otp(**clean_data)
         tokens = services.issue_tokens(user)
         user = user_with_badges().get(pk=user.pk)
         payload = {

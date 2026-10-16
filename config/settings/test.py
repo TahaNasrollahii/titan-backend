@@ -9,6 +9,7 @@ from .base import *  # noqa: F403
 from .base import BASE_DIR, REST_FRAMEWORK, env
 
 DEBUG = False
+IS_TESTING = True
 ALLOWED_HOSTS = ["testserver", "localhost"]
 
 DATABASES = {"default": env.db("TEST_DATABASE_URL", default="sqlite://:memory:")}

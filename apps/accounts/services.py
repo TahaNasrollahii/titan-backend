@@ -1,7 +1,10 @@
 import hashlib
 import hmac
+import logging
 import secrets
 from datetime import timedelta
+
+logger = logging.getLogger(__name__)
 
 from django.conf import settings
 from django.db import IntegrityError, transaction
@@ -37,6 +40,18 @@ class TooManyOTPAttempts(DomainError):
     default_code = "otp_attempts_exceeded"
 
 
+class OTPDailyLimitExceeded(DomainError):
+    status_code = 429
+    default_detail = _("Daily OTP request limit exceeded for this phone number. Please try again tomorrow.")
+    default_code = "otp_daily_limit_exceeded"
+
+
+class OTPVerificationLocked(DomainError):
+    status_code = 429
+    default_detail = _("Too many failed attempts. Verification is temporarily locked for this phone number.")
+    default_code = "otp_verification_locked"
+
+
 # ------------------------------------------------------------------ OTP
 def _hash_code(phone: str, code: str) -> str:
     message = f"{phone}:{code}".encode()
@@ -50,8 +65,18 @@ def _generate_code() -> str:
 
 
 def request_otp(phone: str, purpose: str = OTPCode.Purpose.LOGIN) -> OTPCode:
-    """Create a one-time code for ``phone`` and deliver it by SMS, enforcing resend limits."""
+    """Create a one-time code for ``phone`` and deliver it by SMS, enforcing resend and daily limits."""
     now = timezone.now()
+
+    # Check lockout from recent failed verifications (within 15 minutes)
+    lockout_since = now - timedelta(minutes=15)
+    failed_attempts_count = OTPCode.objects.filter(
+        phone=phone, purpose=purpose, created_at__gte=lockout_since, attempts__gte=settings.OTP_MAX_ATTEMPTS
+    ).count()
+    if failed_attempts_count >= 2:
+        raise OTPVerificationLocked()
+
+    # Per-phone hourly limit & cooldown
     recent = OTPCode.objects.filter(phone=phone, purpose=purpose, created_at__gte=now - timedelta(hours=1))
     latest = recent.first()
     if latest and (now - latest.created_at).total_seconds() < settings.OTP_RESEND_COOLDOWN_SECONDS:
@@ -59,7 +84,25 @@ def request_otp(phone: str, purpose: str = OTPCode.Purpose.LOGIN) -> OTPCode:
     if recent.count() >= settings.OTP_MAX_PER_HOUR:
         raise OTPThrottled()
 
+    # Per-phone daily limit
+    recent_day = OTPCode.objects.filter(phone=phone, purpose=purpose, created_at__gte=now - timedelta(days=1))
+    daily_cap = getattr(settings, "OTP_MAX_PER_DAY", 15)
+    if recent_day.count() >= daily_cap:
+        raise OTPDailyLimitExceeded()
+
+    # Global outgoing SMS hourly cap (anti SMS-pumping cost protection)
+    global_hour = OTPCode.objects.filter(created_at__gte=now - timedelta(hours=1)).count()
+    global_cap = getattr(settings, "SMS_GLOBAL_HOURLY_CAP", 100)
+    if global_hour >= global_cap:
+        logger.critical("SECURITY ALERT: Global SMS hourly cap reached (%d/%d). Outgoing SMS throttled.", global_hour, global_cap)
+        raise OTPThrottled(_("Service is experiencing unusually high traffic. Please try again later."))
+    elif global_hour >= int(global_cap * 0.8):
+        logger.warning("SECURITY ALERT: Global SMS volume reached 80%% threshold (%d/%d).", global_hour, global_cap)
+
     code = _generate_code()
+    # Expire any previous unconsumed codes for this phone & purpose to ensure safe code length transition
+    OTPCode.objects.filter(phone=phone, purpose=purpose, used_at__isnull=True).update(expires_at=now)
+
     otp = OTPCode.objects.create(
         phone=phone,
         purpose=purpose,
@@ -75,6 +118,14 @@ def consume_otp(phone: str, code: str, purpose: str) -> None:
 
     The error is raised *after* the transaction commits so a failed attempt is always counted.
     """
+    now = timezone.now()
+    lockout_since = now - timedelta(minutes=15)
+    failed_attempts_count = OTPCode.objects.filter(
+        phone=phone, purpose=purpose, created_at__gte=lockout_since, attempts__gte=settings.OTP_MAX_ATTEMPTS
+    ).count()
+    if failed_attempts_count >= 2:
+        raise OTPVerificationLocked()
+
     error: DomainError | None = None
     with transaction.atomic():
         otp = (
@@ -90,7 +141,10 @@ def consume_otp(phone: str, code: str, purpose: str) -> None:
         elif not hmac.compare_digest(otp.code_hash, _hash_code(phone, code)):
             otp.attempts += 1
             otp.save(update_fields=["attempts"])
-            error = InvalidOTP()
+            if otp.attempts >= settings.OTP_MAX_ATTEMPTS:
+                error = TooManyOTPAttempts()
+            else:
+                error = InvalidOTP()
         else:
             otp.used_at = timezone.now()
             otp.save(update_fields=["used_at"])

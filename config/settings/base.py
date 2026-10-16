@@ -189,17 +189,20 @@ SPECTACULAR_SETTINGS = {
 FRONTEND_URL = env("FRONTEND_URL", default="http://localhost:3000").rstrip("/")
 CORS_ALLOWED_ORIGINS = env.list("CORS_ALLOWED_ORIGINS", default=[FRONTEND_URL])
 CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[FRONTEND_URL])
-# The live-chat widget identifies visitors with this header.
-CORS_ALLOW_HEADERS = (*default_headers, "x-support-token")
+# The live-chat widget identifies visitors with this header, Turnstile with X-Turnstile-Token.
+CORS_ALLOW_HEADERS = (*default_headers, "x-support-token", "x-turnstile-token")
 
 # ---------------------------------------------------------------- domain settings
 FIELD_ENCRYPTION_KEY = env("FIELD_ENCRYPTION_KEY")
 
-OTP_LENGTH = 4
+OTP_LENGTH = 6
 OTP_TTL_SECONDS = env.int("OTP_TTL_SECONDS", default=120)
-OTP_MAX_ATTEMPTS = 5
+OTP_MAX_ATTEMPTS = 3
 OTP_RESEND_COOLDOWN_SECONDS = env.int("OTP_RESEND_COOLDOWN_SECONDS", default=60)
 OTP_MAX_PER_HOUR = env.int("OTP_MAX_PER_HOUR", default=5)
+OTP_MAX_PER_DAY = env.int("OTP_MAX_PER_DAY", default=15)
+SMS_GLOBAL_HOURLY_CAP = env.int("SMS_GLOBAL_HOURLY_CAP", default=100)
+TURNSTILE_SECRET_KEY = env("TURNSTILE_SECRET_KEY", default="")
 # Testing only: when set, every OTP is this fixed code. Must stay empty in production.
 OTP_TEST_CODE = env("OTP_TEST_CODE", default="")
 ALLOW_OTP_TEST_CODE = env.bool("ALLOW_OTP_TEST_CODE", default=False)

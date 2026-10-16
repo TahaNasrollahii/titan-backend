@@ -44,11 +44,11 @@ class TestOTPRequest:
         assert response.json()["code"] == "validation_error"
         assert "phone" in response.json()["errors"]
 
-    def test_code_is_four_digits(self, api_client):
+    def test_code_is_six_digits(self, api_client):
         request_code(api_client)
         code = InMemorySMSBackend.last_code_for(PHONE)
 
-        assert len(code) == 4
+        assert len(code) == 6
         assert code.isdigit()
 
     def test_code_is_stored_hashed(self, api_client):
@@ -71,6 +71,29 @@ class TestOTPRequest:
         assert request_code(api_client).status_code == 201
 
         assert request_code(api_client).status_code == 429
+
+    def test_daily_limit(self, api_client, settings):
+        settings.OTP_RESEND_COOLDOWN_SECONDS = 0
+        settings.OTP_MAX_PER_HOUR = 20
+        settings.OTP_MAX_PER_DAY = 3
+        assert request_code(api_client).status_code == 201
+        assert request_code(api_client).status_code == 201
+        assert request_code(api_client).status_code == 201
+
+        response = request_code(api_client)
+        assert response.status_code == 429
+        assert response.json()["code"] == "otp_daily_limit_exceeded"
+
+    def test_global_sms_hourly_cap(self, api_client, settings):
+        settings.OTP_RESEND_COOLDOWN_SECONDS = 0
+        settings.OTP_MAX_PER_HOUR = 100
+        settings.SMS_GLOBAL_HOURLY_CAP = 2
+        assert request_code(api_client, "09121111111").status_code == 201
+        assert request_code(api_client, "09122222222").status_code == 201
+
+        response = request_code(api_client, "09123333333")
+        assert response.status_code == 429
+        assert response.json()["code"] == "otp_throttled"
 
 
 class TestOTPVerify:
@@ -108,7 +131,7 @@ class TestOTPVerify:
         request_code(api_client)
 
         response = verify(
-            api_client, "00000" if InMemorySMSBackend.last_code_for(PHONE) != "00000" else "11111"
+            api_client, "000000" if InMemorySMSBackend.last_code_for(PHONE) != "000000" else "111111"
         )
 
         assert response.status_code == 400
@@ -119,7 +142,7 @@ class TestOTPVerify:
         settings.OTP_MAX_ATTEMPTS = 2
         request_code(api_client)
         code = InMemorySMSBackend.last_code_for(PHONE)
-        wrong = "00000" if code != "00000" else "11111"
+        wrong = "000000" if code != "000000" else "111111"
         verify(api_client, wrong)
         verify(api_client, wrong)
 
@@ -127,6 +150,30 @@ class TestOTPVerify:
 
         assert response.status_code == 429
         assert response.json()["code"] == "otp_attempts_exceeded"
+
+    def test_lockout_window_after_multiple_failed_codes(self, api_client, settings):
+        settings.OTP_MAX_ATTEMPTS = 2
+        settings.OTP_RESEND_COOLDOWN_SECONDS = 0
+        settings.OTP_MAX_PER_HOUR = 10
+
+        # Code 1: exhaust attempts
+        request_code(api_client)
+        code1 = InMemorySMSBackend.last_code_for(PHONE)
+        wrong = "000000" if code1 != "000000" else "111111"
+        verify(api_client, wrong)
+        verify(api_client, wrong)
+
+        # Code 2: exhaust attempts
+        request_code(api_client)
+        code2 = InMemorySMSBackend.last_code_for(PHONE)
+        wrong = "000000" if code2 != "000000" else "111111"
+        verify(api_client, wrong)
+        verify(api_client, wrong)
+
+        # Subsequent verify or request should be locked out
+        response = verify(api_client, "123456")
+        assert response.status_code == 429
+        assert response.json()["code"] == "otp_verification_locked"
 
     def test_expired_code_is_rejected(self, api_client):
         request_code(api_client)
@@ -195,14 +242,14 @@ class TestTokens:
 
 class TestFixedTestCode:
     def test_fixed_code_logs_in(self, api_client, settings):
-        settings.OTP_TEST_CODE = "1234"
+        settings.OTP_TEST_CODE = "123456"
         settings.ALLOW_OTP_TEST_CODE = True
         request_code(api_client)
 
-        response = verify(api_client, "1234")
+        response = verify(api_client, "123456")
 
         assert response.status_code == 200
-        assert InMemorySMSBackend.last_code_for(PHONE) == "1234"
+        assert InMemorySMSBackend.last_code_for(PHONE) == "123456"
 
     def test_production_refuses_fixed_code(self, monkeypatch):
         import importlib

@@ -139,6 +139,7 @@ class AvatarSerializer(serializers.ModelSerializer):
 # ------------------------------------------------------------------ auth
 class PhoneSerializer(serializers.Serializer):
     phone = serializers.CharField(max_length=20)
+    turnstile_token = serializers.CharField(required=False, allow_blank=True, write_only=True)
 
     def validate_phone(self, value: str) -> str:
         return normalize_phone(value)
@@ -148,7 +149,11 @@ class OTPVerifySerializer(PhoneSerializer):
     code = serializers.CharField(max_length=10)
 
     def validate_code(self, value: str) -> str:
-        return normalize_digits(value).strip()
+        from django.conf import settings
+        digits = normalize_digits(value).strip()
+        if len(digits) != settings.OTP_LENGTH:
+            raise serializers.ValidationError(_("Verification code must be exactly %(len)d digits.") % {"len": settings.OTP_LENGTH})
+        return digits
 
 
 class OTPRequestResponseSerializer(serializers.Serializer):

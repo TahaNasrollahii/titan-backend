@@ -89,6 +89,7 @@ class StartInputSerializer(serializers.Serializer):
     last_name = serializers.CharField(max_length=60)
     phone = serializers.CharField(max_length=20)
     page_url = serializers.CharField(required=False, allow_blank=True, max_length=500)
+    turnstile_token = serializers.CharField(required=False, allow_blank=True, write_only=True)
 
     def validate_first_name(self, value):
         return _clean_name(value)
