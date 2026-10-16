@@ -129,11 +129,17 @@ class MeSerializer(PublicPlayerSerializer):
         return value
 
 
+from apps.core.images import validate_and_sanitize_image
+
+
 class AvatarSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ["avatar"]
         extra_kwargs = {"avatar": {"required": True, "allow_null": False}}
+
+    def validate_avatar(self, value):
+        return validate_and_sanitize_image(value)
 
 
 # ------------------------------------------------------------------ auth

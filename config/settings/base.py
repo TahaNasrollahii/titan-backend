@@ -272,3 +272,34 @@ UNFOLD["SITE_URL"] = FRONTEND_URL  # "Return to site" goes to the storefront, no
 
 # Compact English date formats for the admin (the public API serialises ISO-8601 regardless).
 FORMAT_MODULE_PATH = ["config.formats"]
+
+# ---------------------------------------------------------------- Sentry
+SENTRY_DSN = env("SENTRY_DSN", default="")
+if SENTRY_DSN:
+    import sentry_sdk
+    from sentry_sdk.integrations.django import DjangoIntegration
+
+    def sentry_before_send(event, hint):
+        if "request" in event:
+            req = event["request"]
+            if "headers" in req and isinstance(req["headers"], dict):
+                for h in ["Authorization", "Cookie", "X-Support-Token", "X-Turnstile-Token", "X-CSRFToken"]:
+                    if h in req["headers"]:
+                        req["headers"][h] = "[SCRUBBED]"
+            if "data" in req and isinstance(req["data"], dict):
+                for sensitive in ["password", "phone", "code", "refresh", "access", "card", "card_number", "cvv"]:
+                    if sensitive in req["data"]:
+                        req["data"][sensitive] = "[SCRUBBED]"
+        if "user" in event and isinstance(event["user"], dict):
+            event["user"].pop("phone", None)
+            event["user"].pop("ip_address", None)
+        return event
+
+    sentry_sdk.init(
+        dsn=SENTRY_DSN,
+        integrations=[DjangoIntegration()],
+        traces_sample_rate=env.float("SENTRY_TRACES_SAMPLE_RATE", default=0.1),
+        send_default_pii=False,
+        before_send=sentry_before_send,
+    )
+

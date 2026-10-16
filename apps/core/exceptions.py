@@ -57,6 +57,16 @@ def api_exception_handler(exc, context):
     elif isinstance(exc, PermissionDenied):
         exc = exceptions.PermissionDenied()
 
+    if isinstance(exc, exceptions.ParseError):
+        logger.warning("Invalid request payload received: %s", exc)
+        from django.conf import settings
+
+        if not getattr(settings, "DEBUG", False):
+            return Response(
+                {"detail": _("Invalid request payload."), "code": "parse_error"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
     response = exception_handler(exc, context)
     if response is None:
         logger.exception("Unhandled server error: %s", exc)
