@@ -30,8 +30,9 @@ def robots_txt(request):
 
 
 def security_txt(request):
+    contact_email = getattr(settings, "SECURITY_CONTACT_EMAIL", "tahanasrollahii@gmail.com")
     lines = [
-        "Contact: mailto:security@titan.gg",
+        f"Contact: mailto:{contact_email}",
         "Expires: 2027-12-31T23:59:59.000Z",
         "Preferred-Languages: fa, en",
         "Canonical: https://titan-backend-taha.vercel.app/.well-known/security.txt",

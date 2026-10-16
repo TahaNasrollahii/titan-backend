@@ -85,3 +85,17 @@ class TestApiConventions:
 
     def test_schema_is_served(self, api_client):
         assert api_client.get(reverse("schema")).status_code == 200
+
+    def test_robots_txt(self, api_client):
+        response = api_client.get("/robots.txt")
+        assert response.status_code == 200
+        content = response.content.decode()
+        assert "Disallow: /admin/" in content
+        assert "Disallow: /api/v1/" in content
+
+    def test_security_txt(self, api_client, monkeypatch):
+        response = api_client.get("/.well-known/security.txt")
+        assert response.status_code == 200
+        content = response.content.decode()
+        assert "titan.gg" not in content
+        assert "Contact: mailto:" in content

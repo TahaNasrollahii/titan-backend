@@ -252,6 +252,7 @@ SUPPORT_MESSAGE_MAX_LENGTH = 2000
 SUPPORT_ALERT_COOLDOWN_SECONDS = env.int("SUPPORT_ALERT_COOLDOWN_SECONDS", default=600)
 SEED_ADMIN_PASSWORD = env("SEED_ADMIN_PASSWORD", default="")
 ADMIN_URL = env("ADMIN_URL", default="manage-titan").strip("/")
+SECURITY_CONTACT_EMAIL = env("SECURITY_CONTACT_EMAIL", default="tahanasrollahii@gmail.com")
 
 # ---------------------------------------------------------------- logging
 LOGGING = {
