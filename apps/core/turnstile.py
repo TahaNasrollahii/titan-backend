@@ -14,17 +14,12 @@ TURNSTILE_VERIFY_URL = "https://challenges.cloudflare.com/turnstile/v0/siteverif
 def verify_turnstile_token(token: str, ip: str | None = None) -> bool:
     """Verify a Turnstile token against Cloudflare's siteverify endpoint.
 
-    Fails closed in production if the token is invalid or Cloudflare cannot be reached.
-    In development and automated testing environments, if TURNSTILE_SECRET_KEY is empty,
-    verification passes.
+    Fails closed if a key is configured but the token is invalid or Cloudflare cannot be reached.
+    If TURNSTILE_SECRET_KEY is not configured, verification is bypassed.
     """
     secret = getattr(settings, "TURNSTILE_SECRET_KEY", "").strip()
     if not secret:
-        # In testing or development without a key, allow requests to proceed
-        if settings.DEBUG or getattr(settings, "IS_TESTING", False):
-            return True
-        logger.error("TURNSTILE_SECRET_KEY is missing in production settings.")
-        return False
+        return True
 
     if not token:
         logger.warning("Turnstile token is missing.")
@@ -49,7 +44,7 @@ def verify_turnstile_token(token: str, ip: str | None = None) -> bool:
 def validate_turnstile(request):
     """Enforces Turnstile verification on the current DRF request."""
     secret = getattr(settings, "TURNSTILE_SECRET_KEY", "").strip()
-    if not secret and (settings.DEBUG or getattr(settings, "IS_TESTING", False)):
+    if not secret:
         return
 
     token = ""
