@@ -238,6 +238,7 @@ class TournamentDetailSerializer(TournamentListSerializer):
     season = SeasonSerializer(read_only=True)
     prizes = PrizeSerializer(many=True, read_only=True)
     my_registration = serializers.SerializerMethodField()
+    special_bracket = serializers.SerializerMethodField()
 
     class Meta(TournamentListSerializer.Meta):
         fields = [
@@ -251,12 +252,36 @@ class TournamentDetailSerializer(TournamentListSerializer):
             "registration_opens_at",
             "stream_url",
             "my_registration",
+            "special_bracket",
         ]
 
     @extend_schema_field(MyRegistrationSerializer(allow_null=True))
     def get_my_registration(self, tournament: Tournament):
         registration = self.context.get("my_registration")
         return MyRegistrationSerializer(registration, context=self.context).data if registration else None
+
+    @extend_schema_field(serializers.JSONField(allow_null=True))
+    def get_special_bracket(self, tournament: Tournament):
+        raw = tournament.rules
+        if isinstance(raw, dict):
+            return raw.get("special_bracket") or (raw if "teams" in raw else None)
+        if isinstance(raw, list):
+            for item in raw:
+                if isinstance(item, dict):
+                    if "special_bracket" in item:
+                        return item["special_bracket"]
+                    if "teams" in item:
+                        return item
+        return None
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        raw_rules = data.get("rules")
+        if isinstance(raw_rules, dict):
+            data["rules"] = raw_rules.get("rules", [])
+        elif isinstance(raw_rules, list):
+            data["rules"] = [r for r in raw_rules if isinstance(r, str)]
+        return data
 
 
 class LineupSerializer(serializers.Serializer):

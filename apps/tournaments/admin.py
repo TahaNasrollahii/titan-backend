@@ -204,6 +204,11 @@ class TournamentAdmin(ModelAdmin):
     actions_detail = ["start_tournament", "view_on_storefront"]
 
     def formfield_for_dbfield(self, db_field, request, **kwargs):
+        if db_field.name == "rules":
+            kwargs["help_text"] = _(
+                "قوانین مسابقه به صورت لیست متنی. برای ایجاد جدول حذفی شیشه‌ای دلخواه بدون نیاز به تغییر کد فرانت‌اند، "
+                "می‌توانید آبجکت {'special_bracket': {...}} شامل تیم‌ها و نتایج را در همین فیلد قرار دهید."
+            )
         if isinstance(db_field, URLField):
             kwargs.setdefault("assume_scheme", "https")
         return super().formfield_for_dbfield(db_field, request, **kwargs)
