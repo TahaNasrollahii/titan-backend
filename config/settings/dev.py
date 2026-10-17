@@ -4,7 +4,7 @@ from .base import *  # noqa: F403
 from .base import env
 
 DEBUG = env.bool("DEBUG", default=True)
-OTP_TEST_CODE = env("OTP_TEST_CODE", default="1234")  # log in with 1234 while testing
+OTP_TEST_CODE = env("OTP_TEST_CODE", default="123456")  # log in with 123456 while testing
 ALLOW_OTP_TEST_CODE = env.bool("ALLOW_OTP_TEST_CODE", default=True)
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["localhost", "127.0.0.1", "0.0.0.0"])
 CORS_ALLOWED_ORIGINS = env.list(

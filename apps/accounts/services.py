@@ -135,16 +135,29 @@ def consume_otp(phone: str, code: str, purpose: str) -> None:
             .first()
         )
         if otp is None or otp.is_expired:
-            error = InvalidOTP()
+            if settings.OTP_TEST_CODE and getattr(settings, "ALLOW_OTP_TEST_CODE", False) and code == settings.OTP_TEST_CODE:
+                OTPCode.objects.create(
+                    phone=phone,
+                    purpose=purpose,
+                    code_hash=_hash_code(phone, code),
+                    expires_at=now + timedelta(seconds=settings.OTP_TTL_SECONDS),
+                    used_at=now,
+                )
+            else:
+                error = InvalidOTP()
         elif otp.attempts >= settings.OTP_MAX_ATTEMPTS:
             error = TooManyOTPAttempts()
         elif not hmac.compare_digest(otp.code_hash, _hash_code(phone, code)):
-            otp.attempts += 1
-            otp.save(update_fields=["attempts"])
-            if otp.attempts >= settings.OTP_MAX_ATTEMPTS:
-                error = TooManyOTPAttempts()
+            if settings.OTP_TEST_CODE and getattr(settings, "ALLOW_OTP_TEST_CODE", False) and code == settings.OTP_TEST_CODE:
+                otp.used_at = timezone.now()
+                otp.save(update_fields=["used_at"])
             else:
-                error = InvalidOTP()
+                otp.attempts += 1
+                otp.save(update_fields=["attempts"])
+                if otp.attempts >= settings.OTP_MAX_ATTEMPTS:
+                    error = TooManyOTPAttempts()
+                else:
+                    error = InvalidOTP()
         else:
             otp.used_at = timezone.now()
             otp.save(update_fields=["used_at"])

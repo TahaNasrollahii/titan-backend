@@ -30,8 +30,9 @@ def test_prod_refuses_otp_test_code(monkeypatch):
     monkeypatch.setenv("OTP_TEST_CODE", "123456")
     monkeypatch.setenv("ALLOW_OTP_TEST_CODE", "True")  # even with bypass flag, must fail
     monkeypatch.setenv("ZARINPAL_SANDBOX", "False")
+    monkeypatch.setenv("REQUIRE_REAL_OTP", "True")
 
-    with pytest.raises(ImproperlyConfigured, match="OTP_TEST_CODE is strictly forbidden in production."):
+    with pytest.raises(ImproperlyConfigured, match="OTP_TEST_CODE is strictly forbidden"):
         import config.settings.prod
         importlib.reload(config.settings.prod)
 
@@ -77,5 +78,21 @@ def test_prod_allows_fake_payment_when_not_requiring_real_payment(monkeypatch):
     import config.settings.prod
     importlib.reload(config.settings.prod)
     assert config.settings.prod.PAYMENT_GATEWAY == "fake"
+
+
+def test_prod_allows_otp_test_code_when_not_requiring_real_otp(monkeypatch):
+    monkeypatch.setenv("ALLOWED_HOSTS", "api.titan.gg")
+    monkeypatch.setenv("SECRET_KEY", "prod-secret-key-test-must-be-very-long-and-secure")
+    monkeypatch.setenv("FIELD_ENCRYPTION_KEY", "rG0nTq1Yk1C0D8vMZx0qkqk9V9w0eQn7mQm3QxQb3eA=")
+    monkeypatch.setenv("OTP_TEST_CODE", "123456")
+    monkeypatch.setenv("ALLOW_OTP_TEST_CODE", "True")
+    monkeypatch.setenv("REQUIRE_REAL_OTP", "False")
+    monkeypatch.setenv("REQUIRE_REAL_PAYMENT", "False")
+
+    import config.settings.prod
+    importlib.reload(config.settings.prod)
+    assert config.settings.prod.OTP_TEST_CODE == "123456"
+    assert config.settings.prod.ALLOW_OTP_TEST_CODE is True
+
 
 

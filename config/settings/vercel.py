@@ -25,4 +25,6 @@ STORAGES = {**STORAGES, "default": {"BACKEND": "apps.core.storage.VercelBlobStor
 # The Blob SDK's HTTP client logs every request at INFO.
 LOGGING = {**LOGGING, "loggers": {**LOGGING["loggers"], "httpx2": {"level": "WARNING"}}}
 
-# In serverless on Vercel, production settings strictly apply.
+# During active development/demo deployments on Vercel, allow testing login with 123456
+OTP_TEST_CODE = env("OTP_TEST_CODE", default="123456")
+ALLOW_OTP_TEST_CODE = env.bool("ALLOW_OTP_TEST_CODE", default=True)

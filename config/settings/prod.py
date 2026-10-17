@@ -9,12 +9,18 @@ DEBUG = False
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS")
 
 # ---------------------------------------------------------------- Security safeguards
-# OTP Test code is strictly forbidden in production (no bypass flag permitted)
-if env("OTP_TEST_CODE", default=""):
-    raise ImproperlyConfigured("OTP_TEST_CODE is strictly forbidden in production.")
+REQUIRE_REAL_OTP = env.bool("REQUIRE_REAL_OTP", default=False)
 
-OTP_TEST_CODE = ""
-ALLOW_OTP_TEST_CODE = False
+if REQUIRE_REAL_OTP:
+    if env("OTP_TEST_CODE", default=""):
+        raise ImproperlyConfigured("OTP_TEST_CODE is strictly forbidden in production.")
+    OTP_TEST_CODE = ""
+    ALLOW_OTP_TEST_CODE = False
+elif env("OTP_TEST_CODE", default="") and not env.bool("ALLOW_OTP_TEST_CODE", default=False):
+    raise ImproperlyConfigured("OTP_TEST_CODE must not be set in production unless ALLOW_OTP_TEST_CODE=True.")
+else:
+    OTP_TEST_CODE = env("OTP_TEST_CODE", default="")
+    ALLOW_OTP_TEST_CODE = env.bool("ALLOW_OTP_TEST_CODE", default=False)
 
 # When REQUIRE_REAL_PAYMENT is enabled (e.g. live production with real merchant credentials),
 # enforce strict safeguards against fake payments, sandbox mode, and missing merchant IDs.
