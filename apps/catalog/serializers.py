@@ -124,6 +124,8 @@ class ProductListSerializer(serializers.ModelSerializer):
             "category",
             "platforms",
             "is_wishlisted",
+            "created_at",
+            "updated_at",
         ]
 
 

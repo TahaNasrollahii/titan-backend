@@ -183,6 +183,8 @@ class TournamentListSerializer(serializers.ModelSerializer):
             "viewer_count",
             "is_registered",
             "featured_match",
+            "created_at",
+            "updated_at",
         ]
 
     def get_is_full(self, tournament: Tournament) -> bool:
