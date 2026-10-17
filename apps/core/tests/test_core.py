@@ -99,3 +99,16 @@ class TestApiConventions:
         content = response.content.decode()
         assert "titan.gg" not in content
         assert "Contact: mailto:" in content
+
+    def test_public_api_cache_headers(self, api_client, auth_client):
+        # Anonymous public request receives public cache header
+        res_anon = api_client.get(reverse("product-list"))
+        assert res_anon.status_code == 200
+        assert res_anon.headers.get("Cache-Control") == "public, s-maxage=300, stale-while-revalidate=600"
+
+        # Authenticated request does NOT receive public cache header
+        res_auth = auth_client.get(reverse("product-list"))
+        assert res_auth.status_code == 200
+        assert res_auth.headers.get("Cache-Control") != "public, s-maxage=300, stale-while-revalidate=600"
+
+

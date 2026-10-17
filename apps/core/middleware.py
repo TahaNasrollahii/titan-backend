@@ -80,3 +80,35 @@ class SecurityHeadersMiddleware:
             response.headers["X-Robots-Tag"] = "noindex, nofollow, noarchive"
 
         return response
+
+
+PUBLIC_CACHE_PREFIXES = (
+    "/api/v1/products/",
+    "/api/v1/games/",
+    "/api/v1/tournaments/",
+    "/api/v1/home/",
+    "/api/v1/content/",
+    "/api/v1/categories/",
+)
+
+
+class PublicApiCacheMiddleware:
+    """Set Edge caching headers on public read-only API endpoints for anonymous requests."""
+
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        response = self.get_response(request)
+        if (
+            request.method in ("GET", "HEAD")
+            and response.status_code == 200
+            and any(request.path.startswith(prefix) for prefix in PUBLIC_CACHE_PREFIXES)
+        ):
+            has_auth = (
+                request.headers.get("Authorization")
+                or (hasattr(request, "user") and request.user.is_authenticated)
+            )
+            if not has_auth and "Cache-Control" not in response.headers:
+                response.headers["Cache-Control"] = "public, s-maxage=300, stale-while-revalidate=600"
+        return response
