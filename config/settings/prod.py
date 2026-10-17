@@ -16,24 +16,28 @@ if env("OTP_TEST_CODE", default=""):
 OTP_TEST_CODE = ""
 ALLOW_OTP_TEST_CODE = False
 
-# Fake payment gateway is strictly forbidden in production
-if env("PAYMENT_GATEWAY", default="zarinpal").lower() == "fake":
-    raise ImproperlyConfigured("PAYMENT_GATEWAY='fake' is strictly forbidden in production.")
+# When REQUIRE_REAL_PAYMENT is enabled (e.g. live production with real merchant credentials),
+# enforce strict safeguards against fake payments, sandbox mode, and missing merchant IDs.
+REQUIRE_REAL_PAYMENT = env.bool("REQUIRE_REAL_PAYMENT", default=False)
+PAYMENT_GATEWAY = env("PAYMENT_GATEWAY", default="zarinpal").lower()
 
-PAYMENT_GATEWAY = "zarinpal"
+if REQUIRE_REAL_PAYMENT:
+    if PAYMENT_GATEWAY == "fake":
+        raise ImproperlyConfigured("PAYMENT_GATEWAY='fake' is strictly forbidden when REQUIRE_REAL_PAYMENT=True.")
+    PAYMENT_GATEWAY = "zarinpal"
 
-# Zarinpal sandbox mode is strictly forbidden in production
-if env.bool("ZARINPAL_SANDBOX", default=False):
-    raise ImproperlyConfigured("ZARINPAL_SANDBOX=True is strictly forbidden in production.")
+    if env.bool("ZARINPAL_SANDBOX", default=False):
+        raise ImproperlyConfigured("ZARINPAL_SANDBOX=True is strictly forbidden when REQUIRE_REAL_PAYMENT=True.")
+    ZARINPAL_SANDBOX = False
 
-ZARINPAL_SANDBOX = False
-
-# Real merchant ID must be configured in production
-_zarinpal_merchant = env("ZARINPAL_MERCHANT_ID", default="").strip()
-if not _zarinpal_merchant or _zarinpal_merchant == "00000000-0000-0000-0000-000000000000":
-    raise ImproperlyConfigured("A valid ZARINPAL_MERCHANT_ID must be configured in production.")
-
-ZARINPAL_MERCHANT_ID = _zarinpal_merchant
+    _zarinpal_merchant = env("ZARINPAL_MERCHANT_ID", default="").strip()
+    if not _zarinpal_merchant or _zarinpal_merchant == "00000000-0000-0000-0000-000000000000":
+        raise ImproperlyConfigured("A valid ZARINPAL_MERCHANT_ID must be configured when REQUIRE_REAL_PAYMENT=True.")
+    ZARINPAL_MERCHANT_ID = _zarinpal_merchant
+else:
+    # Demo / Testing deployment mode (allows fake payments or sandbox testing)
+    ZARINPAL_SANDBOX = env.bool("ZARINPAL_SANDBOX", default=True)
+    ZARINPAL_MERCHANT_ID = env("ZARINPAL_MERCHANT_ID", default="00000000-0000-0000-0000-000000000000").strip()
 
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 SECURE_SSL_REDIRECT = env.bool("SECURE_SSL_REDIRECT", default=True)

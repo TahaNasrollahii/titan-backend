@@ -14,8 +14,9 @@ def test_prod_refuses_fake_payment_gateway(monkeypatch):
     monkeypatch.setenv("PAYMENT_GATEWAY", "fake")
     monkeypatch.setenv("OTP_TEST_CODE", "")
     monkeypatch.setenv("ZARINPAL_SANDBOX", "False")
+    monkeypatch.setenv("REQUIRE_REAL_PAYMENT", "True")
 
-    with pytest.raises(ImproperlyConfigured, match="PAYMENT_GATEWAY='fake' is strictly forbidden in production."):
+    with pytest.raises(ImproperlyConfigured, match="PAYMENT_GATEWAY='fake' is strictly forbidden"):
         import config.settings.prod
         importlib.reload(config.settings.prod)
 
@@ -43,8 +44,9 @@ def test_prod_refuses_zarinpal_sandbox(monkeypatch):
     monkeypatch.setenv("PAYMENT_GATEWAY", "zarinpal")
     monkeypatch.setenv("OTP_TEST_CODE", "")
     monkeypatch.setenv("ZARINPAL_SANDBOX", "True")
+    monkeypatch.setenv("REQUIRE_REAL_PAYMENT", "True")
 
-    with pytest.raises(ImproperlyConfigured, match="ZARINPAL_SANDBOX=True is strictly forbidden in production."):
+    with pytest.raises(ImproperlyConfigured, match="ZARINPAL_SANDBOX=True is strictly forbidden"):
         import config.settings.prod
         importlib.reload(config.settings.prod)
 
@@ -57,8 +59,23 @@ def test_prod_refuses_missing_merchant_id(monkeypatch):
     monkeypatch.setenv("PAYMENT_GATEWAY", "zarinpal")
     monkeypatch.setenv("OTP_TEST_CODE", "")
     monkeypatch.setenv("ZARINPAL_SANDBOX", "False")
+    monkeypatch.setenv("REQUIRE_REAL_PAYMENT", "True")
 
-    with pytest.raises(ImproperlyConfigured, match="A valid ZARINPAL_MERCHANT_ID must be configured in production."):
+    with pytest.raises(ImproperlyConfigured, match="A valid ZARINPAL_MERCHANT_ID must be configured"):
         import config.settings.prod
         importlib.reload(config.settings.prod)
+
+
+def test_prod_allows_fake_payment_when_not_requiring_real_payment(monkeypatch):
+    monkeypatch.setenv("ALLOWED_HOSTS", "api.titan.gg")
+    monkeypatch.setenv("SECRET_KEY", "prod-secret-key-test-must-be-very-long-and-secure")
+    monkeypatch.setenv("FIELD_ENCRYPTION_KEY", "rG0nTq1Yk1C0D8vMZx0qkqk9V9w0eQn7mQm3QxQb3eA=")
+    monkeypatch.setenv("PAYMENT_GATEWAY", "fake")
+    monkeypatch.setenv("OTP_TEST_CODE", "")
+    monkeypatch.setenv("REQUIRE_REAL_PAYMENT", "False")
+
+    import config.settings.prod
+    importlib.reload(config.settings.prod)
+    assert config.settings.prod.PAYMENT_GATEWAY == "fake"
+
 
