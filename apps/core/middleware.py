@@ -53,13 +53,25 @@ class SecurityHeadersMiddleware:
 
     def __call__(self, request):
         response = self.get_response(request)
+        admin_slug = getattr(settings, "ADMIN_URL", "manage-titan").strip("/")
+        admin_prefix = f"/{admin_slug}/"
+        is_admin_or_docs = (
+            request.path.startswith(admin_prefix)
+            or request.path.startswith("/admin/")
+            or request.path.startswith("/api/docs/")
+            or request.path.startswith("/api/redoc/")
+            or request.path.startswith("/api/schema/")
+        )
+
         if "Content-Security-Policy" not in response.headers:
+            # Django Unfold admin relies on Alpine.js which requires 'unsafe-eval' for expression evaluation.
+            script_src = "'self' 'unsafe-inline' 'unsafe-eval'" if is_admin_or_docs else "'self' 'unsafe-inline'"
             response.headers["Content-Security-Policy"] = (
                 "default-src 'self'; "
                 "img-src 'self' data: https: blob:; "
                 "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
                 "font-src 'self' data: https://fonts.gstatic.com; "
-                "script-src 'self' 'unsafe-inline'; "
+                f"script-src {script_src}; "
                 "frame-ancestors 'none'; "
                 "object-src 'none'; "
                 "base-uri 'self';"
@@ -67,16 +79,7 @@ class SecurityHeadersMiddleware:
         if "Permissions-Policy" not in response.headers:
             response.headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=(), browsing-topics=()"
 
-        # Ensure admin, API documentation, and private routes are strictly forbidden from indexing
-        admin_slug = getattr(settings, "ADMIN_URL", "manage-titan").strip("/")
-        admin_prefix = f"/{admin_slug}/"
-        if (
-            request.path.startswith(admin_prefix)
-            or request.path.startswith("/admin/")
-            or request.path.startswith("/api/docs/")
-            or request.path.startswith("/api/redoc/")
-            or request.path.startswith("/api/schema/")
-        ):
+        if is_admin_or_docs:
             response.headers["X-Robots-Tag"] = "noindex, nofollow, noarchive"
 
         return response

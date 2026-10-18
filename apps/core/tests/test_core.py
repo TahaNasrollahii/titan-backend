@@ -111,4 +111,16 @@ class TestApiConventions:
         assert res_auth.status_code == 200
         assert res_auth.headers.get("Cache-Control") != "public, s-maxage=300, stale-while-revalidate=600"
 
+    def test_csp_headers_admin_vs_api(self, api_client):
+        # API routes: strict script-src without unsafe-eval
+        res_api = api_client.get(reverse("health"))
+        csp_api = res_api.headers.get("Content-Security-Policy", "")
+        assert "script-src 'self' 'unsafe-inline';" in csp_api
+        assert "'unsafe-eval'" not in csp_api
+
+        # Admin routes: script-src with unsafe-eval for Alpine.js
+        res_admin = api_client.get("/manage-titan/login/")
+        csp_admin = res_admin.headers.get("Content-Security-Policy", "")
+        assert "'unsafe-eval'" in csp_admin
+
 
