@@ -111,7 +111,7 @@ USE_TZ = True
 # ---------------------------------------------------------------- static & media
 STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
-MEDIA_URL = "media/"
+MEDIA_URL = "/media/"
 MEDIA_ROOT = Path(env("MEDIA_ROOT", default=str(BASE_DIR / "media")))
 MAX_UPLOAD_SIZE = 2 * 1024 * 1024  # 2 MB, per the frontend's upload hints
 
@@ -205,11 +205,13 @@ SPECTACULAR_SETTINGS = {
 
 # ---------------------------------------------------------------- CORS / frontend
 FRONTEND_URL = env("FRONTEND_URL", default="http://localhost:3000").rstrip("/")
-CORS_ALLOWED_ORIGINS = env.list("CORS_ALLOWED_ORIGINS", default=[FRONTEND_URL])
-CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[FRONTEND_URL])
+CORS_ALLOWED_ORIGINS = env.list("CORS_ALLOWED_ORIGINS", default=[FRONTEND_URL, "http://127.0.0.1:3000", "http://localhost:3000"])
+CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[FRONTEND_URL, "http://127.0.0.1:3000", "http://localhost:3000"])
 CORS_ALLOW_CREDENTIALS = True
+if DEBUG:
+    CORS_ALLOWED_ORIGIN_REGEXES = [r"^http://(localhost|127\.0\.0\.1)(:\d+)?$"]
 # The live-chat widget identifies visitors with this header, Turnstile with X-Turnstile-Token, plus CSRF defense headers.
-CORS_ALLOW_HEADERS = (*default_headers, "x-support-token", "x-turnstile-token", "x-requested-with", "x-csrftoken")
+CORS_ALLOW_HEADERS = (*default_headers, "accept-language", "x-support-token", "x-turnstile-token", "x-requested-with", "x-csrftoken")
 
 # ---------------------------------------------------------------- domain settings
 FIELD_ENCRYPTION_KEY = env("FIELD_ENCRYPTION_KEY")
