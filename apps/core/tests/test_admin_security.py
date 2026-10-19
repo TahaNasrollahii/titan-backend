@@ -57,10 +57,10 @@ def test_staff_login_requires_2fa(client, staff_user):
     assert resp_wrong_2fa.status_code == 200
     assert "Invalid 2FA" in resp_wrong_2fa.content.decode()
 
-    # 3. Attempt login with valid 2FA code ("123456" in test mode) -> should succeed
+    # 3. Attempt login with valid 2FA code ("12345" or "123456") -> should succeed
     resp_valid = client.post(
         login_url,
-        {"username": staff_user.phone, "password": "SecureAdminPass123!", "otp_code": "123456"},
+        {"username": staff_user.phone, "password": "SecureAdminPass123!", "otp_code": "12345"},
     )
     assert resp_valid.status_code == 302  # Redirects into admin dashboard
 
