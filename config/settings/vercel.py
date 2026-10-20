@@ -28,3 +28,4 @@ LOGGING = {**LOGGING, "loggers": {**LOGGING["loggers"], "httpx2": {"level": "WAR
 # During active development/demo deployments on Vercel, allow testing login with 123456
 OTP_TEST_CODE = env("OTP_TEST_CODE", default="123456")
 ALLOW_OTP_TEST_CODE = env.bool("ALLOW_OTP_TEST_CODE", default=True)
+FRONTEND_URL = env("FRONTEND_URL", default="https://titan-front.vercel.app").rstrip("/")

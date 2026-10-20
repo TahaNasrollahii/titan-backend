@@ -205,6 +205,7 @@ SPECTACULAR_SETTINGS = {
 
 # ---------------------------------------------------------------- CORS / frontend
 FRONTEND_URL = env("FRONTEND_URL", default="http://localhost:3000").rstrip("/")
+REVALIDATE_SECRET = env("REVALIDATE_SECRET", default="titan-revalidate-default-secret")
 CORS_ALLOWED_ORIGINS = env.list("CORS_ALLOWED_ORIGINS", default=[FRONTEND_URL, "http://127.0.0.1:3000", "http://localhost:3000"])
 CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[FRONTEND_URL, "http://127.0.0.1:3000", "http://localhost:3000"])
 CORS_ALLOW_CREDENTIALS = True
