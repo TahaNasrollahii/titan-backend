@@ -13,7 +13,9 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.accounts.models import User
-from apps.catalog.models import Game, Product
+from apps.catalog.models import Game, Product, ProductCategory
+from apps.catalog.signals import SEO_REDIRECTS_CACHE_KEY, SEO_SITEMAP_CACHE_KEY
+from .models import Redirect, normalize_redirect_path
 from apps.catalog.selectors import games_with_counts
 from apps.catalog.serializers import GameMiniSerializer, GameSerializer, ProductListSerializer
 from apps.content.models import Announcement, Promo
@@ -181,3 +183,137 @@ class PlatformStatsView(APIView):
     def get(self, request):
         stats = cache.get_or_set(PLATFORM_STATS_CACHE_KEY, platform_stats, PLATFORM_STATS_TTL)
         return Response(PlatformStatsSerializer(stats).data)
+
+
+SEO_CACHE_TTL = 5 * 60
+
+
+class SitemapItemSerializer(serializers.Serializer):
+    slug = serializers.CharField()
+    updated_at = serializers.DateTimeField()
+    title = serializers.CharField(required=False, allow_blank=True)
+    image = serializers.CharField(required=False, allow_null=True)
+    status = serializers.CharField(required=False, allow_blank=True)
+
+
+class SitemapPayloadSerializer(serializers.Serializer):
+    products = SitemapItemSerializer(many=True)
+    games = SitemapItemSerializer(many=True)
+    categories = SitemapItemSerializer(many=True)
+    tournaments = SitemapItemSerializer(many=True)
+
+
+def _build_sitemap_payload() -> dict:
+    products = [
+        {
+            "slug": row.slug,
+            "updated_at": row.updated_at.isoformat(),
+            "title": row.title,
+            "image": row.image.url if row.image else None,
+        }
+        for row in Product.objects.filter(is_active=True, noindex=False, canonical_url="")
+        .only("slug", "updated_at", "title", "image")
+        .order_by("-updated_at")
+    ]
+    games = [
+        {
+            "slug": row.slug,
+            "updated_at": row.updated_at.isoformat(),
+            "title": row.title,
+            "image": row.cover_image.url if row.cover_image else None,
+        }
+        for row in Game.objects.filter(is_active=True, noindex=False, canonical_url="")
+        .only("slug", "updated_at", "title", "cover_image")
+        .order_by("sort_order", "slug")
+    ]
+    categories = [
+        {
+            "slug": row.slug,
+            "updated_at": row.updated_at.isoformat(),
+            "title": row.name,
+            "image": None,
+        }
+        for row in ProductCategory.objects.filter(noindex=False, canonical_url="")
+        .only("slug", "updated_at", "name")
+        .order_by("sort_order", "slug")
+    ]
+    tournaments = [
+        {
+            "slug": row.slug,
+            "updated_at": row.updated_at.isoformat(),
+            "title": row.title,
+            "image": row.cover_image.url if row.cover_image else None,
+            "status": row.state,
+        }
+        for row in Tournament.objects.filter(noindex=False, canonical_url="")
+        .exclude(state=Tournament.State.CANCELLED)
+        .only("slug", "updated_at", "title", "cover_image", "state")
+        .order_by("-starts_at")
+    ]
+    return {
+        "products": products,
+        "games": games,
+        "categories": categories,
+        "tournaments": tournaments,
+    }
+
+
+@extend_schema(tags=["seo"], responses=SitemapPayloadSerializer)
+class SitemapDataView(APIView):
+    """Lightweight, cached endpoint serving canonical indexable slugs and timestamps for XML sitemaps."""
+
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        data = cache.get_or_set(SEO_SITEMAP_CACHE_KEY, _build_sitemap_payload, SEO_CACHE_TTL)
+        return Response(data)
+
+
+class RedirectRuleSerializer(serializers.Serializer):
+    old_path = serializers.CharField()
+    new_path = serializers.CharField()
+    is_permanent = serializers.BooleanField()
+
+
+def _build_redirects_payload() -> dict:
+    rules = list(
+        Redirect.objects.filter(is_active=True)
+        .values("old_path", "new_path", "is_permanent")
+        .order_by("-updated_at")
+    )
+    redirect_map = {
+        row["old_path"]: {
+            "new_path": row["new_path"],
+            "is_permanent": row["is_permanent"],
+        }
+        for row in rules
+    }
+    return {"results": rules, "map": redirect_map}
+
+
+@extend_schema(
+    tags=["seo"],
+    parameters=[OpenApiParameter("path", str, required=False, description="Optional path to resolve.")],
+    responses=RedirectRuleSerializer(many=True),
+)
+class RedirectListView(APIView):
+    """Cached 301/302 redirect lookup endpoint consumed by Next.js middleware and server routes."""
+
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        payload = cache.get_or_set(SEO_REDIRECTS_CACHE_KEY, _build_redirects_payload, SEO_CACHE_TTL)
+        lookup_path = request.query_params.get("path")
+        if lookup_path:
+            normalized = normalize_redirect_path(lookup_path)
+            match = payload["map"].get(normalized)
+            if not match:
+                return Response({"detail": "No redirect found."}, status=404)
+            return Response(
+                {
+                    "old_path": normalized,
+                    "new_path": match["new_path"],
+                    "is_permanent": match["is_permanent"],
+                }
+            )
+        return Response(payload)

@@ -74,3 +74,45 @@ class OutstandingTokenAdmin(JWTOutstandingTokenAdmin, ModelAdmin):
 class BlacklistedTokenAdmin(JWTBlacklistedTokenAdmin, ModelAdmin):
     search_fields = ["token__jti", "token__user__phone", "token__user__username"]
     ordering = ["-blacklisted_at"]
+
+
+SEO_FIELDSET = (
+    _("SEO & Metadata"),
+    {
+        "classes": ["tab"],
+        "description": _(
+            "Search engine optimization fields. Leave meta title / description blank to use smart automatic fallbacks."
+        ),
+        "fields": (
+            "meta_title",
+            "meta_description",
+            ("noindex", "canonical_url"),
+            ("og_image", "image_alt"),
+        ),
+    },
+)
+
+
+from .models import Redirect  # noqa: E402
+
+
+@admin.register(Redirect)
+class RedirectAdmin(ModelAdmin):
+    list_display = ["old_path", "new_path", "is_permanent", "is_active", "updated_at"]
+    list_editable = ["is_permanent", "is_active"]
+    list_filter = ["is_permanent", "is_active"]
+    search_fields = ["old_path", "new_path"]
+    ordering = ["-updated_at"]
+    readonly_fields = ["created_at", "updated_at"]
+    fieldsets = (
+        (
+            None,
+            {
+                "fields": (
+                    ("old_path", "new_path"),
+                    ("is_permanent", "is_active"),
+                    ("created_at", "updated_at"),
+                )
+            },
+        ),
+    )

@@ -18,7 +18,7 @@ from unfold.contrib.filters.admin import (
 from unfold.decorators import action, display
 from unfold.enums import ActionVariant
 
-from apps.core.admin import DANGER, INFO, SUCCESS, WARNING, image_header, initials, toman
+from apps.core.admin import DANGER, INFO, SEO_FIELDSET, SUCCESS, WARNING, image_header, initials, toman
 
 from . import services
 from .models import (
@@ -75,6 +75,20 @@ class GameAdmin(ModelAdmin):
             },
         ),
         (_("Accent"), {"classes": ["tab"], "fields": ("accent_color", "accent_gradient")}),
+        (
+            _("SEO & Content"),
+            {
+                "classes": ["tab"],
+                "fields": (
+                    "meta_title",
+                    "meta_description",
+                    ("noindex", "canonical_url"),
+                    ("og_image", "image_alt"),
+                    "intro_text",
+                    "bottom_seo_text",
+                ),
+            },
+        ),
     )
 
     def get_queryset(self, request):
@@ -120,6 +134,24 @@ class PlatformAdmin(ModelAdmin):
 @admin.register(ProductCategory)
 class ProductCategoryAdmin(ModelAdmin):
     list_display = ["name", "slug", "products", "sort_order"]
+    readonly_fields = ["updated_at"]
+    fieldsets = (
+        (None, {"fields": (("name", "slug"), "sort_order", "description", "updated_at")}),
+        (
+            _("SEO & Content"),
+            {
+                "classes": ["tab"],
+                "fields": (
+                    "meta_title",
+                    "meta_description",
+                    ("noindex", "canonical_url"),
+                    ("og_image", "image_alt"),
+                    "intro_text",
+                    "bottom_seo_text",
+                ),
+            },
+        ),
+    )
     list_editable = ["sort_order"]
     search_fields = ["name", "slug"]
     prepopulated_fields = {"slug": ["name"]}
@@ -179,7 +211,7 @@ class ProductAdmin(ModelAdmin):
     ]
     list_filter_submit = True
     list_select_related = ["game", "category"]
-    search_fields = ["title", "slug", "vendor"]
+    search_fields = ["title", "slug", "vendor", "sku", "gtin", "mpn"]
     prepopulated_fields = {"slug": ["title"]}
     autocomplete_fields = ["game", "category", "platforms"]
     readonly_fields = ["has_variants", "price_max", "rating_avg", "review_count", "created_at", "updated_at"]
@@ -209,7 +241,10 @@ class ProductAdmin(ModelAdmin):
         ),
         (
             _("Content"),
-            {"classes": ["tab"], "fields": ("description", "features", "specs", "tags")},
+            {"classes": ["tab"], "fields": ("description", "features", "specs", "tags", ("sku", "gtin", "mpn"))},
+        ),
+        (
+            *SEO_FIELDSET,
         ),
         (
             _("Merchandising"),

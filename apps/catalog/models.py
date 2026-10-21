@@ -4,12 +4,12 @@ from django.db import models
 from django.db.models import F, Q
 from django.utils.translation import gettext_lazy as _
 
-from apps.core.models import TimeStampedModel
+from apps.core.models import SeoMetadataMixin, TimeStampedModel
 from apps.core.utils import percent_off
 from apps.core.validators import IMAGE_VALIDATORS
 
 
-class Game(TimeStampedModel):
+class Game(TimeStampedModel, SeoMetadataMixin):
     class Kind(models.TextChoices):
         GAME = "game", _("Game")
         SERVICE = "service", _("Service")  # e.g. premium accounts (Spotify, Telegram…)
@@ -17,6 +17,16 @@ class Game(TimeStampedModel):
     slug = models.SlugField(unique=True)
     title = models.CharField(_("title"), max_length=80)
     title_en = models.CharField(_("English title"), max_length=80)
+    intro_text = models.TextField(
+        _("category intro text"),
+        blank=True,
+        help_text=_("Short SEO intro text displayed near the top of the game store page."),
+    )
+    bottom_seo_text = models.TextField(
+        _("bottom SEO content"),
+        blank=True,
+        help_text=_("Detailed SEO descriptive content displayed at the bottom of the game store page."),
+    )
     description = models.TextField(blank=True)
     genre = models.CharField(max_length=60, blank=True)
     kind = models.CharField(max_length=10, choices=Kind.choices, default=Kind.GAME)
@@ -59,9 +69,21 @@ class Platform(models.Model):
         return self.name
 
 
-class ProductCategory(models.Model):
+class ProductCategory(SeoMetadataMixin):
     slug = models.SlugField(unique=True)
     name = models.CharField(max_length=60)
+    description = models.TextField(blank=True)
+    intro_text = models.TextField(
+        _("category intro text"),
+        blank=True,
+        help_text=_("Short SEO intro text displayed when filtering by this category."),
+    )
+    bottom_seo_text = models.TextField(
+        _("bottom SEO content"),
+        blank=True,
+        help_text=_("Detailed SEO descriptive content displayed at the bottom of this category view."),
+    )
+    updated_at = models.DateTimeField(auto_now=True)
     sort_order = models.PositiveSmallIntegerField(default=0)
 
     class Meta:
@@ -78,7 +100,7 @@ class ProductQuerySet(models.QuerySet):
         return self.filter(is_active=True)
 
 
-class Product(TimeStampedModel):
+class Product(TimeStampedModel, SeoMetadataMixin):
     """A sellable item. Two shapes are supported:
 
     * **Fixed price** (e.g. "Fortnite Crew Pack"): ``price``/``original_price``/``stock`` are set directly.
@@ -98,6 +120,24 @@ class Product(TimeStampedModel):
     game = models.ForeignKey(Game, null=True, blank=True, on_delete=models.SET_NULL, related_name="products")
     category = models.ForeignKey(ProductCategory, on_delete=models.PROTECT, related_name="products")
     vendor = models.CharField(_("vendor / store"), max_length=60, blank=True)
+    sku = models.CharField(
+        _("SKU"),
+        max_length=64,
+        blank=True,
+        help_text=_("Stock Keeping Unit (falls back to TITAN-{id} in structured data when blank)."),
+    )
+    gtin = models.CharField(
+        _("GTIN / EAN / UPC"),
+        max_length=14,
+        blank=True,
+        help_text=_("Optional 8, 12, 13, or 14-digit Global Trade Item Number."),
+    )
+    mpn = models.CharField(
+        _("MPN"),
+        max_length=64,
+        blank=True,
+        help_text=_("Optional Manufacturer Part Number."),
+    )
     platforms = models.ManyToManyField(Platform, blank=True, related_name="products")
 
     description = models.TextField(blank=True)

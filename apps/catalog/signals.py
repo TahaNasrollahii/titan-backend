@@ -4,14 +4,27 @@ import threading
 import urllib.request
 
 from django.conf import settings
+from django.core.cache import cache
 from django.db import transaction
-from django.db.models.signals import post_delete, post_save
+from django.db.models.signals import post_delete, post_save, pre_save
 from django.dispatch import receiver
 
 from apps.content.models import Promo
+from apps.core.models import Redirect
+from apps.tournaments.models import Tournament
 
 from .models import Game, Product, ProductCategory, ProductVariant
 from .services import sync_variant_summary
+
+SEO_SITEMAP_CACHE_KEY = "seo-sitemap-v1"
+SEO_REDIRECTS_CACHE_KEY = "seo-redirects-v1"
+
+
+def _invalidate_seo_caches(*, include_redirects: bool = False) -> None:
+    keys = [SEO_SITEMAP_CACHE_KEY]
+    if include_redirects:
+        keys.append(SEO_REDIRECTS_CACHE_KEY)
+    cache.delete_many(keys)
 
 logger = logging.getLogger(__name__)
 _local = threading.local()
@@ -77,10 +90,46 @@ def keep_product_price_in_sync(sender, instance: ProductVariant, **kwargs) -> No
     _schedule_frontend_revalidation(["products", "home"], ["/store"])
 
 
+@receiver(pre_save, sender=Product)
+def _remember_previous_product_slug(sender, instance: Product, **kwargs) -> None:
+    if not instance.pk:
+        return
+    prev = Product.objects.filter(pk=instance.pk).values_list("slug", flat=True).first()
+    if prev and prev != instance.slug:
+        instance._previous_slug = prev
+
+
+@receiver(pre_save, sender=Game)
+def _remember_previous_game_slug(sender, instance: Game, **kwargs) -> None:
+    if not instance.pk:
+        return
+    prev = Game.objects.filter(pk=instance.pk).values_list("slug", flat=True).first()
+    if prev and prev != instance.slug:
+        instance._previous_slug = prev
+
+
+@receiver(pre_save, sender=Tournament)
+def _remember_previous_tournament_slug(sender, instance: Tournament, **kwargs) -> None:
+    if not instance.pk:
+        return
+    prev = Tournament.objects.filter(pk=instance.pk).values_list("slug", flat=True).first()
+    if prev and prev != instance.slug:
+        instance._previous_slug = prev
+
+
 @receiver([post_save, post_delete], sender=Product)
 def revalidate_on_product_change(sender, instance: Product, **kwargs) -> None:
-    tags = ["products", "games", "home", f"product-{instance.slug}"]
-    paths = ["/store", f"/product/{instance.slug}"]
+    prev_slug = getattr(instance, "_previous_slug", None)
+    slug_changed = bool(prev_slug and prev_slug != instance.slug)
+    if slug_changed:
+        Redirect.record_slug_change("product", prev_slug, instance.slug)
+    _invalidate_seo_caches(include_redirects=slug_changed)
+
+    tags = ["products", "games", "home", "sitemap", f"product-{instance.slug}"]
+    paths = ["/store", "/sitemap.xml", f"/product/{instance.slug}"]
+    if slug_changed:
+        tags.extend(["redirects", f"product-{prev_slug}"])
+        paths.append(f"/product/{prev_slug}")
     if instance.game_id and instance.game:
         tags.append(f"products-{instance.game.slug}")
         tags.append(f"game-{instance.game.slug}")
@@ -90,15 +139,46 @@ def revalidate_on_product_change(sender, instance: Product, **kwargs) -> None:
 
 @receiver([post_save, post_delete], sender=Game)
 def revalidate_on_game_change(sender, instance: Game, **kwargs) -> None:
-    _schedule_frontend_revalidation(
-        ["games", "products", "home", f"game-{instance.slug}", f"products-{instance.slug}"],
-        ["/store", f"/store/{instance.slug}"],
-    )
+    prev_slug = getattr(instance, "_previous_slug", None)
+    slug_changed = bool(prev_slug and prev_slug != instance.slug)
+    if slug_changed:
+        Redirect.record_slug_change("store", prev_slug, instance.slug)
+    _invalidate_seo_caches(include_redirects=slug_changed)
+
+    tags = ["games", "products", "home", "sitemap", f"game-{instance.slug}", f"products-{instance.slug}"]
+    paths = ["/store", "/sitemap.xml", f"/store/{instance.slug}"]
+    if slug_changed:
+        tags.extend(["redirects", f"game-{prev_slug}", f"products-{prev_slug}"])
+        paths.append(f"/store/{prev_slug}")
+    _schedule_frontend_revalidation(tags, paths)
 
 
 @receiver([post_save, post_delete], sender=ProductCategory)
 def revalidate_on_category_change(sender, instance: ProductCategory, **kwargs) -> None:
-    _schedule_frontend_revalidation(["products", "games", "home"], ["/store"])
+    _invalidate_seo_caches()
+    _schedule_frontend_revalidation(["products", "games", "home", "sitemap"], ["/store", "/sitemap.xml"])
+
+
+@receiver([post_save, post_delete], sender=Tournament)
+def revalidate_on_tournament_change(sender, instance: Tournament, **kwargs) -> None:
+    prev_slug = getattr(instance, "_previous_slug", None)
+    slug_changed = bool(prev_slug and prev_slug != instance.slug)
+    if slug_changed:
+        Redirect.record_slug_change("tournaments", prev_slug, instance.slug)
+    _invalidate_seo_caches(include_redirects=slug_changed)
+
+    tags = ["tournaments", "home", "sitemap", f"tournament-{instance.slug}"]
+    paths = ["/tournaments", "/tournament", "/sitemap.xml", f"/tournaments/{instance.slug}"]
+    if slug_changed:
+        tags.extend(["redirects", f"tournament-{prev_slug}"])
+        paths.append(f"/tournaments/{prev_slug}")
+    _schedule_frontend_revalidation(tags, paths)
+
+
+@receiver([post_save, post_delete], sender=Redirect)
+def revalidate_on_redirect_change(sender, instance: Redirect, **kwargs) -> None:
+    _invalidate_seo_caches(include_redirects=True)
+    _schedule_frontend_revalidation(["redirects"], [instance.old_path, instance.new_path])
 
 
 @receiver([post_save, post_delete], sender=Promo)

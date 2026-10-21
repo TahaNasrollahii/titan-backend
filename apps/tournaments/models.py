@@ -4,7 +4,7 @@ from django.db.models import Q
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
-from apps.core.models import TimeStampedModel
+from apps.core.models import SeoMetadataMixin, TimeStampedModel
 from apps.core.utils import percent_off
 from apps.core.validators import IMAGE_VALIDATORS
 from apps.teams.models import TeamMembership
@@ -43,7 +43,7 @@ class Season(models.Model):
         return self.name
 
 
-class Tournament(TimeStampedModel):
+class Tournament(TimeStampedModel, SeoMetadataMixin):
     class ParticipantType(models.TextChoices):
         """Derived from ``team_size``: 1 is solo, anything larger is a team tournament."""
 

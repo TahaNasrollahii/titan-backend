@@ -152,6 +152,12 @@ class TournamentListSerializer(serializers.ModelSerializer):
     is_free = serializers.BooleanField(read_only=True)
     entry_discount_percent = serializers.IntegerField(read_only=True)
     is_registered = serializers.BooleanField(read_only=True)
+
+    def to_representation(self, instance: Tournament):
+        data = super().to_representation(instance)
+        if not data.get("image_alt"):
+            data["image_alt"] = instance.title
+        return data
     featured_match = serializers.SerializerMethodField()
 
     class Meta:
@@ -183,6 +189,7 @@ class TournamentListSerializer(serializers.ModelSerializer):
             "viewer_count",
             "is_registered",
             "featured_match",
+            "image_alt",
             "created_at",
             "updated_at",
         ]
@@ -239,6 +246,7 @@ class TournamentDetailSerializer(TournamentListSerializer):
     prizes = PrizeSerializer(many=True, read_only=True)
     my_registration = serializers.SerializerMethodField()
     special_bracket = serializers.SerializerMethodField()
+    og_image = ImageUrlField()
 
     class Meta(TournamentListSerializer.Meta):
         fields = [
@@ -253,6 +261,11 @@ class TournamentDetailSerializer(TournamentListSerializer):
             "stream_url",
             "my_registration",
             "special_bracket",
+            "meta_title",
+            "meta_description",
+            "noindex",
+            "og_image",
+            "canonical_url",
         ]
 
     @extend_schema_field(MyRegistrationSerializer(allow_null=True))
@@ -277,6 +290,23 @@ class TournamentDetailSerializer(TournamentListSerializer):
     def to_representation(self, instance):
         data = super().to_representation(instance)
         raw_rules = data.get("rules")
+        if not data.get("image_alt"):
+            data["image_alt"] = instance.title
+        if not data.get("meta_title"):
+            base_title = (
+                f"{instance.title} — تورنمنت {instance.game.title}"
+                if instance.game_id and instance.game
+                else instance.title
+            )
+            data["meta_title"] = base_title[:70]
+        if not data.get("meta_description"):
+            fallback_desc = (
+                instance.description
+                or f"ثبت‌نام و جدول مسابقات {instance.title} با جایزه ویژه در پلتفرم ورزش‌های الکترونیک تایتان."
+            )
+            data["meta_description"] = fallback_desc[:160]
+        if not data.get("og_image"):
+            data["og_image"] = data.get("cover_image")
         if isinstance(raw_rules, dict):
             data["rules"] = raw_rules.get("rules", [])
         elif isinstance(raw_rules, list):

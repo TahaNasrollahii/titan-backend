@@ -92,6 +92,7 @@ PUBLIC_CACHE_PREFIXES = (
     "/api/v1/home/",
     "/api/v1/content/",
     "/api/v1/categories/",
+    "/api/v1/seo/",
 )
 
 

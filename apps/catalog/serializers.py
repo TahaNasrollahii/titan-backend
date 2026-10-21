@@ -28,10 +28,28 @@ class GameSerializer(serializers.ModelSerializer):
     logo_image = ImageUrlField()
     background_image = ImageUrlField()
     character_image = ImageUrlField()
+    og_image = ImageUrlField()
     icon_image = ImageUrlField()
     product_count = serializers.IntegerField(read_only=True)
     tournament_count = serializers.IntegerField(read_only=True)
     player_count = serializers.IntegerField(read_only=True)
+
+    def to_representation(self, instance: Game):
+        data = super().to_representation(instance)
+        if not data.get("meta_title"):
+            data["meta_title"] = f"خرید آیتم و محصولات {instance.title} ({instance.title_en})"[:70]
+        if not data.get("meta_description"):
+            fallback_desc = (
+                instance.intro_text
+                or instance.description
+                or f"خرید آنلاین محصولات، گیفت کارت و آیتم‌های {instance.title} ({instance.title_en}) با تحویل آنی و گارانتی معتبر در فروشگاه تایتان."
+            )
+            data["meta_description"] = fallback_desc[:160]
+        if not data.get("image_alt"):
+            data["image_alt"] = f"{instance.title} - {instance.title_en}"[:150]
+        if not data.get("og_image"):
+            data["og_image"] = data.get("cover_image") or data.get("background_image")
+        return data
 
     class Meta:
         model = Game
@@ -53,6 +71,15 @@ class GameSerializer(serializers.ModelSerializer):
             "product_count",
             "tournament_count",
             "player_count",
+            "intro_text",
+            "bottom_seo_text",
+            "meta_title",
+            "meta_description",
+            "noindex",
+            "og_image",
+            "canonical_url",
+            "image_alt",
+            "updated_at",
         ]
 
 
@@ -67,7 +94,34 @@ class PlatformSerializer(serializers.ModelSerializer):
 class ProductCategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductCategory
-        fields = ["slug", "name"]
+        fields = [
+            "slug",
+            "name",
+            "description",
+            "intro_text",
+            "bottom_seo_text",
+            "meta_title",
+            "meta_description",
+            "noindex",
+            "canonical_url",
+            "image_alt",
+            "updated_at",
+        ]
+
+    def to_representation(self, instance: ProductCategory):
+        data = super().to_representation(instance)
+        if not data.get("meta_title"):
+            data["meta_title"] = f"خرید {instance.name} بازی"[:70]
+        if not data.get("meta_description"):
+            fallback_desc = (
+                instance.intro_text
+                or instance.description
+                or f"خرید آنلاین انواع {instance.name} اورجینال با تحویل آنی و بهترین قیمت در تایتان."
+            )
+            data["meta_description"] = fallback_desc[:160]
+        if not data.get("image_alt"):
+            data["image_alt"] = instance.name
+        return data
 
 
 class ProductVariantSerializer(serializers.ModelSerializer):
@@ -86,6 +140,12 @@ class ProductImageSerializer(serializers.ModelSerializer):
         model = ProductImage
         fields = ["image", "alt"]
 
+    def to_representation(self, instance: ProductImage):
+        data = super().to_representation(instance)
+        if not data.get("alt") and instance.product_id:
+            data["alt"] = instance.product.title
+        return data
+
 
 class ProductListSerializer(serializers.ModelSerializer):
     """``price`` is the fixed price, or the cheapest option when ``hasVariants`` (then ``priceMax`` is the
@@ -101,6 +161,14 @@ class ProductListSerializer(serializers.ModelSerializer):
     rating = serializers.FloatField(source="rating_avg", read_only=True)
     is_wishlisted = serializers.BooleanField(read_only=True, default=False)
 
+    def to_representation(self, instance: Product):
+        data = super().to_representation(instance)
+        if not data.get("sku"):
+            data["sku"] = f"TITAN-{instance.id}"
+        if not data.get("image_alt"):
+            data["image_alt"] = instance.title
+        return data
+
     class Meta:
         model = Product
         fields = [
@@ -109,6 +177,8 @@ class ProductListSerializer(serializers.ModelSerializer):
             "title",
             "subtitle",
             "image",
+            "image_alt",
+            "sku",
             "price",
             "original_price",
             "discount_percent",
@@ -135,6 +205,27 @@ class ProductDetailSerializer(ProductListSerializer):
     gallery = ProductImageSerializer(many=True, read_only=True)
     requires_game_account = serializers.BooleanField(read_only=True)
 
+    def to_representation(self, instance: Product):
+        data = super().to_representation(instance)
+        if not data.get("meta_title"):
+            base_title = (
+                f"خرید {instance.title} ({instance.game.title})"
+                if instance.game_id and instance.game
+                else f"خرید {instance.title}"
+            )
+            data["meta_title"] = base_title[:70]
+        if not data.get("meta_description"):
+            fallback_desc = (
+                instance.description
+                or instance.subtitle
+                or f"خرید آنلاین {instance.title} با تحویل آنی، قیمت مناسب و گارانتی معتبر در فروشگاه تایتان."
+            )
+            data["meta_description"] = fallback_desc[:160]
+        if not data.get("og_image"):
+            data["og_image"] = data.get("image")
+        return data
+    og_image = ImageUrlField()
+
     class Meta(ProductListSerializer.Meta):
         fields = [
             *ProductListSerializer.Meta.fields,
@@ -147,6 +238,13 @@ class ProductDetailSerializer(ProductListSerializer):
             "specs",
             "variants",
             "gallery",
+            "gtin",
+            "mpn",
+            "meta_title",
+            "meta_description",
+            "noindex",
+            "og_image",
+            "canonical_url",
         ]
 
 

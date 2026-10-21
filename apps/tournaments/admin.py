@@ -16,7 +16,7 @@ from unfold.contrib.filters.admin import (
 from unfold.decorators import action, display
 from unfold.enums import ActionVariant
 
-from apps.core.admin import DANGER, INFO, SUCCESS, WARNING, image_header, initials, toman
+from apps.core.admin import DANGER, INFO, SEO_FIELDSET, SUCCESS, WARNING, image_header, initials, toman
 from apps.core.exceptions import DomainError
 
 from .models import (
@@ -191,6 +191,7 @@ class TournamentAdmin(ModelAdmin):
             },
         ),
         (_("Rules"), {"classes": ["tab"], "fields": ("rules",)}),
+        SEO_FIELDSET,
         (
             _("Broadcast"),
             {
