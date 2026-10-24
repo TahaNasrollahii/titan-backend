@@ -8,6 +8,9 @@ from .base import LOGGING, MIDDLEWARE, env
 DEBUG = False
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS")
 
+# The base.py default is public in the repo; production only revalidates with a real secret.
+REVALIDATE_SECRET = env("REVALIDATE_SECRET", default="")
+
 # ---------------------------------------------------------------- Security safeguards
 REQUIRE_REAL_OTP = env.bool("REQUIRE_REAL_OTP", default=False)
 

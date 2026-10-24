@@ -7,7 +7,7 @@ and uploads go to Vercel Blob. Static files are collected at build time and serv
 from django.core.exceptions import ImproperlyConfigured
 
 from .prod import *  # noqa: F403
-from .prod import DATABASES, LOGGING, STORAGES, env
+from .prod import DATABASES, LOGGING, REQUIRE_REAL_OTP, STORAGES, env
 
 # Without it base.py falls back to SQLite (or a dummy backend when the value is empty, as `vercel env
 # pull` writes Secret variables), and commands like `seed` would run against the wrong database.
@@ -25,7 +25,9 @@ STORAGES = {**STORAGES, "default": {"BACKEND": "apps.core.storage.VercelBlobStor
 # The Blob SDK's HTTP client logs every request at INFO.
 LOGGING = {**LOGGING, "loggers": {**LOGGING["loggers"], "httpx2": {"level": "WARNING"}}}
 
-# During active development/demo deployments on Vercel, allow testing login with 123456
-OTP_TEST_CODE = env("OTP_TEST_CODE", default="123456")
-ALLOW_OTP_TEST_CODE = env.bool("ALLOW_OTP_TEST_CODE", default=True)
+# Demo deployments allow logging in with a fixed code (123456). REQUIRE_REAL_OTP=True switches it off;
+# prod.py already cleared the code in that case, so it must not be re-enabled here.
+if not REQUIRE_REAL_OTP:
+    OTP_TEST_CODE = env("OTP_TEST_CODE", default="123456")
+    ALLOW_OTP_TEST_CODE = env.bool("ALLOW_OTP_TEST_CODE", default=True)
 FRONTEND_URL = env("FRONTEND_URL", default="https://titan-front.vercel.app").rstrip("/")

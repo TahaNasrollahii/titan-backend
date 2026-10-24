@@ -21,8 +21,10 @@ attrs==26.1.0
     #   referencing
 cbor2==6.1.5
     # via vercel-workflow
-certifi==2026.7.22
-    # via requests
+certifi==2026.10.23
+    # via
+    #   requests
+    #   sentry-sdk
 cffi==2.1.1 ; platform_python_implementation != 'PyPy'
     # via cryptography
 charset-normalizer==3.5.2
@@ -48,7 +50,7 @@ django-filter==26.2
     # via titan-back
 django-unfold==0.108.0
     # via titan-back
-djangorestframework==3.18.1
+djangorestframework==3.18.3
     # via
     #   djangorestframework-simplejwt
     #   drf-spectacular
@@ -96,7 +98,7 @@ jsonschema==4.26.0
     # via drf-spectacular
 jsonschema-specifications==2025.9.1
     # via jsonschema
-pillow==12.3.0
+pillow==13.0.0
     # via titan-back
 psycopg==3.3.6
     # via titan-back
@@ -131,6 +133,8 @@ rpds-py==2026.6.3
     #   referencing
 semver==3.1.0
     # via vercel-workflow
+sentry-sdk==2.72.0
+    # via titan-back
 sqlparse==0.6.0
     # via django
 truststore==0.10.4 ; sys_platform != 'emscripten'
@@ -153,7 +157,9 @@ tzdata==2026.5 ; sys_platform == 'win32'
 uritemplate==4.2.0
     # via drf-spectacular
 urllib3==2.8.0
-    # via requests
+    # via
+    #   requests
+    #   sentry-sdk
 vercel==0.11.6
     # via titan-back
 vercel-cache==0.7.6

@@ -63,7 +63,10 @@ def _schedule_frontend_revalidation(tags: list[str], paths: list[str] | None = N
         if not frontend_url or not tags_to_send:
             return
 
-        secret = getattr(settings, "REVALIDATE_SECRET", "titan-revalidate-default-secret")
+        secret = getattr(settings, "REVALIDATE_SECRET", "")
+        if not secret:
+            logger.warning("REVALIDATE_SECRET is not set; skipping frontend cache revalidation.")
+            return
         payload = json.dumps({"tags": tags_to_send, "paths": paths_to_send}).encode("utf-8")
         req = urllib.request.Request(
             f"{frontend_url}/api/revalidate",
