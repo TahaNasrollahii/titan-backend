@@ -48,7 +48,7 @@ ADMIN_PHONE = "09000000000"
 PLAYER_PHONE_PREFIX = "0991"
 FILLER_PHONE_PREFIX = "0992"
 FRIEND_PHONE_PREFIX = "0993"
-DEMO_SOLO_TOURNAMENT = "titan-apex-solo"
+DEMO_SOLO_TOURNAMENT = "titan-cod-solo"
 UPLOAD_ATTEMPTS = 3
 
 
@@ -130,9 +130,12 @@ class Seeder:
         )
 
     def _user(self, username: str, phone: str, **fields) -> User:
-        user = User.objects.filter(username=username).first()
+        user = User.objects.filter(username=username).first() or User.objects.filter(phone=phone).first()
         if user is None:
             user = User.objects.create_user(phone=phone, username=username, **fields)
+        elif user.username != username:
+            User.objects.filter(pk=user.pk).update(username=username)
+            user.username = username
         return user
 
     def _filler_user(self, prefix: str) -> User:
@@ -191,11 +194,34 @@ class Seeder:
             game.save()
             self.games[game.slug] = game
 
+        self._cleanup_legacy_catalog()
         platforms = {platform.slug: platform for platform in Platform.objects.all()}
         categories = {category.slug: category for category in ProductCategory.objects.all()}
         for spec in data.PRODUCTS:
             self._product(spec, platforms, categories)
         self.log(f"Catalog: {len(self.games)} games, {len(data.PRODUCTS)} products.")
+
+    def _cleanup_legacy_catalog(self) -> None:
+        cod = self.games.get("call-of-duty")
+        valid_game_slugs = {spec["slug"] for spec in data.GAMES}
+        for stale_game in Game.objects.exclude(slug__in=valid_game_slugs):
+            if cod:
+                User.objects.filter(favorite_game=stale_game).update(favorite_game=cod)
+                GameAccount.objects.filter(game=stale_game).update(game=cod)
+                PlayerStats.objects.filter(game=stale_game).delete()
+                TeamStats.objects.filter(game=stale_game).delete()
+                Tournament.objects.filter(game=stale_game).update(game=cod)
+                Product.objects.filter(game=stale_game).update(game=cod)
+            stale_game.delete()
+        valid_product_slugs = {spec["slug"] for spec in data.PRODUCTS}
+        Promo.objects.exclude(product__isnull=True).exclude(product__slug__in=valid_product_slugs).delete()
+        Product.objects.exclude(slug__in=valid_product_slugs).delete()
+        valid_promo_titles = {spec["title"] for spec in data.PROMOS}
+        Promo.objects.exclude(title__in=valid_promo_titles).delete()
+        valid_tournament_slugs = {spec["slug"] for spec in data.TOURNAMENTS}
+        Tournament.objects.exclude(slug__in=valid_tournament_slugs).delete()
+        if not Team.objects.filter(name="Task Force 141").exists():
+            Team.objects.filter(name__icontains="Predator").update(name="Task Force 141")
 
     def _product(self, spec: dict, platforms: dict, categories: dict) -> Product:
         spec = dict(spec)
@@ -337,6 +363,10 @@ class Seeder:
         for spec in data.TOURNAMENTS:
             tournament = self._tournament(spec)
             if not tournament.registrations.exists():
+                tournament.matches.all().delete()
+                if tournament.state != Tournament.State.SCHEDULED:
+                    Tournament.objects.filter(pk=tournament.pk).update(state=Tournament.State.SCHEDULED)
+                    tournament.state = Tournament.State.SCHEDULED
                 self._register_entrants(tournament, spec)
                 self._play(tournament, spec)
         self.log(f"Tournaments: {len(data.TOURNAMENTS)}.")
@@ -532,15 +562,15 @@ class Seeder:
             captain = shadow_strike.memberships.get(role=TeamMembership.Role.CAPTAIN).user
             team_services.invite(shadow_strike, captain, demo)
 
-        apex_solo = Tournament.objects.get(slug=DEMO_SOLO_TOURNAMENT)
+        cod_solo = Tournament.objects.get(slug=DEMO_SOLO_TOURNAMENT)
         if not demo.notifications.filter(kind=Kind.TOURNAMENT).exists():
             notify(
                 demo,
                 kind=Kind.TOURNAMENT,
                 title="تایید ثبت‌نام در تورنومنت",
-                body=f"ثبت‌نام شما در {apex_solo.title} با موفقیت تایید شد.",
+                body=f"ثبت‌نام شما در {cod_solo.title} با موفقیت تایید شد.",
                 icon="trophy",
-                data={"tournament_slug": apex_solo.slug},
+                data={"tournament_slug": cod_solo.slug},
             )
         self.log("Demo activity: orders, game accounts, friends, invitations, notifications.")
 
