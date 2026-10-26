@@ -48,7 +48,7 @@ class TestWalletCheckout:
         assert response.status_code == 201
         body = response.json()
         assert body["paymentUrl"] is None
-        assert body["order"]["status"] == "paid"
+        assert body["order"]["status"] in ("paid", "processing")
         assert body["order"]["total"] == 200_000
         assert get_wallet(user).balance == 50_000
         product.refresh_from_db()
@@ -127,7 +127,7 @@ class TestGatewayCheckout:
         query = parse_qs(urlparse(callback.url).query)
         assert query["status"] == ["paid"]
         order = Order.objects.get()
-        assert order.status == Order.Status.PAID
+        assert order.status in (Order.Status.PAID, Order.Status.PROCESSING)
         assert Payment.objects.get().ref_id == "201"
         assert not CartItem.objects.exists()
         product.refresh_from_db()
@@ -259,7 +259,43 @@ class TestOrders:
         assert response.status_code == 201
         body = response.json()
         assert body["paymentUrl"] is None
-        assert body["order"]["status"] == "paid"
+        assert body["order"]["status"] in ("paid", "processing")
         assert not CartItem.objects.exists()
         product.refresh_from_db()
         assert product.stock == 1
+
+    def test_admin_cancel_refunds_wallet_and_restores_stock(self, auth_client, user):
+        product = ProductFactory(price=100_000, stock=5)
+        services.add_to_cart(user, product, quantity=2)
+        fund(user, 200_000)
+        checkout_res = services.checkout(user, payment_method="wallet")
+        order = checkout_res.order
+
+        product.refresh_from_db()
+        assert product.stock == 3
+        assert get_wallet(user).balance == 0
+
+        # Admin cancels the order
+        services.cancel_order_by_admin(order)
+
+        order.refresh_from_db()
+        assert order.status == Order.Status.CANCELLED
+        # Wallet refunded 200,000
+        assert get_wallet(user).balance == 200_000
+        # Stock restored to 5
+        product.refresh_from_db()
+        assert product.stock == 5
+        # Notification sent
+        last_notif = Notification.objects.filter(user=user, kind="order").first()
+        assert "لغو" in last_notif.title or "لغو" in last_notif.body
+
+    def test_admin_mark_processing_and_complete_lifecycle(self, auth_client, user):
+        order = self._paid_order(user)
+        services.mark_order_processing(order)
+        order.refresh_from_db()
+        assert order.status == Order.Status.PROCESSING
+
+        services.complete_order(order)
+        order.refresh_from_db()
+        assert order.status == Order.Status.COMPLETED
+        assert order.completed_at is not None

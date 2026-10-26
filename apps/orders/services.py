@@ -3,7 +3,7 @@ from datetime import date
 
 from django.conf import settings
 from django.db import IntegrityError, transaction
-from django.db.models import F, Q
+from django.db.models import Case, F, Q, When
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
@@ -332,13 +332,13 @@ def _remove_ordered_lines_from_cart(order: Order) -> None:
 def on_order_paid(payment: Payment) -> None:
     order = Order.objects.select_for_update().prefetch_related("items").get(pk=payment.object_id)
     if order.status != Order.Status.PENDING_PAYMENT:
-        _refund_to_wallet(order, payment, _("Refund for an order that was no longer payable"))
+        _refund_to_wallet(order, payment, _("بازگشت وجه برای سفارشی که دیگر قابل پرداخت نبود"))
         return
     if not _reserve_stock(order):
-        _refund_to_wallet(order, payment, _("Refund: product went out of stock"))
+        _refund_to_wallet(order, payment, _("بازگشت وجه: موجودی کالا به پایان رسید"))
         return
 
-    order.status = Order.Status.PAID
+    order.status = Order.Status.PROCESSING
     order.paid_at = timezone.now()
     order.save(update_fields=["status", "paid_at", "updated_at"])
     for item in order.items.all():
@@ -348,8 +348,9 @@ def on_order_paid(payment: Payment) -> None:
     notify(
         order.user,
         kind=Kind.ORDER,
-        title=_("Order confirmed"),
-        body=_("Order %(number)s was paid and is being processed.") % {"number": order.number},
+        title=_("سفارش تایید شد"),
+        body=_("سفارش شماره %(number)s با موفقیت تایید شد و وضعیت آن در حال انجام است.")
+        % {"number": order.number},
         icon="cart",
         data={"order_number": order.number},
     )
@@ -372,31 +373,126 @@ def register_payment_handlers() -> None:
 def cancel_order(user: User, number: str) -> Order:
     order = Order.objects.get(user=user, number=number)
     if order.status not in (Order.Status.PENDING_PAYMENT, Order.Status.FAILED):
-        raise DomainError(_("Only unpaid orders can be cancelled."), code="order_not_cancellable")
+        raise DomainError(_("تنها سفارش‌های پرداخت‌نشده قابل لغو توسط کاربر هستند."), code="order_not_cancellable")
     order.status = Order.Status.CANCELLED
     order.save(update_fields=["status", "updated_at"])
+    notify(
+        order.user,
+        kind=Kind.ORDER,
+        title=_("سفارش شما لغو شد"),
+        body=_("سفارش شماره %(number)s لغو شد.") % {"number": order.number},
+        icon="cart",
+        data={"order_number": order.number},
+    )
     return order
 
 
 @transaction.atomic
-def complete_order(order: Order) -> Order:
+def mark_order_processing(order: Order, *, notify_user: bool = True) -> Order:
+    """Move an order to processing and notify the customer."""
+    order = Order.objects.select_for_update().get(pk=order.pk)
+    if order.status == Order.Status.PROCESSING:
+        return order
+    order.status = Order.Status.PROCESSING
+    order.save(update_fields=["status", "updated_at"])
+    if notify_user:
+        notify(
+            order.user,
+            kind=Kind.ORDER,
+            title=_("وضعیت سفارش: در حال انجام"),
+            body=_("سفارش شماره %(number)s هم‌اکنون در حال انجام است.") % {"number": order.number},
+            icon="cart",
+            data={"order_number": order.number},
+        )
+    return order
+
+
+@transaction.atomic
+def complete_order(order: Order, *, notify_user: bool = True) -> Order:
     """Staff action: mark every line delivered and notify the customer."""
     order = Order.objects.select_for_update().get(pk=order.pk)
-    if not order.is_paid:
-        raise DomainError(_("Only paid orders can be completed."), code="order_not_paid")
+    if order.status == Order.Status.COMPLETED:
+        return order
     now = timezone.now()
     order.items.filter(delivered_at__isnull=True).update(delivered_at=now)
     order.status = Order.Status.COMPLETED
     order.completed_at = now
     order.save(update_fields=["status", "completed_at", "updated_at"])
-    notify(
-        order.user,
-        kind=Kind.ORDER,
-        title=_("Order delivered"),
-        body=_("Order %(number)s has been delivered.") % {"number": order.number},
-        icon="check",
-        data={"order_number": order.number},
-    )
+    if notify_user:
+        notify(
+            order.user,
+            kind=Kind.ORDER,
+            title=_("سفارش شما انجام شد"),
+            body=_("سفارش شماره %(number)s با موفقیت انجام و تکمیل شد.") % {"number": order.number},
+            icon="check",
+            data={"order_number": order.number},
+        )
+    return order
+
+
+@transaction.atomic
+def cancel_order_by_admin(order: Order, *, reason: str = "", notify_user: bool = True) -> Order:
+    """Admin action: cancel order, restore stock, and refund paid amount to user's wallet."""
+    order = Order.objects.select_for_update().get(pk=order.pk)
+    if order.status == Order.Status.CANCELLED:
+        return order
+
+    was_paid = order.is_paid or order.paid_at is not None
+    refunded_amount = 0
+
+    if was_paid:
+        refund_ref = f"order:{order.number}"
+        already_refunded = WalletTransaction.objects.filter(
+            reference=refund_ref, kind=WalletTransaction.Kind.REFUND
+        ).exists()
+
+        if not already_refunded and order.total > 0:
+            desc = reason or (_("بازگشت وجه سفارش لغو شده %(number)s") % {"number": order.number})
+            credit(
+                order.user,
+                order.total,
+                kind=WalletTransaction.Kind.REFUND,
+                description=desc,
+                reference=refund_ref,
+            )
+            refunded_amount = order.total
+
+        # Restore reserved stock and popularity
+        for item in order.items.all():
+            if item.variant_id:
+                ProductVariant.objects.filter(pk=item.variant_id).update(stock=F("stock") + item.quantity)
+            elif item.product_id:
+                Product.objects.filter(pk=item.product_id).update(stock=F("stock") + item.quantity)
+            if item.product_id:
+                Product.objects.filter(pk=item.product_id).update(
+                    popularity=Case(
+                        When(popularity__gte=item.quantity, then=F("popularity") - item.quantity),
+                        default=0,
+                    )
+                )
+
+    order.status = Order.Status.CANCELLED
+    order.save(update_fields=["status", "updated_at"])
+
+    if notify_user:
+        if refunded_amount > 0:
+            from apps.core.admin import toman
+            body = (
+                _("سفارش شماره %(number)s لغو شد و مبلغ %(amount)s به کیف پول شما بازگردانده شد.")
+                % {"number": order.number, "amount": toman(refunded_amount)}
+            )
+        else:
+            body = _("سفارش شماره %(number)s لغو شد.") % {"number": order.number}
+
+        notify(
+            order.user,
+            kind=Kind.ORDER,
+            title=_("سفارش شما لغو شد"),
+            body=body,
+            icon="cart",
+            data={"order_number": order.number},
+        )
+
     return order
 
 

@@ -130,6 +130,9 @@ class OrderViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.Ge
     @extend_schema(request=None)
     @action(detail=True, methods=["post"])
     def cancel(self, request, number=None):
-        self.get_object()
-        services.cancel_order(request.user, number)
+        order = self.get_object()
+        if request.user.is_staff:
+            services.cancel_order_by_admin(order)
+        else:
+            services.cancel_order(request.user, number)
         return Response(self.get_serializer(self.get_queryset().get(number=number)).data)

@@ -24,6 +24,7 @@ ORDER_STATUS_LABELS = {
     Order.Status.PAID: INFO,
     Order.Status.PROCESSING: INFO,
     Order.Status.COMPLETED: SUCCESS,
+    Order.Status.CANCELLED: DANGER,
     Order.Status.FAILED: DANGER,
     Order.Status.REFUNDED: DANGER,
 }
@@ -100,8 +101,8 @@ class OrderAdmin(ModelAdmin):
         ),
     )
     inlines = [OrderItemInline]
-    actions = ["mark_processing", "mark_delivered"]
-    actions_detail = ["start_processing", "deliver"]
+    actions = ["mark_processing", "mark_delivered", "cancel_and_refund"]
+    actions_detail = ["start_processing", "deliver", "cancel_detail"]
 
     def get_queryset(self, request):
         return super().get_queryset(request).annotate(line_count=Count("items"))
@@ -128,45 +129,112 @@ class OrderAdmin(ModelAdmin):
         return toman(obj.total)
 
     # ---- bulk actions
-    @action(description=_("Mark as processing"), icon="pending_actions", permissions=["change"])
+    @action(description=_("تغییر وضعیت به در حال انجام"), icon="pending_actions", permissions=["change"])
     def mark_processing(self, request, queryset):
-        updated = queryset.filter(status=Order.Status.PAID).update(status=Order.Status.PROCESSING)
-        self.message_user(request, _("%(count)d order(s) marked as processing.") % {"count": updated})
-
-    @action(description=_("Mark as delivered (completed)"), icon="task_alt", permissions=["change"])
-    def mark_delivered(self, request, queryset):
+        count = 0
         for order in queryset:
-            self._complete(request, order)
+            services.mark_order_processing(order)
+            count += 1
+        self.message_user(request, _("%(count)d سفارش به وضعیت «در حال انجام» تغییر یافت.") % {"count": count})
+
+    @action(description=_("تغییر وضعیت به انجام شده (تکمیل)"), icon="task_alt", permissions=["change"])
+    def mark_delivered(self, request, queryset):
+        count = 0
+        for order in queryset:
+            try:
+                services.complete_order(order)
+                count += 1
+            except Exception as error:
+                self.message_user(request, f"{order.number}: {error}", level=messages.ERROR)
+        self.message_user(request, _("%(count)d سفارش به وضعیت «انجام شده» تغییر یافت.") % {"count": count})
+
+    @action(
+        description=_("کنسل کردن سفارش و بازگشت وجه به حساب کاربر"),
+        icon="cancel",
+        variant=ActionVariant.DANGER,
+        permissions=["change"],
+    )
+    def cancel_and_refund(self, request, queryset):
+        count = 0
+        for order in queryset:
+            try:
+                services.cancel_order_by_admin(order)
+                count += 1
+            except Exception as error:
+                self.message_user(request, f"{order.number}: {error}", level=messages.ERROR)
+        self.message_user(
+            request,
+            _("%(count)d سفارش لغو و در صورت پرداخت، مبلغ به کیف پول کاربر بازگردانده شد.") % {"count": count},
+        )
 
     # ---- detail actions
-    @action(description=_("Start processing"), icon="pending_actions", permissions=["change"])
+    @action(description=_("در حال انجام"), icon="pending_actions", permissions=["change"])
     def start_processing(self, request, object_id):
-        updated = Order.objects.filter(pk=object_id, status=Order.Status.PAID).update(
-            status=Order.Status.PROCESSING
-        )
-        if updated:
-            self.message_user(request, _("Order marked as processing."))
-        else:
-            self.message_user(request, _("Only paid orders can move to processing."), level=messages.WARNING)
+        order = get_object_or_404(Order, pk=object_id)
+        services.mark_order_processing(order)
+        self.message_user(request, _("سفارش به وضعیت «در حال انجام» تغییر یافت و نوتیفیکیشن برای کاربر ارسال شد."))
         return redirect(reverse("admin:orders_order_change", args=[object_id]))
 
     @action(
-        description=_("Mark as delivered"),
+        description=_("انجام شده (تکمیل)"),
         icon="task_alt",
         variant=ActionVariant.SUCCESS,
         permissions=["change"],
     )
     def deliver(self, request, object_id):
-        self._complete(request, get_object_or_404(Order, pk=object_id))
-        return redirect(reverse("admin:orders_order_change", args=[object_id]))
-
-    def _complete(self, request, order: Order) -> None:
+        order = get_object_or_404(Order, pk=object_id)
         try:
             services.complete_order(order)
-        except DomainError as error:
-            self.message_user(request, f"{order.number}: {error.detail}", level=messages.ERROR)
-        else:
-            self.message_user(request, _("%(number)s delivered.") % {"number": order.number})
+            self.message_user(request, _("سفارش به وضعیت «انجام شده» تغییر یافت و نوتیفیکیشن ارسال شد."))
+        except Exception as error:
+            self.message_user(request, f"{error}", level=messages.ERROR)
+        return redirect(reverse("admin:orders_order_change", args=[object_id]))
+
+    @action(
+        description=_("کنسل کردن و بازگشت وجه"),
+        icon="cancel",
+        variant=ActionVariant.DANGER,
+        permissions=["change"],
+    )
+    def cancel_detail(self, request, object_id):
+        order = get_object_or_404(Order, pk=object_id)
+        try:
+            services.cancel_order_by_admin(order)
+            self.message_user(
+                request,
+                _("سفارش با موفقیت کنسل شد، مبلغ به کیف پول کاربر واریز شد و نوتیفیکیشن ارسال گردید."),
+            )
+        except Exception as error:
+            self.message_user(request, f"{error}", level=messages.ERROR)
+        return redirect(reverse("admin:orders_order_change", args=[object_id]))
+
+    def save_model(self, request, obj, form, change):
+        if change and "status" in form.changed_data:
+            new_status = form.cleaned_data.get("status")
+            old_status = Order.objects.get(pk=obj.pk).status
+            if new_status != old_status:
+                if new_status == Order.Status.PROCESSING:
+                    services.mark_order_processing(obj)
+                    self.message_user(
+                        request,
+                        _("سفارش به «در حال انجام» تغییر یافت و نوتیفیکیشن برای کاربر ارسال شد."),
+                    )
+                    return
+                elif new_status == Order.Status.COMPLETED:
+                    services.complete_order(obj)
+                    self.message_user(
+                        request,
+                        _("سفارش به «انجام شده» تغییر یافت و نوتیفیکیشن برای کاربر ارسال شد."),
+                    )
+                    return
+                elif new_status in (Order.Status.CANCELLED, Order.Status.REFUNDED):
+                    services.cancel_order_by_admin(obj)
+                    self.message_user(
+                        request,
+                        _("سفارش کنسل شد، مبلغ به کیف پول کاربر واریز گردید و نوتیفیکیشن ارسال شد."),
+                    )
+                    return
+        super().save_model(request, obj, form, change)
 
 
 class CartItemInline(TabularInline):
