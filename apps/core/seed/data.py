@@ -1333,16 +1333,7 @@ PROMOS = [
     },
 ]
 
-ANNOUNCEMENTS = [
-    (
-        "Valorant Titan Cup",
-        "ثبت‌نام تا 10 دقیقه دیگر بسته می‌شود",
-        "trophy",
-        "/tournaments/titan-valorant-weekly",
-    ),
-    ("فروش ویژه", "هدست تایتان پرو — 20٪ تخفیف برای یک ساعت آینده", "bag", "/product/titan-pro-headset"),
-    ("سری راکت", "براکت دور دوم شروع شد", "trophy", "/tournaments/valorant-season-cup"),
-]
+ANNOUNCEMENTS: list[tuple[str, str, str, str]] = []
 
 CONTACT_CHANNELS = [
     {

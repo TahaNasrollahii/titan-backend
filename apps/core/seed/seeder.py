@@ -23,7 +23,6 @@ from apps.accounts.services import heartbeat, send_friend_request
 from apps.catalog import services as catalog_services
 from apps.catalog.models import Game, Platform, Product, ProductCategory, ProductVariant
 from apps.content.models import Announcement, ContactChannel, Promo, SiteSetting
-from apps.notifications.services import Kind, notify
 from apps.orders import services as order_services
 from apps.orders.models import Order
 from apps.payments.models import PaymentMethod, WalletTransaction
@@ -562,17 +561,7 @@ class Seeder:
             captain = shadow_strike.memberships.get(role=TeamMembership.Role.CAPTAIN).user
             team_services.invite(shadow_strike, captain, demo)
 
-        cod_solo = Tournament.objects.get(slug=DEMO_SOLO_TOURNAMENT)
-        if not demo.notifications.filter(kind=Kind.TOURNAMENT).exists():
-            notify(
-                demo,
-                kind=Kind.TOURNAMENT,
-                title="تایید ثبت‌نام در تورنومنت",
-                body=f"ثبت‌نام شما در {cod_solo.title} با موفقیت تایید شد.",
-                icon="trophy",
-                data={"tournament_slug": cod_solo.slug},
-            )
-        self.log("Demo activity: orders, game accounts, friends, invitations, notifications.")
+        self.log("Demo activity: orders, game accounts, friends, invitations.")
 
     def _demo_orders(self, game_account: GameAccount, final_balance: int) -> None:
         vbucks = Product.objects.get(slug="fortnite-vbucks")
