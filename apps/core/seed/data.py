@@ -1291,9 +1291,9 @@ PROMOS = [
     },
     {
         "placement": "store_bestseller",
-        "title": "باندل ویژه Call of Duty",
-        "subtitle": "شامل اسکین اپراتور و ۱,۱۰۰ سی‌پی",
-        "price": 2_950_000,
+        "title": "CP کال آو دیوتی",
+        "subtitle": "شارژ فوری و قانونی سی‌پی روی اکانت اکتیویژن",
+        "price": 95_000,
         "badge": "پرفروش‌ها",
         "image": "images/products/Molten-Gold-Lightning-King.webp",
         "background_image": "images/games/callof-background.webp",
