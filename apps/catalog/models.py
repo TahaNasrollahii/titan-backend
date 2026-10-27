@@ -14,6 +14,11 @@ class Game(TimeStampedModel, SeoMetadataMixin):
         GAME = "game", _("Game")
         SERVICE = "service", _("Service")  # e.g. premium accounts (Spotify, Telegram…)
 
+    class CredentialType(models.TextChoices):
+        EMAIL_PASSWORD = "email_password", _("ایمیل و رمز عبور (Email & Password)")
+        SUPERCELL_ID = "supercell_id", _("آی‌دی سوپرسل (Supercell ID)")
+        PLAYER_ID = "player_id", _("آی‌دی بازیکن (Player ID / UID)")
+
     slug = models.SlugField(unique=True)
     title = models.CharField(_("title"), max_length=80)
     title_en = models.CharField(_("English title"), max_length=80)
@@ -30,6 +35,13 @@ class Game(TimeStampedModel, SeoMetadataMixin):
     description = models.TextField(blank=True)
     genre = models.CharField(max_length=60, blank=True)
     kind = models.CharField(max_length=10, choices=Kind.choices, default=Kind.GAME)
+    credential_type = models.CharField(
+        _("نوع اطلاعات اکانت دریافتی"),
+        max_length=20,
+        choices=CredentialType.choices,
+        default=CredentialType.EMAIL_PASSWORD,
+        help_text=_("مشخص می‌کند هنگام خرید محصولات این بازی، چه اطلاعاتی از کاربر دریافت شود."),
+    )
 
     cover_image = models.ImageField(upload_to="games/", blank=True, validators=IMAGE_VALIDATORS)
     logo_image = models.ImageField(upload_to="games/", blank=True, validators=IMAGE_VALIDATORS)
@@ -114,6 +126,12 @@ class Product(TimeStampedModel, SeoMetadataMixin):
         ACCOUNT = "account", _("Direct account top-up")
         MANUAL = "manual", _("Manual fulfilment")
 
+    class CredentialType(models.TextChoices):
+        INHERIT = "", _("ارث‌بری از بازی / دسته‌بندی (پیش‌فرض)")
+        EMAIL_PASSWORD = "email_password", _("ایمیل و رمز عبور (Email & Password)")
+        SUPERCELL_ID = "supercell_id", _("آی‌دی سوپرسل (Supercell ID)")
+        PLAYER_ID = "player_id", _("آی‌دی بازیکن (Player ID / UID)")
+
     slug = models.SlugField(unique=True, max_length=120)
     title = models.CharField(_("title"), max_length=150)
     subtitle = models.CharField(max_length=150, blank=True)
@@ -142,7 +160,18 @@ class Product(TimeStampedModel, SeoMetadataMixin):
 
     description = models.TextField(blank=True)
     delivery_info = models.CharField(max_length=200, blank=True)
-    delivery_type = models.CharField(max_length=10, choices=DeliveryType.choices, default=DeliveryType.CODE)
+    delivery_type = models.CharField(max_length=10, choices=DeliveryType.choices, default=DeliveryType.ACCOUNT)
+    credential_type = models.CharField(
+        _("نوع اطلاعات اکانت دریافتی"),
+        max_length=20,
+        choices=CredentialType.choices,
+        default=CredentialType.INHERIT,
+        blank=True,
+        help_text=_(
+            "در حالت پیش‌فرض (ارث‌بری از بازی)، نوع اطلاعات دریافتی به‌صورت خودکار از روی بازی محصول تعیین می‌شود "
+            "(برای کلش آو کلنز: آی‌دی سوپرسل، و برای سایر محصولات: ایمیل و رمز عبور)."
+        ),
+    )
     image = models.ImageField(upload_to="products/", blank=True, validators=IMAGE_VALIDATORS)
 
     price = models.PositiveBigIntegerField(
@@ -220,6 +249,17 @@ class Product(TimeStampedModel, SeoMetadataMixin):
     @property
     def requires_game_account(self) -> bool:
         return self.delivery_type == self.DeliveryType.ACCOUNT
+
+    @property
+    def effective_credential_type(self) -> str:
+        if self.credential_type:
+            return self.credential_type
+        if self.game_id and self.game:
+            if self.game.slug == "clash-of-clans":
+                return Game.CredentialType.SUPERCELL_ID
+            if self.game.credential_type:
+                return self.game.credential_type
+        return Game.CredentialType.EMAIL_PASSWORD
 
 
 class ProductVariant(models.Model):

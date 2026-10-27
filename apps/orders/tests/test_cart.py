@@ -28,6 +28,7 @@ def test_empty_cart(auth_client):
         "discount": 0,
         "total": 0,
         "requiresGameAccount": False,
+        "credentialTypes": [],
     }
 
 
@@ -144,7 +145,21 @@ def test_merge_guest_cart(auth_client):
 def test_requires_game_account_flag(auth_client):
     product = ProductFactory(delivery_type="account")
 
-    assert add(auth_client, product).json()["requiresGameAccount"] is True
+    body = add(auth_client, product).json()
+    assert body["requiresGameAccount"] is True
+    assert body["credentialTypes"] == ["email_password"]
+
+
+def test_clash_of_clans_cart_credential_type(auth_client):
+    from apps.catalog.tests.factories import GameFactory
+
+    clash = GameFactory(slug="clash-of-clans", credential_type="supercell_id")
+    product = ProductFactory(game=clash, delivery_type="account")
+
+    body = add(auth_client, product).json()
+    assert body["requiresGameAccount"] is True
+    assert body["credentialTypes"] == ["supercell_id"]
+    assert body["items"][0]["product"]["credentialType"] == "supercell_id"
 
 
 def test_cart_requires_auth(api_client):

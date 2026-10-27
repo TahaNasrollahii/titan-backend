@@ -38,6 +38,7 @@ class ProductFactory(factory.django.DjangoModelFactory):
     slug = factory.Sequence(lambda n: f"product-{n}")
     title = factory.Sequence(lambda n: f"Product {n}")
     category = factory.SubFactory(ProductCategoryFactory)
+    delivery_type = Product.DeliveryType.CODE
     price = 100_000
 
 

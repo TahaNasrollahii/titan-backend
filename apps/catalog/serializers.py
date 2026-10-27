@@ -20,7 +20,7 @@ class GameMiniSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Game
-        fields = ["slug", "title", "title_en", "icon_image", "accent_color"]
+        fields = ["slug", "title", "title_en", "icon_image", "accent_color", "credential_type"]
 
 
 class GameSerializer(serializers.ModelSerializer):
@@ -60,6 +60,7 @@ class GameSerializer(serializers.ModelSerializer):
             "description",
             "genre",
             "kind",
+            "credential_type",
             "cover_image",
             "logo_image",
             "background_image",
@@ -160,6 +161,7 @@ class ProductListSerializer(serializers.ModelSerializer):
     badges = serializers.ListField(child=serializers.CharField(), read_only=True)
     rating = serializers.FloatField(source="rating_avg", read_only=True)
     is_wishlisted = serializers.BooleanField(read_only=True, default=False)
+    credential_type = serializers.CharField(source="effective_credential_type", read_only=True)
 
     def to_representation(self, instance: Product):
         data = super().to_representation(instance)
@@ -190,6 +192,7 @@ class ProductListSerializer(serializers.ModelSerializer):
             "in_stock",
             "vendor",
             "delivery_type",
+            "credential_type",
             "game",
             "category",
             "platforms",

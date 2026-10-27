@@ -83,6 +83,7 @@ class OrderAdmin(ModelAdmin):
         "game_account",
         "game_account_title",
         "game_account_username",
+        "game_account_password",
         "paid_at",
         "completed_at",
         "created_at",
@@ -93,7 +94,10 @@ class OrderAdmin(ModelAdmin):
         (_("Amounts"), {"classes": ["tab"], "fields": (("subtotal", "discount", "total"), "payment_method")}),
         (
             _("Game account"),
-            {"classes": ["tab"], "fields": ("game_account", ("game_account_title", "game_account_username"))},
+            {
+                "classes": ["tab"],
+                "fields": ("game_account", ("game_account_title", "game_account_username"), "game_account_password"),
+            },
         ),
         (
             _("Timeline"),
@@ -127,6 +131,12 @@ class OrderAdmin(ModelAdmin):
     @admin.display(description="Total", ordering="total")
     def amount(self, obj: Order) -> str:
         return toman(obj.total)
+
+    @admin.display(description="Password / Secret")
+    def game_account_password(self, obj: Order) -> str:
+        if obj.game_account and obj.game_account.password:
+            return obj.game_account.password
+        return "— (بدون رمز / آی‌دی سوپرسل)"
 
     # ---- bulk actions
     @action(description=_("تغییر وضعیت به در حال انجام"), icon="pending_actions", permissions=["change"])

@@ -13,11 +13,21 @@ from .models import MAX_QUANTITY_PER_LINE, CartItem, Order, OrderItem
 class CartProductSerializer(serializers.ModelSerializer):
     image = ImageUrlField()
     requires_game_account = serializers.BooleanField(read_only=True)
+    credential_type = serializers.CharField(source="effective_credential_type", read_only=True)
     in_stock = serializers.BooleanField(read_only=True)
 
     class Meta:
         model = Product
-        fields = ["id", "slug", "title", "image", "delivery_type", "requires_game_account", "in_stock"]
+        fields = [
+            "id",
+            "slug",
+            "title",
+            "image",
+            "delivery_type",
+            "requires_game_account",
+            "credential_type",
+            "in_stock",
+        ]
 
 
 class CartVariantSerializer(serializers.ModelSerializer):
@@ -47,6 +57,7 @@ class CartSerializer(serializers.Serializer):
     discount = serializers.IntegerField()
     total = serializers.IntegerField()
     requires_game_account = serializers.BooleanField()
+    credential_types = serializers.ListField(child=serializers.CharField(), read_only=True)
 
 
 class CartLineInputSerializer(serializers.Serializer):

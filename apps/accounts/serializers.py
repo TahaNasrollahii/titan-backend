@@ -194,6 +194,7 @@ class GameAccountSerializer(serializers.ModelSerializer):
     password = serializers.CharField(
         write_only=True, required=False, allow_blank=True, style={"input_type": "password"}, max_length=256
     )
+    credential_type = serializers.CharField(write_only=True, required=False, allow_blank=True)
     has_password = serializers.SerializerMethodField()
     game = serializers.SlugRelatedField(
         slug_field="slug", queryset=Game.objects.all(), required=False, allow_null=True
@@ -201,14 +202,23 @@ class GameAccountSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = GameAccount
-        fields = ["id", "title", "username", "password", "has_password", "game", "created_at"]
+        fields = ["id", "title", "username", "password", "credential_type", "has_password", "game", "created_at"]
         read_only_fields = ["id", "created_at"]
 
     def get_has_password(self, account: GameAccount) -> bool:
         return bool(account.password)
 
     def validate(self, attrs):
-        if self.instance is None and not attrs.get("password"):
+        credential_type = attrs.pop("credential_type", "")
+        game = attrs.get("game")
+        title = attrs.get("title", "")
+        is_id_only = (
+            credential_type in ("supercell_id", "player_id")
+            or (game is not None and (game.slug == "clash-of-clans" or game.credential_type in ("supercell_id", "player_id")))
+            or "سوپرسل" in title
+            or "Supercell" in title
+        )
+        if self.instance is None and not attrs.get("password") and not is_id_only:
             raise serializers.ValidationError({"password": _("This field is required.")})
         if self.instance is not None and not attrs.get("password"):
             attrs.pop("password", None)  # blank on update means "keep the current password"

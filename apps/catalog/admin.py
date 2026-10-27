@@ -65,7 +65,7 @@ class GameAdmin(ModelAdmin):
     prepopulated_fields = {"slug": ["title_en"]}
     ordering = ["sort_order", "title_en"]
     fieldsets = (
-        (None, {"fields": (("title", "title_en"), "slug", ("kind", "genre"), "description")}),
+        (None, {"fields": (("title", "title_en"), "slug", ("kind", "genre", "credential_type"), "description")}),
         (_("Visibility"), {"classes": ["tab"], "fields": ("is_featured", "is_active", "sort_order")}),
         (
             _("Artwork"),
@@ -222,7 +222,17 @@ class ProductAdmin(ModelAdmin):
     fieldsets = (
         (
             None,
-            {"fields": ("title", "slug", "subtitle", ("game", "category"), ("vendor", "platforms"), "image")},
+            {
+                "fields": (
+                    "title",
+                    "slug",
+                    "subtitle",
+                    ("game", "category"),
+                    ("delivery_type", "credential_type"),
+                    ("vendor", "platforms"),
+                    "image",
+                )
+            },
         ),
         (
             _("Pricing & stock"),
@@ -237,7 +247,7 @@ class ProductAdmin(ModelAdmin):
         ),
         (
             _("Delivery"),
-            {"classes": ["tab"], "fields": ("delivery_type", "delivery_info")},
+            {"classes": ["tab"], "fields": ("delivery_info",)},
         ),
         (
             _("Content"),

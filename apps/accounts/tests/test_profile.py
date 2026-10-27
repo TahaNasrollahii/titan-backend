@@ -168,6 +168,24 @@ class TestGameAccounts:
         assert response.status_code == 400
         assert "password" in response.json()["errors"]
 
+    def test_supercell_id_account_created_without_password(self, auth_client):
+        GameFactory(slug="clash-of-clans", credential_type="supercell_id")
+        response = auth_client.post(
+            self.url,
+            {
+                "title": "آی‌دی سوپرسل",
+                "username": "#2PP99",
+                "password": "",
+                "game": "clash-of-clans",
+                "credentialType": "supercell_id",
+            },
+            format="json",
+        )
+
+        assert response.status_code == 201
+        assert response.json()["hasPassword"] is False
+        assert response.json()["username"] == "#2PP99"
+
     def test_blank_password_on_update_keeps_existing(self, auth_client, user):
         account = GameAccountFactory(user=user, password="original")
 

@@ -71,6 +71,16 @@ class CartSummary:
     def requires_game_account(self) -> bool:
         return any(item.product.requires_game_account for item in self.items)
 
+    @property
+    def credential_types(self) -> list[str]:
+        types: list[str] = []
+        for item in self.items:
+            if item.product.requires_game_account:
+                ct = item.product.effective_credential_type
+                if ct not in types:
+                    types.append(ct)
+        return types
+
 
 def get_cart(user: User) -> Cart:
     cart, _ = Cart.objects.get_or_create(user=user)
