@@ -1,8 +1,11 @@
 from collections.abc import Iterable
 
+from django.db import transaction
+
 from apps.accounts.models import User
 
 from .models import Notification
+from .signals import notifications_created
 
 Kind = Notification.Kind
 
@@ -18,9 +21,11 @@ def notify(
 ) -> Notification:
     from django.utils.translation import override
     with override("fa"):
-        return Notification.objects.create(
+        notification = Notification.objects.create(
             user=user, kind=kind, title=str(title), body=str(body), icon=icon, data=data or {}
         )
+    _announce([notification])
+    return notification
 
 
 def notify_many(users: Iterable[User], **kwargs) -> list[Notification]:
@@ -28,8 +33,18 @@ def notify_many(users: Iterable[User], **kwargs) -> list[Notification]:
     with override("fa"):
         data = kwargs.pop("data", None) or {}
         title, body = str(kwargs.pop("title")), str(kwargs.pop("body", ""))
-        return Notification.objects.bulk_create(
+        notifications = Notification.objects.bulk_create(
             [Notification(user=user, title=title, body=body, data=data, **kwargs) for user in users]
+        )
+    _announce(notifications)
+    return notifications
+
+
+def _announce(notifications: list[Notification]) -> None:
+    """Let delivery channels (e.g. the Telegram bot) know, once the rows are really saved."""
+    if notifications:
+        transaction.on_commit(
+            lambda: notifications_created.send(sender=Notification, notifications=notifications)
         )
 
 

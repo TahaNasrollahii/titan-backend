@@ -13,6 +13,8 @@ from django.utils.translation import override
 from apps.accounts.models import User
 from apps.accounts.sms import get_sms_backend
 from apps.core.exceptions import ConflictError, DomainError, ExternalServiceError
+from apps.notifications.models import Notification
+from apps.notifications.services import notify
 
 from .models import Conversation, Message, SupportAgent
 
@@ -310,6 +312,15 @@ def notify_visitor_if_away(conversation: Conversation) -> bool:
     )
     if not claimed:
         return False
+    if conversation.user_id:
+        # In-app too: the Telegram bot mirrors notifications, so Mini App users hear about it there.
+        notify(
+            conversation.user,
+            kind=Notification.Kind.SYSTEM,
+            title=_("Support answered your message"),
+            body=_("Ticket %(ticket)s has a new reply.") % {"ticket": conversation.ticket},
+            data={"support_ticket": conversation.ticket},
+        )
     try:
         get_sms_backend().send_support_reply(conversation.phone, conversation.ticket)
     except ExternalServiceError:

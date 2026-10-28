@@ -151,7 +151,10 @@ class StartView(VisitorView):
 
     def post(self, request):
         from apps.core.turnstile import validate_turnstile
-        validate_turnstile(request)
+
+        # Signed-in users already proved they are human (OTP or Telegram); the bot check is for visitors.
+        if not request.user.is_authenticated:
+            validate_turnstile(request)
         serializer = StartInputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         # Exclude turnstile_token if present in validated_data

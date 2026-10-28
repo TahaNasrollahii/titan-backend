@@ -8,6 +8,7 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from apps.accounts.models import User
+from apps.core import channel
 from apps.core.exceptions import DomainError
 
 from . import registry
@@ -98,6 +99,7 @@ def _create_payment(
         object_id=object_id,
         reference=reference,
         description=str(description)[:200],
+        channel=channel.current(),
     )
 
 
@@ -223,7 +225,11 @@ def frontend_result_url(payment: Payment | None, *, status: str | None = None) -
     params = {"status": status or (payment.status if payment else Payment.Status.FAILED)}
     if payment is not None:
         params |= {"paymentId": payment.pk, "purpose": payment.purpose, "reference": payment.reference}
-    return f"{settings.FRONTEND_URL}{settings.PAYMENT_RESULT_PATH}?{urlencode(params)}"
+    base = settings.FRONTEND_URL
+    # The gateway ran in the phone's browser; the Mini App's return page hands the customer back to Telegram.
+    if payment is not None and payment.channel == channel.TELEGRAM and settings.TELEGRAM_MINIAPP_URL:
+        base = settings.TELEGRAM_MINIAPP_URL
+    return f"{base}{settings.PAYMENT_RESULT_PATH}?{urlencode(params)}"
 
 
 # ------------------------------------------------------------------ wallet top-up

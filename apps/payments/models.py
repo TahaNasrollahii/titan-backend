@@ -73,6 +73,12 @@ class Payment(TimeStampedModel):
     )
     reference = models.CharField(max_length=60, blank=True, help_text=_("Human readable reference."))
     description = models.CharField(max_length=200, blank=True)
+    channel = models.CharField(
+        max_length=10,
+        choices=[("web", _("Website")), ("telegram", _("Telegram Mini App"))],
+        default="web",
+        help_text=_("The app the payment started from; the gateway returns the customer there."),
+    )
 
     status = models.CharField(max_length=10, choices=Status.choices, default=Status.INITIATED, db_index=True)
     authority = models.CharField(max_length=64, unique=True, null=True, blank=True)

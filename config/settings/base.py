@@ -2,6 +2,7 @@
 
 from datetime import timedelta
 from pathlib import Path
+from urllib.parse import urlsplit
 
 import environ
 from corsheaders.defaults import default_headers
@@ -50,6 +51,7 @@ LOCAL_APPS = [
     "apps.notifications",
     "apps.content",
     "apps.support",
+    "apps.telegram",
 ]
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
@@ -61,6 +63,7 @@ MIDDLEWARE = [
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.locale.LocaleMiddleware",
     "apps.core.middleware.AdminEnglishMiddleware",
+    "apps.core.channel.ClientChannelMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -165,6 +168,8 @@ REST_FRAMEWORK = {
         "support_start": env("THROTTLE_SUPPORT_START", default="30/hour"),
         "support_poll": env("THROTTLE_SUPPORT_POLL", default="180/min"),
         "support_send": env("THROTTLE_SUPPORT_SEND", default="40/min"),
+        # Telegram Mini App sign-in. Keyed by Telegram user id once the init data is verified.
+        "telegram_auth": env("THROTTLE_TELEGRAM_AUTH", default="30/min"),
     },
 }
 
@@ -212,7 +217,31 @@ CORS_ALLOW_CREDENTIALS = True
 if DEBUG:
     CORS_ALLOWED_ORIGIN_REGEXES = [r"^http://(localhost|127\.0\.0\.1)(:\d+)?$"]
 # The live-chat widget identifies visitors with this header, Turnstile with X-Turnstile-Token, plus CSRF defense headers.
-CORS_ALLOW_HEADERS = (*default_headers, "accept-language", "x-support-token", "x-turnstile-token", "x-requested-with", "x-csrftoken")
+# X-Titan-Client names the calling app (the Telegram Mini App sends "telegram") so payments return to it.
+CORS_ALLOW_HEADERS = (
+    *default_headers,
+    "accept-language",
+    "x-support-token",
+    "x-turnstile-token",
+    "x-requested-with",
+    "x-csrftoken",
+    "x-titan-client",
+)
+
+# ---------------------------------------------------------------- Telegram bot & Mini App
+TELEGRAM_BOT_TOKEN = env("TELEGRAM_BOT_TOKEN", default="")
+TELEGRAM_BOT_USERNAME = env("TELEGRAM_BOT_USERNAME", default="").lstrip("@")
+# Telegram sends it back in X-Telegram-Bot-Api-Secret-Token on every webhook call.
+TELEGRAM_WEBHOOK_SECRET = env("TELEGRAM_WEBHOOK_SECRET", default="")
+TELEGRAM_MINIAPP_URL = env("TELEGRAM_MINIAPP_URL", default="").rstrip("/")
+# How old the Mini App's signed launch data may be when it is exchanged for tokens.
+TELEGRAM_INIT_DATA_MAX_AGE = env.int("TELEGRAM_INIT_DATA_MAX_AGE", default=60 * 60 * 24)
+TELEGRAM_API_TIMEOUT = env.float("TELEGRAM_API_TIMEOUT", default=4.0)
+if TELEGRAM_MINIAPP_URL:
+    _miniapp = urlsplit(TELEGRAM_MINIAPP_URL)
+    _miniapp_origin = f"{_miniapp.scheme}://{_miniapp.netloc}"
+    if _miniapp_origin not in CORS_ALLOWED_ORIGINS:
+        CORS_ALLOWED_ORIGINS = [*CORS_ALLOWED_ORIGINS, _miniapp_origin]
 
 # ---------------------------------------------------------------- domain settings
 FIELD_ENCRYPTION_KEY = env("FIELD_ENCRYPTION_KEY")
