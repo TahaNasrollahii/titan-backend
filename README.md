@@ -286,6 +286,9 @@ See `titan-front/README.md` for how the client is organised.
   - Required env vars: `SECRET_KEY`, `FIELD_ENCRYPTION_KEY`, `ALLOWED_HOSTS`, `DATABASE_URL`,
     `FRONTEND_URL`, `CORS_ALLOWED_ORIGINS`, `ZARINPAL_MERCHANT_ID`, `PAYMENT_CALLBACK_URL`.
   - Also set `SMS_BACKEND=apps.accounts.sms.KavenegarSMSBackend` and `KAVENEGAR_API_KEY`.
+  - The OTP template (`KAVENEGAR_OTP_TEMPLATE`) must end with the line `@<site host> #%token`
+    (e.g. `@titan-front.vercel.app #%token`) so Android Chrome fills the code in automatically
+    (WebOTP). The host is the website's, without `https://`; change it when the domain changes.
   - Live chat SMS uses two Kavenegar templates with one token (the ticket, e.g. `T-1042`):
     `KAVENEGAR_SUPPORT_ALERT_TEMPLATE` (to agents: a visitor is waiting) and
     `KAVENEGAR_SUPPORT_REPLY_TEMPLATE` (to visitors: support answered).
