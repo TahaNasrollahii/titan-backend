@@ -3,7 +3,7 @@ from django.db.models import Q
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
-from apps.core.models import TimeStampedModel
+from apps.core.models import SeoMetadataMixin, TimeStampedModel
 from apps.core.validators import IMAGE_VALIDATORS
 
 
@@ -134,3 +134,73 @@ class SiteSetting(models.Model):
     def get(cls, key: str, default=None):
         setting = cls.objects.filter(key=key).first()
         return setting.value if setting is not None else default
+
+
+class GuideQuerySet(models.QuerySet):
+    def published(self):
+        return self.filter(is_published=True)
+
+
+class Guide(TimeStampedModel, SeoMetadataMixin):
+    """A how-to article in the /guides hub: buying and activating products, account setup, site help."""
+
+    class Category(models.TextChoices):
+        PURCHASE = "purchase", _("Buying & activation")
+        ACCOUNT = "account", _("Account setup")
+        SITE = "site", _("Using Titan")
+        TOURNAMENT = "tournament", _("Tournaments")
+
+    slug = models.SlugField(unique=True, max_length=120)
+    title = models.CharField(_("title"), max_length=150)
+    category = models.CharField(max_length=12, choices=Category.choices, db_index=True)
+    game = models.ForeignKey(
+        "catalog.Game", null=True, blank=True, on_delete=models.SET_NULL, related_name="guides"
+    )
+    products = models.ManyToManyField(
+        "catalog.Product",
+        blank=True,
+        related_name="guides",
+        help_text=_("Product pages that link to this guide."),
+    )
+    summary = models.CharField(
+        max_length=300, help_text=_("One or two sentences shown on the guide card and under the title.")
+    )
+    body = models.TextField(
+        help_text=_(
+            "Lines starting with ## or ### are headings, - is a bullet, 1. is a numbered step, "
+            "**text** is bold and [text](/path) is a link. Leave a blank line between paragraphs."
+        )
+    )
+    is_published = models.BooleanField(default=False, db_index=True)
+    published_at = models.DateTimeField(null=True, blank=True)
+    sort_order = models.PositiveSmallIntegerField(default=0)
+
+    objects = GuideQuerySet.as_manager()
+
+    class Meta:
+        ordering = ["category", "sort_order", "title"]
+        verbose_name = _("Guide")
+        verbose_name_plural = _("Guides")
+
+    def __str__(self) -> str:
+        return self.title
+
+    def save(self, *args, **kwargs):
+        if self.is_published and self.published_at is None:
+            self.published_at = timezone.now()
+        super().save(*args, **kwargs)
+
+
+class GuideFaq(models.Model):
+    guide = models.ForeignKey(Guide, on_delete=models.CASCADE, related_name="faqs")
+    question = models.CharField(max_length=200)
+    answer = models.TextField()
+    sort_order = models.PositiveSmallIntegerField(default=0)
+
+    class Meta:
+        ordering = ["sort_order", "id"]
+        verbose_name = _("Guide question")
+        verbose_name_plural = _("Guide questions")
+
+    def __str__(self) -> str:
+        return self.question

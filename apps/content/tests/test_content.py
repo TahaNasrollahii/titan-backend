@@ -5,8 +5,8 @@ from django.utils import timezone
 
 import pytest
 
-from apps.catalog.tests.factories import ProductFactory
-from apps.content.models import Announcement, ContactChannel, Promo, SiteSetting
+from apps.catalog.tests.factories import GameFactory, ProductFactory
+from apps.content.models import Announcement, ContactChannel, Guide, Promo, SiteSetting
 
 pytestmark = pytest.mark.django_db
 
@@ -51,3 +51,49 @@ def test_contact_info(api_client):
 
 def test_support_online_defaults_to_true(api_client):
     assert api_client.get(reverse("contact-info")).json()["supportOnline"] is True
+
+
+def _guide(slug, *, published=True, **fields):
+    defaults = {"title": slug, "category": "purchase", "summary": "s", "body": "b", "is_published": published}
+    return Guide.objects.create(slug=slug, **{**defaults, **fields})
+
+
+def test_guides_list_only_published_and_filters(api_client):
+    product = ProductFactory(slug="vp-test", game=GameFactory(slug="valorant-test"))
+    vp = _guide("vp-guide", game=product.game)
+    vp.products.add(product)
+    _guide("wallet-guide", category="site")
+    _guide("draft-guide", published=False)
+
+    titles = lambda **params: {g["slug"] for g in api_client.get(reverse("guide-list"), params).json()}
+
+    assert titles() >= {"vp-guide", "wallet-guide"}
+    assert "draft-guide" not in titles()
+    assert titles(category="site") == {"wallet-guide"}
+    assert titles(product="vp-test") == {"vp-guide"}
+    assert titles(game=product.game.slug) == {"vp-guide"}
+
+
+def test_guide_detail_hides_drafts_and_lists_related(api_client):
+    guide = _guide("detail-guide")
+    guide.faqs.create(question="Q?", answer="A.")
+    _guide("sibling-guide")
+    _guide("hidden-guide", published=False)
+
+    body = api_client.get(reverse("guide-detail", args=["detail-guide"])).json()
+
+    assert body["faqs"] == [{"question": "Q?", "answer": "A."}]
+    assert body["publishedAt"] is not None
+    assert "sibling-guide" in {g["slug"] for g in body["related"]}
+    assert "hidden-guide" not in {g["slug"] for g in body["related"]}
+    assert api_client.get(reverse("guide-detail", args=["hidden-guide"])).status_code == 404
+
+
+def test_published_guides_are_in_the_sitemap(api_client):
+    _guide("sitemap-guide")
+    _guide("sitemap-draft", published=False)
+
+    slugs = {g["slug"] for g in api_client.get(reverse("seo-sitemap")).json()["guides"]}
+
+    assert "sitemap-guide" in slugs
+    assert "sitemap-draft" not in slugs

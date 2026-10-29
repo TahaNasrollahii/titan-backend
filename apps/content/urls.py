@@ -6,4 +6,6 @@ urlpatterns = [
     path("content/promos/", views.PromoListView.as_view(), name="promo-list"),
     path("content/announcements/", views.AnnouncementListView.as_view(), name="announcement-list"),
     path("content/contact/", views.ContactInfoView.as_view(), name="contact-info"),
+    path("content/guides/", views.GuideListView.as_view(), name="guide-list"),
+    path("content/guides/<slug:slug>/", views.GuideDetailView.as_view(), name="guide-detail"),
 ]

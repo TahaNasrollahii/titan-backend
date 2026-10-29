@@ -9,7 +9,7 @@ from django.db import transaction
 from django.db.models.signals import post_delete, post_save, pre_save
 from django.dispatch import receiver
 
-from apps.content.models import Promo
+from apps.content.models import Guide, GuideFaq, Promo
 from apps.core.models import Redirect
 from apps.tournaments.models import Tournament
 
@@ -111,6 +111,15 @@ def _remember_previous_game_slug(sender, instance: Game, **kwargs) -> None:
         instance._previous_slug = prev
 
 
+@receiver(pre_save, sender=Guide)
+def _remember_previous_guide_slug(sender, instance: Guide, **kwargs) -> None:
+    if not instance.pk:
+        return
+    prev = Guide.objects.filter(pk=instance.pk).values_list("slug", flat=True).first()
+    if prev and prev != instance.slug:
+        instance._previous_slug = prev
+
+
 @receiver(pre_save, sender=Tournament)
 def _remember_previous_tournament_slug(sender, instance: Tournament, **kwargs) -> None:
     if not instance.pk:
@@ -187,3 +196,27 @@ def revalidate_on_redirect_change(sender, instance: Redirect, **kwargs) -> None:
 @receiver([post_save, post_delete], sender=Promo)
 def revalidate_on_promo_change(sender, instance: Promo, **kwargs) -> None:
     _schedule_frontend_revalidation(["promos", "home"], ["/store", "/"])
+
+
+@receiver([post_save, post_delete], sender=Guide)
+def revalidate_on_guide_change(sender, instance: Guide, **kwargs) -> None:
+    prev_slug = getattr(instance, "_previous_slug", None)
+    slug_changed = bool(prev_slug and prev_slug != instance.slug)
+    if slug_changed:
+        Redirect.record_slug_change("guides", prev_slug, instance.slug)
+    _invalidate_seo_caches(include_redirects=slug_changed)
+
+    # Store and product pages link to their guides.
+    tags = ["guides", "sitemap", "products", "games", f"guide-{instance.slug}"]
+    paths = ["/guides", "/sitemap.xml", f"/guides/{instance.slug}"]
+    if slug_changed:
+        tags.extend(["redirects", f"guide-{prev_slug}"])
+        paths.append(f"/guides/{prev_slug}")
+    _schedule_frontend_revalidation(tags, paths)
+
+
+@receiver([post_save, post_delete], sender=GuideFaq)
+def revalidate_on_guide_faq_change(sender, instance: GuideFaq, **kwargs) -> None:
+    guide = Guide.objects.filter(pk=instance.guide_id).only("slug").first()
+    if guide:
+        _schedule_frontend_revalidation(["guides", f"guide-{guide.slug}"], [f"/guides/{guide.slug}"])

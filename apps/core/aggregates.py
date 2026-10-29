@@ -18,7 +18,7 @@ from apps.catalog.signals import SEO_REDIRECTS_CACHE_KEY, SEO_SITEMAP_CACHE_KEY
 from .models import Redirect, normalize_redirect_path
 from apps.catalog.selectors import games_with_counts
 from apps.catalog.serializers import GameMiniSerializer, GameSerializer, ProductListSerializer
-from apps.content.models import Announcement, Promo
+from apps.content.models import Announcement, Guide, Promo
 from apps.content.serializers import AnnouncementSerializer, PromoSerializer
 from apps.orders.models import Order
 from apps.orders.serializers import OrderSerializer
@@ -201,6 +201,7 @@ class SitemapPayloadSerializer(serializers.Serializer):
     games = SitemapItemSerializer(many=True)
     categories = SitemapItemSerializer(many=True)
     tournaments = SitemapItemSerializer(many=True)
+    guides = SitemapItemSerializer(many=True)
 
 
 def _build_sitemap_payload() -> dict:
@@ -250,11 +251,18 @@ def _build_sitemap_payload() -> dict:
         .only("slug", "updated_at", "title", "cover_image", "state")
         .order_by("-starts_at")
     ]
+    guides = [
+        {"slug": row.slug, "updated_at": row.updated_at.isoformat(), "title": row.title, "image": None}
+        for row in Guide.objects.published()
+        .filter(noindex=False, canonical_url="")
+        .only("slug", "updated_at", "title")
+    ]
     return {
         "products": products,
         "games": games,
         "categories": categories,
         "tournaments": tournaments,
+        "guides": guides,
     }
 
 

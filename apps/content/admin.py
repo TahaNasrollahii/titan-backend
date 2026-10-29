@@ -2,13 +2,13 @@ from django.contrib import admin
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
-from unfold.admin import ModelAdmin
+from unfold.admin import ModelAdmin, TabularInline
 from unfold.contrib.filters.admin import BooleanRadioFilter, ChoicesDropdownFilter
 from unfold.decorators import display
 
-from apps.core.admin import DANGER, INFO, SUCCESS, WARNING, image_header, initials, toman
+from apps.core.admin import DANGER, INFO, SEO_FIELDSET, SUCCESS, WARNING, image_header, initials, toman
 
-from .models import Announcement, ContactChannel, Promo, SiteSetting
+from .models import Announcement, ContactChannel, Guide, GuideFaq, Promo, SiteSetting
 
 WINDOW_LABELS = {"live": SUCCESS, "scheduled": INFO, "ended": DANGER, "off": WARNING}
 
@@ -115,3 +115,43 @@ class ContactChannelAdmin(ModelAdmin):
 class SiteSettingAdmin(ModelAdmin):
     list_display = ["key", "value", "description"]
     search_fields = ["key", "description"]
+
+
+class GuideFaqInline(TabularInline):
+    model = GuideFaq
+    extra = 0
+    fields = ["question", "answer", "sort_order"]
+
+
+@admin.register(Guide)
+class GuideAdmin(ModelAdmin):
+    list_display = ["guide", "category_label", "game", "is_published", "sort_order", "updated_at"]
+    list_display_links = ["guide"]
+    list_editable = ["is_published", "sort_order"]
+    list_filter = [
+        ("category", ChoicesDropdownFilter),
+        ("is_published", BooleanRadioFilter),
+        "game",
+    ]
+    search_fields = ["title", "slug", "summary", "body"]
+    autocomplete_fields = ["game", "products"]
+    readonly_fields = ["published_at"]
+    ordering = ["category", "sort_order"]
+    inlines = [GuideFaqInline]
+    fieldsets = (
+        (None, {"fields": ("title", "slug", ("category", "game"), "summary", "body")}),
+        (_("Links"), {"classes": ["tab"], "fields": ("products",)}),
+        (
+            _("Publishing"),
+            {"classes": ["tab"], "fields": (("is_published", "published_at"), "sort_order")},
+        ),
+        SEO_FIELDSET,
+    )
+
+    @display(description="Guide", header=True, ordering="title")
+    def guide(self, obj: Guide):
+        return [obj.title, f"/guides/{obj.slug}", initials(obj.title), None]
+
+    @display(description="Category", label=True, ordering="category")
+    def category_label(self, obj: Guide):
+        return obj.get_category_display()
