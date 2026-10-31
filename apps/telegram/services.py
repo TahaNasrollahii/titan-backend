@@ -196,6 +196,10 @@ WELCOME_TEXT = _(
     "Game top-ups, tournaments, your team and your wallet, all in one app.\n"
     "Tap the button below to open Titan."
 )
+GUIDES_TEXT = _(
+    "<b>Titan Academy & Guides</b> 📘\n\n"
+    "Step-by-step tutorials for buying products, securing your game accounts, joining tournaments, and climbing Titan ranks."
+)
 NUDGE_TEXT = _("Everything happens inside the Titan app. Tap the button below to open it.")
 OPEN_APP = _("Open Titan")
 
@@ -234,7 +238,9 @@ def handle_update(update: dict) -> dict | None:
     TelegramAccount.objects.filter(telegram_id=sender_id, can_message=False).update(can_message=True)
     if not settings.TELEGRAM_MINIAPP_URL:
         return None
-    text = str(message.get("text") or "")
+    text = str(message.get("text") or "").strip()
+    if text.startswith(("/guides", "/help")):
+        return _send_message_reply(sender_id, GUIDES_TEXT, path="/guides")
     return _send_message_reply(sender_id, WELCOME_TEXT if text.startswith("/start") else NUDGE_TEXT)
 
 

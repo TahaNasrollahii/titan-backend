@@ -57,7 +57,15 @@ class Command(BaseCommand):
                     }
                 },
             ),
-            ("setMyCommands", {"commands": [{"command": "start", "description": "باز کردن تایتان"}]}),
+            (
+                "setMyCommands",
+                {
+                    "commands": [
+                        {"command": "start", "description": "باز کردن تایتان"},
+                        {"command": "guides", "description": "آموزش‌ها، راهنمای خرید و رنک‌بندی"},
+                    ]
+                },
+            ),
             ("setMyDescription", {"description": DESCRIPTION}),
             ("setMyShortDescription", {"short_description": SHORT_DESCRIPTION}),
         ]
