@@ -726,18 +726,29 @@ def _list_price(price: int) -> int:
     return round(price * (1 + _SEED_DISCOUNT) / 1000) * 1000
 
 
+import importlib
+
+_PRODUCT_SEO_DATA = importlib.import_module("apps.catalog.migrations.0006_product_seo_descriptions").PRODUCT_SEO_DATA
+
+
 def _complete(spec: dict) -> dict:
     """Fill in whatever a product entry leaves out so every product page is fully populated:
     feature boxes, description, delivery info, tags, specs and a discount (on each option, if any)."""
     spec = dict(spec)
+    seo = _PRODUCT_SEO_DATA.get(spec["slug"])
     gear = spec.get("delivery_type") == "manual"
     spec.setdefault("features", _GEAR_FEATURES if gear else _TOPUP_FEATURES)
-    spec.setdefault("tags", _GEAR_TAGS if gear else _DIGITAL_TAGS)
-    spec.setdefault(
-        "description",
-        f"{spec['title']} با ضمانت اصالت از فروشگاه تایتان. "
-        + ("ارسال سریع به سراسر کشور همراه با گارانتی معتبر." if gear else "تحویل آنی و پشتیبانی ۲۴ ساعته."),
-    )
+    if seo:
+        spec["subtitle"] = seo["subtitle"]
+        spec["description"] = seo["description"]
+        spec["tags"] = seo["tags"]
+    else:
+        spec.setdefault("tags", _GEAR_TAGS if gear else _DIGITAL_TAGS)
+        spec.setdefault(
+            "description",
+            f"{spec['title']} با ضمانت اصالت از فروشگاه تایتان. "
+            + ("ارسال سریع به سراسر کشور همراه با گارانتی معتبر." if gear else "تحویل آنی و پشتیبانی ۲۴ ساعته."),
+        )
     spec.setdefault(
         "delivery_info",
         "ارسال ۲ تا ۴ روز کاری" if gear else "تحویل آنی — کد فعال‌سازی به ایمیل ارسال می‌شود",
@@ -747,6 +758,8 @@ def _complete(spec: dict) -> dict:
     else:
         activation = "شارژ مستقیم اکانت" if spec.get("delivery_type") == "account" else "کد فعال‌سازی"
         spec.setdefault("specs", {"region": "Global", "delivery": "زیر ۱۵ دقیقه", "activation": activation})
+    if seo and seo.get("keywords"):
+        spec["specs"] = {**spec["specs"], "keywords": "، ".join(seo["keywords"])}
 
     if spec.get("variants"):
         spec["variants"] = [

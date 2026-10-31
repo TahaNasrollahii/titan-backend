@@ -642,7 +642,7 @@ def create_drafts(apps, schema_editor):
 class Migration(migrations.Migration):
     dependencies = [
         ("content", "0003_guide"),
-        ("catalog", "__latest__"),
+        ("catalog", "0005_game_credential_type_product_credential_type_and_more"),
     ]
 
     operations = [migrations.RunPython(create_drafts, migrations.RunPython.noop)]
