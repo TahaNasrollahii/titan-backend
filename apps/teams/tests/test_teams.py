@@ -157,6 +157,7 @@ class TestInvitations:
 
         assert captain.delete(team_url(team, f"invitations/{invitation_id}/")).status_code == 204
         assert TeamInvitation.objects.get().status == "cancelled"
+        assert Notification.objects.get(user=user, kind="team_invite").is_read
 
 
 class TestRoster:

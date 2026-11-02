@@ -117,9 +117,14 @@ def dissolve_team(team: Team, actor: User) -> None:
     members = [membership.user for membership in team.memberships.select_related("user")]
     team.dissolved_at = timezone.now()
     team.save(update_fields=["dissolved_at", "updated_at"])
+    pending_invitations = list(
+        team.invitations.filter(status=TeamInvitation.Status.PENDING).select_related("invited_user")
+    )
     team.invitations.filter(status=TeamInvitation.Status.PENDING).update(
         status=TeamInvitation.Status.CANCELLED
     )
+    for invitation in pending_invitations:
+        resolve_action(invitation.invited_user, kind=Kind.TEAM_INVITE, key="invitation_id", value=invitation.pk)
     team.memberships.all().delete()
     others = [member for member in members if member.pk != actor.pk]
     notify_many(
@@ -146,9 +151,15 @@ def join_with_code(user: User, code: str) -> TeamMembership:
     if team is None:
         raise DomainError(_("This invite link is invalid or has expired."), code="invalid_invite_code")
     membership = _add_member(team, user)
-    TeamInvitation.objects.filter(team=team, invited_user=user, status=TeamInvitation.Status.PENDING).update(
-        status=TeamInvitation.Status.ACCEPTED
+    pending_ids = list(
+        TeamInvitation.objects.filter(
+            team=team, invited_user=user, status=TeamInvitation.Status.PENDING
+        ).values_list("pk", flat=True)
     )
+    if pending_ids:
+        TeamInvitation.objects.filter(pk__in=pending_ids).update(status=TeamInvitation.Status.ACCEPTED)
+        for invitation_id in pending_ids:
+            resolve_action(user, kind=Kind.TEAM_INVITE, key="invitation_id", value=invitation_id)
     return membership
 
 
@@ -279,6 +290,12 @@ def decline_invitation(user: User, invitation_id: int) -> TeamInvitation:
 @transaction.atomic
 def cancel_invitation(team: Team, actor: User, invitation_id: int) -> None:
     _require_captain(team, actor)
-    team.invitations.filter(pk=invitation_id, status=TeamInvitation.Status.PENDING).update(
-        status=TeamInvitation.Status.CANCELLED
+    invitation = (
+        team.invitations.select_related("invited_user")
+        .filter(pk=invitation_id, status=TeamInvitation.Status.PENDING)
+        .first()
     )
+    if invitation is not None:
+        invitation.status = TeamInvitation.Status.CANCELLED
+        invitation.save(update_fields=["status", "updated_at"])
+        resolve_action(invitation.invited_user, kind=Kind.TEAM_INVITE, key="invitation_id", value=invitation.pk)
