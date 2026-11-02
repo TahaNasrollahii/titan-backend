@@ -11,10 +11,14 @@ from django.core.management.base import BaseCommand, CommandError
 from apps.telegram import bot
 
 DESCRIPTION = (
-    "تایتان؛ خرید آنی آیتم و ارز بازی، شرکت در تورنمنت‌ها، مدیریت تیم و کیف پول، همه در یک اپ.\n"
-    "برای شروع روی «باز کردن تایتان» بزنید."
+    "🔥 به باشگاه گیمرهای تایتان خوش آمدید! 🎮✨\n\n"
+    "⚡ خرید آنی آیتم، سی‌پی، وی‌باکس و گیفت‌کارت با تحویل خودکار\n"
+    "🕺 آیتم‌شاپ زنده فورتنایت با بروزرسانی روزانه و پرداخت ریالی\n"
+    "🏆 تورنمنت‌های رقابتی انفرادی و تیمی با جوایز نقدی\n"
+    "💎 کیف پول دیجیتال، باشگاه رنکینگ و پشتیبانی ۲۴ ساعته\n\n"
+    "👇 برای ورود به سوپراپ تایتان روی دکمه زیر بزنید!"
 )
-SHORT_DESCRIPTION = "فروشگاه بازی و تورنمنت‌های تایتان، داخل تلگرام 🎮"
+SHORT_DESCRIPTION = "🎮 سوپراپ گیمینگ تایتان | فروشگاه آنی آیتم، فورتنایت شاپ و تورنمنت‌های جایزه‌دار 🏆✨"
 
 
 class Command(BaseCommand):
@@ -52,7 +56,7 @@ class Command(BaseCommand):
                 {
                     "menu_button": {
                         "type": "web_app",
-                        "text": "تایتان",
+                        "text": "🎮 تایتان",
                         "web_app": {"url": settings.TELEGRAM_MINIAPP_URL},
                     }
                 },
@@ -61,8 +65,14 @@ class Command(BaseCommand):
                 "setMyCommands",
                 {
                     "commands": [
-                        {"command": "start", "description": "باز کردن تایتان"},
-                        {"command": "guides", "description": "آموزش‌ها، راهنمای خرید و رنک‌بندی"},
+                        {"command": "start", "description": "🚀 ورود به سوپراپ و منوی اصلی تایتان"},
+                        {"command": "store", "description": "🛒 فروشگاه بازی‌ها، آیتم و گیفت‌کارت"},
+                        {"command": "shop", "description": "🕺 آیتم‌شاپ زنده و روزانه فورتنایت"},
+                        {"command": "tournaments", "description": "🏆 تورنمنت‌های رقابتی و جایزه‌دار"},
+                        {"command": "wallet", "description": "💎 کیف پول من و شارژ آنی"},
+                        {"command": "orders", "description": "📦 پیگیری سفارش‌ها و کدهای تحویل‌شده"},
+                        {"command": "guides", "description": "📘 آکادمی، آموزش‌ها و راهنمای رنک‌بندی"},
+                        {"command": "support", "description": "🎧 پشتیبانی آنلاین ۲۴ ساعته تایتان"},
                     ]
                 },
             ),

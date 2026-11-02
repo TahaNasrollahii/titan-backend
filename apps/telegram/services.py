@@ -192,27 +192,145 @@ def notification_path(notification: Notification) -> str:
 
 # ------------------------------------------------------------------ webhook
 WELCOME_TEXT = _(
-    "<b>Welcome to Titan</b> 🎮\n\n"
-    "Game top-ups, tournaments, your team and your wallet, all in one app.\n"
-    "Tap the button below to open Titan."
+    "🔥 <b>Welcome to the Titan Gamers Club!</b> 🎮✨\n\n"
+    "<blockquote>"
+    "⚡ <b>Instant Game Store</b> — Auto-delivery top-ups, CP, V-Bucks & gift cards\n"
+    "🏆 <b>Pro Tournaments</b> — Compete solo or with your squad for cash prizes\n"
+    "🕺 <b>Live Fortnite Shop</b> — Daily item rotation with instant Rial checkout\n"
+    "💎 <b>Wallet & Rank Club</b> — Earn XP, climb tiers & unlock exclusive rewards"
+    "</blockquote>\n\n"
+    "👇 <b>Choose a section below or launch the Titan Super-App:</b>"
+)
+STORE_TEXT = _(
+    "🛒 <b>Titan Game Store</b> ⚡\n\n"
+    "<blockquote>"
+    "• Instant in-game currencies (CP, UC, V-Bucks, Robux & more)\n"
+    "• Official gift cards & game accounts with warranty\n"
+    "• Fast checkout with Wallet or direct bank gateway"
+    "</blockquote>\n\n"
+    "👇 Tap below to browse products and deals:"
+)
+FORTNITE_TEXT = _(
+    "🕺 <b>Live Fortnite Item Shop</b> ✨\n\n"
+    "<blockquote>"
+    "• Synced live with today's Epic Games rotation\n"
+    "• Transparent Rial pricing & instant gift delivery\n"
+    "• Bundles, skins, emotes, pickaxes & jam tracks"
+    "</blockquote>\n\n"
+    "👇 Tap below to open today's Fortnite Item Shop:"
+)
+TOURNAMENTS_TEXT = _(
+    "🏆 <b>Titan Arena & Tournaments</b> ⚔️\n\n"
+    "<blockquote>"
+    "• Solo & squad tournaments with guaranteed prize pools\n"
+    "• Live brackets, match schedules & room credentials\n"
+    "• Automatic prize payout straight to your Titan Wallet"
+    "</blockquote>\n\n"
+    "👇 Tap below to enter the arena:"
+)
+WALLET_TEXT = _(
+    "💎 <b>Titan Digital Wallet</b> 💳\n\n"
+    "<blockquote>"
+    "• Instant Rial top-up for 1-tap checkout\n"
+    "• Receive tournament winnings & order refunds\n"
+    "• Full transaction history and receipt tracking"
+    "</blockquote>\n\n"
+    "👇 Tap below to manage your wallet:"
+)
+ORDERS_TEXT = _(
+    "📦 <b>Your Orders & Deliveries</b> 🧾\n\n"
+    "<blockquote>"
+    "• Track live order status and fulfillment progress\n"
+    "• View delivered redeem codes and account credentials\n"
+    "• Direct support access for every order"
+    "</blockquote>\n\n"
+    "👇 Tap below to view your orders:"
 )
 GUIDES_TEXT = _(
-    "<b>Titan Academy & Guides</b> 📘\n\n"
-    "Step-by-step tutorials for buying products, securing your game accounts, joining tournaments, and climbing Titan ranks."
+    "📘 <b>Titan Academy & Guides</b> 🎓\n\n"
+    "<blockquote>"
+    "• Step-by-step tutorials for buying & redeeming items\n"
+    "• Account security best practices & two-step verification\n"
+    "• How to join tournaments, form teams & climb Titan ranks"
+    "</blockquote>\n\n"
+    "👇 Tap below to open Titan Academy:"
 )
-NUDGE_TEXT = _("Everything happens inside the Titan app. Tap the button below to open it.")
-OPEN_APP = _("Open Titan")
+SUPPORT_TEXT = _(
+    "🎧 <b>Titan 24/7 Live Support</b> 💬\n\n"
+    "<blockquote>"
+    "• Real-time chat with Titan gaming specialists\n"
+    "• Order follow-ups, tournament help & account recovery\n"
+    "• Instant Telegram alerts when an agent replies"
+    "</blockquote>\n\n"
+    "👇 Tap below to start or continue a support chat:"
+)
+NUDGE_TEXT = _(
+    "✨ <b>Titan Super-App</b> 🎮\n\n"
+    "<blockquote>"
+    "Everything happens inside the Titan Mini App — instant game top-ups, live Fortnite shop, "
+    "tournaments, teams, and your wallet!"
+    "</blockquote>\n\n"
+    "👇 <b>Tap a glass button below to jump right in:</b>"
+)
+OPEN_APP = _("🚀 Launch Titan Super-App 🎮")
+
+COMMAND_ROUTES: dict[str, tuple[str, object, object]] = {
+    "/store": ("/store", STORE_TEXT, _("🛒 Open Game Store")),
+    "/shop": ("/fortnite-shop", FORTNITE_TEXT, _("🕺 Open Fortnite Shop")),
+    "/fortnite": ("/fortnite-shop", FORTNITE_TEXT, _("🕺 Open Fortnite Shop")),
+    "/tournaments": ("/tournaments", TOURNAMENTS_TEXT, _("🏆 Open Tournaments")),
+    "/wallet": ("/wallet", WALLET_TEXT, _("💎 Open My Wallet")),
+    "/orders": ("/orders", ORDERS_TEXT, _("📦 View My Orders")),
+    "/guides": ("/guides", GUIDES_TEXT, _("📘 Open Titan Academy")),
+    "/help": ("/guides", GUIDES_TEXT, _("📘 Open Titan Academy")),
+    "/support": ("/support", SUPPORT_TEXT, _("🎧 Open Live Support")),
+}
 
 
-def _send_message_reply(chat_id: int, text: str, path: str = "/") -> dict:
+def _hub_keyboard(primary_path: str = "/", primary_label: str | None = None) -> dict:
+    """Rich multi-row glass WebApp keyboard with the primary CTA at [0][0] and quick-access shortcuts below."""
+    cta_text = str(primary_label or OPEN_APP)
+    return bot.inline_keyboard(
+        [bot.web_app_button(cta_text, app_url(primary_path))],
+        [
+            bot.web_app_button(str(_("🛒 Game Store")), app_url("/store")),
+            bot.web_app_button(str(_("🏆 Tournaments")), app_url("/tournaments")),
+        ],
+        [
+            bot.web_app_button(str(_("🕺 Fortnite Shop")), app_url("/fortnite-shop")),
+            bot.web_app_button(str(_("💎 My Wallet")), app_url("/wallet")),
+        ],
+        [
+            bot.web_app_button(str(_("📘 Academy & Guides")), app_url("/guides")),
+            bot.web_app_button(str(_("🎧 Live Support")), app_url("/support")),
+        ],
+    )
+
+
+def _send_message_reply(
+    chat_id: int,
+    text: str,
+    path: str = "/",
+    *,
+    primary_label: str | None = None,
+) -> dict:
     """A Bot API call returned as the webhook response, saving a round trip to Telegram."""
     return {
         "method": "sendMessage",
         "chat_id": chat_id,
         "text": str(text),
         "parse_mode": "HTML",
-        "reply_markup": bot.inline_keyboard([bot.web_app_button(str(OPEN_APP), app_url(path))]),
+        "link_preview_options": {"is_disabled": True},
+        "reply_markup": _hub_keyboard(primary_path=path, primary_label=primary_label),
     }
+
+
+def _personalize_welcome(sender: dict) -> str:
+    first_name = str(sender.get("first_name") or "").strip()
+    if not first_name:
+        return str(WELCOME_TEXT)
+    greeting = str(_("👋 Hey <b>{name}</b>!")).format(name=html.escape(first_name[:60]))
+    return f"{greeting}\n{WELCOME_TEXT}"
 
 
 def handle_update(update: dict) -> dict | None:
@@ -224,7 +342,8 @@ def handle_update(update: dict) -> dict | None:
     message = update.get("message")
     if not isinstance(message, dict) or (message.get("chat") or {}).get("type") != "private":
         return None
-    sender_id = (message.get("from") or {}).get("id")
+    sender = message.get("from") or {}
+    sender_id = sender.get("id")
     if not isinstance(sender_id, int):
         return None
 
@@ -239,9 +358,18 @@ def handle_update(update: dict) -> dict | None:
     if not settings.TELEGRAM_MINIAPP_URL:
         return None
     text = str(message.get("text") or "").strip()
-    if text.startswith(("/guides", "/help")):
-        return _send_message_reply(sender_id, GUIDES_TEXT, path="/guides")
-    return _send_message_reply(sender_id, WELCOME_TEXT if text.startswith("/start") else NUDGE_TEXT)
+    command = text.split(maxsplit=1)[0].split("@", 1)[0].lower() if text.startswith("/") else ""
+    if command in COMMAND_ROUTES:
+        route_path, route_text, route_label = COMMAND_ROUTES[command]
+        return _send_message_reply(
+            sender_id,
+            str(route_text),
+            path=route_path,
+            primary_label=str(route_label),
+        )
+    if command == "/start":
+        return _send_message_reply(sender_id, _personalize_welcome(sender))
+    return _send_message_reply(sender_id, str(NUDGE_TEXT))
 
 
 def _chat_member_changed(member: dict) -> None:
@@ -254,16 +382,44 @@ def _chat_member_changed(member: dict) -> None:
 
 
 # ------------------------------------------------------------------ notification delivery
+def _notification_presentation(notification: Notification) -> tuple[str, str]:
+    """Return (header_badge, button_label) tailored to the notification kind/context."""
+    data = notification.data or {}
+    if data.get("order_number") or notification.kind == Notification.Kind.ORDER:
+        return str(_("📦 <b>Order Update</b>")), str(_("📦 View Order in Titan"))
+    if notification.kind == Notification.Kind.PAYMENT:
+        return str(_("💎 <b>Wallet & Payment</b>")), str(_("💎 Open Wallet in Titan"))
+    if data.get("tournament_slug") or notification.kind == Notification.Kind.TOURNAMENT:
+        return str(_("🏆 <b>Tournament Alert</b>")), str(_("🏆 View Tournament in Titan"))
+    if data.get("invitation_id"):
+        return str(_("💌 <b>Team Invitation</b>")), str(_("⚔️ View Invitation in Titan"))
+    if data.get("team_id"):
+        return str(_("🛡️ <b>Squad Update</b>")), str(_("🛡️ View Team in Titan"))
+    if data.get("friendship_id"):
+        return str(_("🤝 <b>Friends & Social</b>")), str(_("👥 View Friends in Titan"))
+    if data.get("support_ticket"):
+        return str(_("🎧 <b>Titan Support Reply</b>")), str(_("💬 Open Support Chat"))
+    return str(_("🔔 <b>Titan Notification</b>")), str(_("✨ View in Titan"))
+
+
 def _notification_message(notification: Notification) -> dict:
-    text = f"<b>{html.escape(notification.title)}</b>"
+    badge, cta_label = _notification_presentation(notification)
+    lines = [
+        badge,
+        f"<b>{html.escape(notification.title)}</b>",
+    ]
     if notification.body:
-        text += f"\n\n{html.escape(notification.body)}"
+        lines.append(f"<blockquote>{html.escape(notification.body)}</blockquote>")
+    data = notification.data or {}
+    if data.get("order_number"):
+        order_no = html.escape(str(data["order_number"]))
+        lines.append(str(_("🔖 Order ID: <code>{order_no}</code>")).format(order_no=order_no))
     return {
-        "text": text,
+        "text": "\n\n".join(lines),
         "parse_mode": "HTML",
         "link_preview_options": {"is_disabled": True},
         "reply_markup": bot.inline_keyboard(
-            [bot.web_app_button(str(_("View in Titan")), app_url(notification_path(notification)))]
+            [bot.web_app_button(cta_label, app_url(notification_path(notification)))]
         ),
     }
 

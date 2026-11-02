@@ -274,7 +274,44 @@ class TestWebhook:
         reply = response.json()
         assert reply["method"] == "sendMessage"
         assert reply["chat_id"] == TG_ID
-        assert reply["reply_markup"]["inline_keyboard"][0][0]["web_app"]["url"] == f"{MINIAPP}/"
+        keyboard = reply["reply_markup"]["inline_keyboard"]
+        assert keyboard[0][0]["web_app"]["url"] == f"{MINIAPP}/"
+        shortcut_urls = [btn["web_app"]["url"] for row in keyboard[1:] for btn in row]
+        assert f"{MINIAPP}/store" in shortcut_urls
+        assert f"{MINIAPP}/tournaments" in shortcut_urls
+        assert f"{MINIAPP}/fortnite-shop" in shortcut_urls
+        assert f"{MINIAPP}/wallet" in shortcut_urls
+        assert f"{MINIAPP}/guides" in shortcut_urls
+        assert f"{MINIAPP}/support" in shortcut_urls
+
+    def test_start_personalizes_greeting_with_escaped_first_name(self, api_client):
+        msg = private_message(text="/start")
+        msg["message"]["from"]["first_name"] = "Taha <Pro>"
+        response = post_update(api_client, msg)
+        assert response.status_code == 200
+        reply = response.json()
+        assert "Taha &lt;Pro&gt;" in reply["text"]
+        assert "<blockquote>" in reply["text"]
+
+    @pytest.mark.parametrize(
+        ("command", "expected_path"),
+        [
+            ("/store", "/store"),
+            ("/shop", "/fortnite-shop"),
+            ("/tournaments", "/tournaments"),
+            ("/wallet", "/wallet"),
+            ("/orders", "/orders"),
+            ("/guides", "/guides"),
+            ("/help", "/guides"),
+            ("/support", "/support"),
+        ],
+    )
+    def test_shortcut_commands_open_target_miniapp_route(self, api_client, command, expected_path):
+        response = post_update(api_client, private_message(text=command))
+        assert response.status_code == 200
+        reply = response.json()
+        assert reply["reply_markup"]["inline_keyboard"][0][0]["web_app"]["url"] == f"{MINIAPP}{expected_path}"
+        assert "<blockquote>" in reply["text"]
 
     def test_own_contact_is_remembered_silently(self, api_client):
         response = post_update(

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-28 16:12+0330\n"
+"POT-Creation-Date: 2026-11-02 14:57+0330\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -65,11 +65,8 @@ msgid "Accounts"
 msgstr "حساب‌ها"
 
 #: .\apps\accounts\models.py:21
-msgid ""
-"Username may contain 3-32 English letters, digits, dots and underscores."
-msgstr ""
-"شناسه بازی باید بین ۳ تا ۳۲ کاراکتر و فقط شامل حروف انگلیسی، عدد، نقطه و "
-"زیرخط باشد."
+msgid "Username may contain 3-32 English letters, digits, dots and underscores."
+msgstr "شناسه بازی باید بین ۳ تا ۳۲ کاراکتر و فقط شامل حروف انگلیسی، عدد، نقطه و زیرخط باشد."
 
 #: .\apps\accounts\models.py:61 .\apps\support\admin.py:104
 #: .\apps\support\admin.py:106
@@ -137,8 +134,8 @@ msgid "OTP codes"
 msgstr "کدهای یک‌بار مصرف"
 
 #: .\apps\accounts\models.py:156 .\apps\catalog\models.py:23
-#: .\apps\catalog\models.py:136 .\apps\support\models.py:223
-#: .\apps\tournaments\models.py:75
+#: .\apps\catalog\models.py:136 .\apps\content\models.py:154
+#: .\apps\support\models.py:223 .\apps\tournaments\models.py:75
 msgid "title"
 msgstr "عنوان"
 
@@ -232,15 +229,11 @@ msgid "Too many wrong attempts. Request a new code."
 msgstr "تعداد تلاش‌های ناموفق زیاد است. کد جدید درخواست کنید."
 
 #: .\apps\accounts\services.py:45
-msgid ""
-"Daily OTP request limit exceeded for this phone number. Please try again "
-"tomorrow."
+msgid "Daily OTP request limit exceeded for this phone number. Please try again tomorrow."
 msgstr ""
 
 #: .\apps\accounts\services.py:51
-msgid ""
-"Too many failed attempts. Verification is temporarily locked for this phone "
-"number."
+msgid "Too many failed attempts. Verification is temporarily locked for this phone number."
 msgstr ""
 
 #: .\apps\accounts\services.py:98
@@ -342,9 +335,7 @@ msgid "Pricing & stock"
 msgstr "قیمت‌گذاری و موجودی"
 
 #: .\apps\catalog\admin.py:242
-msgid ""
-"Products with options take their price and stock from the Options tab; fill "
-"these only for fixed-price products."
+msgid "Products with options take their price and stock from the Options tab; fill these only for fixed-price products."
 msgstr ""
 
 #: .\apps\catalog\admin.py:249
@@ -468,9 +459,7 @@ msgid "bottom SEO content"
 msgstr "محتوای سایت"
 
 #: .\apps\catalog\models.py:33
-msgid ""
-"Detailed SEO descriptive content displayed at the bottom of the game store "
-"page."
+msgid "Detailed SEO descriptive content displayed at the bottom of the game store page."
 msgstr ""
 
 #: .\apps\catalog\models.py:39 .\apps\catalog\models.py:165
@@ -478,8 +467,7 @@ msgid "نوع اطلاعات اکانت دریافتی"
 msgstr ""
 
 #: .\apps\catalog\models.py:43
-msgid ""
-"مشخص می‌کند هنگام خرید محصولات این بازی، چه اطلاعاتی از کاربر دریافت شود."
+msgid "مشخص می‌کند هنگام خرید محصولات این بازی، چه اطلاعاتی از کاربر دریافت شود."
 msgstr ""
 
 #: .\apps\catalog\models.py:54
@@ -503,9 +491,7 @@ msgid "Short SEO intro text displayed when filtering by this category."
 msgstr ""
 
 #: .\apps\catalog\models.py:96
-msgid ""
-"Detailed SEO descriptive content displayed at the bottom of this category "
-"view."
+msgid "Detailed SEO descriptive content displayed at the bottom of this category view."
 msgstr ""
 
 #: .\apps\catalog\models.py:103
@@ -542,8 +528,7 @@ msgstr ""
 
 #: .\apps\catalog\models.py:145
 #, python-brace-format
-msgid ""
-"Stock Keeping Unit (falls back to TITAN-{id} in structured data when blank)."
+msgid "Stock Keeping Unit (falls back to TITAN-{id} in structured data when blank)."
 msgstr ""
 
 #: .\apps\catalog\models.py:148
@@ -563,10 +548,7 @@ msgid "Optional Manufacturer Part Number."
 msgstr ""
 
 #: .\apps\catalog\models.py:171
-msgid ""
-"در حالت پیش‌فرض (ارث‌بری از بازی)، نوع اطلاعات دریافتی به‌صورت خودکار از روی "
-"بازی محصول تعیین می‌شود (برای کلش آو کلنز: آی‌دی سوپرسل، و برای سایر محصولات: "
-"ایمیل و رمز عبور)."
+msgid "در حالت پیش‌فرض (ارث‌بری از بازی)، نوع اطلاعات دریافتی به‌صورت خودکار از روی بازی محصول تعیین می‌شود (برای کلش آو کلنز: آی‌دی سوپرسل، و برای سایر محصولات: ایمیل و رمز عبور)."
 msgstr ""
 
 #: .\apps\catalog\models.py:178 .\apps\catalog\models.py:270
@@ -574,12 +556,8 @@ msgid "price (toman)"
 msgstr ""
 
 #: .\apps\catalog\models.py:181
-msgid ""
-"Required for fixed-price products. With options it is the cheapest option "
-"(automatic)."
-msgstr ""
-"برای محصولات با قیمت ثابت الزامی است. برای محصولات دارای گزینه، قیمت "
-"ارزان‌ترین گزینه (خودکار)."
+msgid "Required for fixed-price products. With options it is the cheapest option (automatic)."
+msgstr "برای محصولات با قیمت ثابت الزامی است. برای محصولات دارای گزینه، قیمت ارزان‌ترین گزینه (خودکار)."
 
 #: .\apps\catalog\models.py:183 .\apps\catalog\models.py:271
 msgid "price before discount"
@@ -590,10 +568,8 @@ msgid "Most expensive option; empty for fixed-price products."
 msgstr "گران‌ترین گزینه؛ برای محصولات با قیمت ثابت خالی است."
 
 #: .\apps\catalog\models.py:194
-msgid ""
-"Empty means unlimited. With options it is their total stock (automatic)."
-msgstr ""
-"خالی یعنی نامحدود. برای محصولات دارای گزینه، مجموع موجودی گزینه‌ها (خودکار)."
+msgid "Empty means unlimited. With options it is their total stock (automatic)."
+msgstr "خالی یعنی نامحدود. برای محصولات دارای گزینه، مجموع موجودی گزینه‌ها (خودکار)."
 
 #: .\apps\catalog\models.py:201
 msgid "[{\"title\", \"description\", \"icon\"}]"
@@ -681,6 +657,14 @@ msgstr "هدف"
 #: .\apps\content\admin.py:57 .\apps\tournaments\admin.py:176
 msgid "Schedule"
 msgstr "زمان‌بندی"
+
+#: .\apps\content\admin.py:143
+msgid "Links"
+msgstr ""
+
+#: .\apps\content\admin.py:145
+msgid "Publishing"
+msgstr ""
 
 #: .\apps\content\apps.py:8
 msgid "Site content"
@@ -770,14 +754,61 @@ msgstr "تنظیم سایت"
 msgid "Site settings"
 msgstr "تنظیمات سایت"
 
+#: .\apps\content\models.py:148
+msgid "Buying & activation"
+msgstr ""
+
+#: .\apps\content\models.py:149
+#, fuzzy
+#| msgid "Accounts"
+msgid "Account setup"
+msgstr "حساب‌ها"
+
+#: .\apps\content\models.py:150
+#, fuzzy
+#| msgid "Open Titan"
+msgid "Using Titan"
+msgstr "باز کردن تایتان"
+
+#: .\apps\content\models.py:151 .\apps\tournaments\apps.py:8
+#: .\apps\tournaments\models.py:109 .\config\settings\unfold.py:168
+msgid "Tournaments"
+msgstr "تورنومنت‌ها"
+
+#: .\apps\content\models.py:163
+msgid "Product pages that link to this guide."
+msgstr ""
+
+#: .\apps\content\models.py:166
+msgid "One or two sentences shown on the guide card and under the title."
+msgstr ""
+
+#: .\apps\content\models.py:170
+msgid "Lines starting with ## or ### are headings, - is a bullet, 1. is a numbered step, **text** is bold and [text](/path) is a link. Leave a blank line between paragraphs."
+msgstr ""
+
+#: .\apps\content\models.py:182
+msgid "Guide"
+msgstr ""
+
+#: .\apps\content\models.py:183
+msgid "Guides"
+msgstr ""
+
+#: .\apps\content\models.py:202
+msgid "Guide question"
+msgstr ""
+
+#: .\apps\content\models.py:203
+msgid "Guide questions"
+msgstr ""
+
 #: .\apps\core\admin.py:80
 msgid "SEO & Metadata"
 msgstr ""
 
 #: .\apps\core\admin.py:84
-msgid ""
-"Search engine optimization fields. Leave meta title / description blank to "
-"use smart automatic fallbacks."
+msgid "Search engine optimization fields. Leave meta title / description blank to use smart automatic fallbacks."
 msgstr ""
 
 #: .\apps\core\admin_auth.py:55
@@ -785,9 +816,7 @@ msgid "2FA Verification Code"
 msgstr ""
 
 #: .\apps\core\admin_auth.py:67
-msgid ""
-"Too many failed login attempts. Account is temporarily locked. Please try "
-"again later."
+msgid "Too many failed login attempts. Account is temporarily locked. Please try again later."
 msgstr ""
 
 #: .\apps\core\admin_auth.py:90
@@ -900,8 +929,7 @@ msgid "meta description"
 msgstr "توضیحات"
 
 #: .\apps\core\models.py:29
-msgid ""
-"Custom SEO description (~140–160 chars). Leave blank for automatic fallback."
+msgid "Custom SEO description (~140–160 chars). Leave blank for automatic fallback."
 msgstr ""
 
 #: .\apps\core\models.py:32
@@ -917,9 +945,7 @@ msgid "Open Graph image"
 msgstr ""
 
 #: .\apps\core\models.py:42
-msgid ""
-"Recommended 1200×630px social preview image. Falls back to primary image "
-"when empty."
+msgid "Recommended 1200×630px social preview image. Falls back to primary image when empty."
 msgstr ""
 
 #: .\apps\core\models.py:45
@@ -927,8 +953,7 @@ msgid "canonical URL"
 msgstr ""
 
 #: .\apps\core\models.py:47
-msgid ""
-"Optional canonical URL override. Leave blank for self-referencing canonical."
+msgid "Optional canonical URL override. Leave blank for self-referencing canonical."
 msgstr ""
 
 #: .\apps\core\models.py:50
@@ -936,8 +961,7 @@ msgid "main image alt text"
 msgstr ""
 
 #: .\apps\core\models.py:53
-msgid ""
-"Descriptive alt text for the main image. Falls back to title when empty."
+msgid "Descriptive alt text for the main image. Falls back to title when empty."
 msgstr ""
 
 #: .\apps\core\models.py:75
@@ -1061,7 +1085,7 @@ msgid "Tournament"
 msgstr ""
 
 #: .\apps\notifications\models.py:10 .\apps\teams\models.py:117
-#: .\apps\teams\services.py:233
+#: .\apps\teams\services.py:244
 msgid "Team invitation"
 msgstr "دعوت‌نامه تیمی"
 
@@ -1094,8 +1118,7 @@ msgstr "اعلان"
 
 #: .\apps\orders\admin.py:37
 msgid "items — enter redeem codes here before marking the order delivered"
-msgstr ""
-"آیتم‌ها — پیش از تغییر وضعیت به تحویل‌شده، کدهای فعال‌سازی را اینجا وارد کنید"
+msgstr "آیتم‌ها — پیش از تغییر وضعیت به تحویل‌شده، کدهای فعال‌سازی را اینجا وارد کنید"
 
 #: .\apps\orders\admin.py:94
 msgid "Amounts"
@@ -1129,8 +1152,7 @@ msgstr ""
 
 #: .\apps\orders\admin.py:177
 #, python-format
-msgid ""
-"%(count)d سفارش لغو و در صورت پرداخت، مبلغ به کیف پول کاربر بازگردانده شد."
+msgid "%(count)d سفارش لغو و در صورت پرداخت، مبلغ به کیف پول کاربر بازگردانده شد."
 msgstr ""
 
 #: .\apps\orders\admin.py:181
@@ -1138,8 +1160,7 @@ msgid "در حال انجام"
 msgstr ""
 
 #: .\apps\orders\admin.py:185
-msgid ""
-"سفارش به وضعیت «در حال انجام» تغییر یافت و نوتیفیکیشن برای کاربر ارسال شد."
+msgid "سفارش به وضعیت «در حال انجام» تغییر یافت و نوتیفیکیشن برای کاربر ارسال شد."
 msgstr ""
 
 #: .\apps\orders\admin.py:189
@@ -1155,9 +1176,7 @@ msgid "کنسل کردن و بازگشت وجه"
 msgstr ""
 
 #: .\apps\orders\admin.py:215
-msgid ""
-"سفارش با موفقیت کنسل شد، مبلغ به کیف پول کاربر واریز شد و نوتیفیکیشن ارسال "
-"گردید."
+msgid "سفارش با موفقیت کنسل شد، مبلغ به کیف پول کاربر واریز شد و نوتیفیکیشن ارسال گردید."
 msgstr ""
 
 #: .\apps\orders\admin.py:230
@@ -1284,10 +1303,8 @@ msgstr "مبلغ سفارش بازگردانده شد"
 
 #: .\apps\orders\services.py:327
 #, python-format
-msgid ""
-"Order %(number)s could not be completed and was refunded to your wallet."
-msgstr ""
-"سفارش %(number)s قابل انجام نبود و مبلغ آن به کیف پول شما بازگردانده شد."
+msgid "Order %(number)s could not be completed and was refunded to your wallet."
+msgstr "سفارش %(number)s قابل انجام نبود و مبلغ آن به کیف پول شما بازگردانده شد."
 
 #: .\apps\orders\services.py:345
 msgid "بازگشت وجه برای سفارشی که دیگر قابل پرداخت نبود"
@@ -1344,8 +1361,7 @@ msgstr ""
 
 #: .\apps\orders\services.py:491
 #, python-format
-msgid ""
-"سفارش شماره %(number)s لغو شد و مبلغ %(amount)s به کیف پول شما بازگردانده شد."
+msgid "سفارش شماره %(number)s لغو شد و مبلغ %(amount)s به کیف پول شما بازگردانده شد."
 msgstr ""
 
 #: .\apps\payments\admin.py:59
@@ -1498,8 +1514,7 @@ msgid "Telegram Mini App"
 msgstr "پشتیبانی تلگرام"
 
 #: .\apps\payments\models.py:80
-msgid ""
-"The app the payment started from; the gateway returns the customer there."
+msgid "The app the payment started from; the gateway returns the customer there."
 msgstr "اپی که پرداخت از آن شروع شد؛ درگاه مشتری را به همان‌جا برمی‌گرداند."
 
 #: .\apps\payments\services.py:23
@@ -1551,9 +1566,7 @@ msgid "public name"
 msgstr "نام نمایشی"
 
 #: .\apps\support\models.py:48
-msgid ""
-"The name visitors see, e.g. Sara. Defaults to the first word of the full "
-"name."
+msgid "The name visitors see, e.g. Sara. Defaults to the first word of the full name."
 msgstr "نامی که کاربران می‌بینند، مثلاً سارا. پیش‌فرض: اولین کلمه‌ی نام کامل."
 
 #: .\apps\support\models.py:50
@@ -1566,8 +1579,7 @@ msgstr "هشدار پیامکی"
 
 #: .\apps\support\models.py:54
 msgid "Text this agent when a visitor writes and nobody is online."
-msgstr ""
-"وقتی کاربری پیام می‌دهد و هیچ پشتیبانی آنلاین نیست، به این پشتیبان پیامک بزن."
+msgstr "وقتی کاربری پیام می‌دهد و هیچ پشتیبانی آنلاین نیست، به این پشتیبان پیامک بزن."
 
 #: .\apps\support\models.py:62
 msgid "Support agent"
@@ -1792,75 +1804,74 @@ msgid "A team with this name already exists."
 msgstr "تیمی با این نام وجود دارد."
 
 #: .\apps\teams\services.py:114
-msgid ""
-"The team is registered in an ongoing tournament and cannot be dissolved."
+msgid "The team is registered in an ongoing tournament and cannot be dissolved."
 msgstr "این تیم در یک تورنمنت در جریان ثبت‌نام کرده و قابل انحلال نیست."
 
-#: .\apps\teams\services.py:128
+#: .\apps\teams\services.py:133
 msgid "Team dissolved"
 msgstr "تیم منحل شد"
 
-#: .\apps\teams\services.py:129
+#: .\apps\teams\services.py:134
 #, python-format
 msgid "%(team)s was dissolved by its captain."
 msgstr "تیم %(team)s توسط کاپیتان منحل شد."
 
-#: .\apps\teams\services.py:147
+#: .\apps\teams\services.py:152
 msgid "This invite link is invalid or has expired."
 msgstr "این لینک دعوت نامعتبر است یا منقضی شده است."
 
-#: .\apps\teams\services.py:163 .\apps\teams\services.py:203
+#: .\apps\teams\services.py:174 .\apps\teams\services.py:214
 msgid "This user is not a member of the team."
 msgstr "این کاربر عضو تیم نیست."
 
-#: .\apps\teams\services.py:170
+#: .\apps\teams\services.py:181
 msgid "This player is in the team's lineup for an ongoing tournament."
 msgstr "این بازیکن در ترکیب تیم برای یک تورنمنت در جریان است."
 
-#: .\apps\teams\services.py:175
+#: .\apps\teams\services.py:186
 msgid "Transfer captaincy to another member before leaving the team."
 msgstr "قبل از ترک تیم، کاپیتانی را به عضو دیگری واگذار کنید."
 
-#: .\apps\teams\services.py:188
+#: .\apps\teams\services.py:199
 msgid "Removed from team"
 msgstr "اخراج از تیم"
 
-#: .\apps\teams\services.py:189
+#: .\apps\teams\services.py:200
 #, python-format
 msgid "You were removed from %(team)s."
 msgstr "شما از تیم %(team)s اخراج شدید."
 
-#: .\apps\teams\services.py:210
+#: .\apps\teams\services.py:221
 msgid "You are now captain"
 msgstr "شما کاپیتان شدید"
 
-#: .\apps\teams\services.py:211
+#: .\apps\teams\services.py:222
 #, python-format
 msgid "You are now the captain of %(team)s."
 msgstr "شما اکنون کاپیتان تیم %(team)s هستید."
 
-#: .\apps\teams\services.py:222
+#: .\apps\teams\services.py:233
 msgid "This player is already in the team."
 msgstr "این بازیکن در حال حاضر عضو تیم است."
 
-#: .\apps\teams\services.py:228
+#: .\apps\teams\services.py:239
 msgid "This player already has a pending invitation."
 msgstr "این بازیکن یک دعوت‌نامه در انتظار دارد."
 
-#: .\apps\teams\services.py:234
+#: .\apps\teams\services.py:245
 #, python-format
 msgid "%(team)s invited you to join the team."
 msgstr "تیم %(team)s شما را دعوت به عضویت کرده است."
 
-#: .\apps\teams\services.py:249
+#: .\apps\teams\services.py:260
 msgid "Invitation not found."
 msgstr "دعوت‌نامه پیدا نشد."
 
-#: .\apps\teams\services.py:263
+#: .\apps\teams\services.py:274
 msgid "Invitation accepted"
 msgstr "دعوت پذیرفته شد"
 
-#: .\apps\teams\services.py:264
+#: .\apps\teams\services.py:275
 #, python-format
 msgid "%(name)s joined %(team)s."
 msgstr "%(name)s به تیم %(team)s پیوست."
@@ -1876,16 +1887,11 @@ msgid "Telegram"
 msgstr "کانال تلگرام"
 
 #: .\apps\telegram\initdata.py:29
-msgid ""
-"Telegram sign-in data is invalid. Close the app and open it again from the "
-"bot."
-msgstr ""
-"اطلاعات ورود تلگرام معتبر نیست. اپ را ببندید و دوباره از ربات باز کنید."
+msgid "Telegram sign-in data is invalid. Close the app and open it again from the bot."
+msgstr "اطلاعات ورود تلگرام معتبر نیست. اپ را ببندید و دوباره از ربات باز کنید."
 
 #: .\apps\telegram\initdata.py:34
-msgid ""
-"Your Telegram session has expired. Close the app and open it again from the "
-"bot."
+msgid "Your Telegram session has expired. Close the app and open it again from the bot."
 msgstr "نشست تلگرام شما منقضی شده است. اپ را ببندید و دوباره از ربات باز کنید."
 
 #: .\apps\telegram\models.py:18
@@ -1909,24 +1915,16 @@ msgid "bot can message"
 msgstr "ربات می‌تواند پیام بدهد"
 
 #: .\apps\telegram\models.py:32
-msgid ""
-"The user has started the bot or allowed it to write; cleared when they block "
-"it."
-msgstr ""
-"کاربر ربات را استارت کرده یا اجازه‌ی پیام داده است؛ با مسدود کردن ربات پاک "
-"می‌شود."
+msgid "The user has started the bot or allowed it to write; cleared when they block it."
+msgstr "کاربر ربات را استارت کرده یا اجازه‌ی پیام داده است؛ با مسدود کردن ربات پاک می‌شود."
 
 #: .\apps\telegram\models.py:37
-#, fuzzy
-#| msgid "game account"
 msgid "Telegram account"
-msgstr "اکانت بازی"
+msgstr "حساب تلگرام"
 
 #: .\apps\telegram\models.py:38
-#, fuzzy
-#| msgid "game accounts"
 msgid "Telegram accounts"
-msgstr "اکانت‌های بازی"
+msgstr "حساب‌های تلگرام"
 
 #: .\apps\telegram\services.py:37
 msgid "Your phone number has not reached us yet. Try again in a moment."
@@ -1937,38 +1935,298 @@ msgid "Share your own phone number to continue."
 msgstr "برای ادامه، شماره‌ی تلفن خودتان را به اشتراک بگذارید."
 
 #: .\apps\telegram\services.py:49
-msgid ""
-"Your Telegram number is not an Iranian mobile number. Sign in with your "
-"Titan mobile number instead."
-msgstr ""
-"شماره‌ی تلگرام شما موبایل ایران نیست. با شماره‌ی موبایلِ حساب تایتان وارد شوید."
+msgid "Your Telegram number is not an Iranian mobile number. Sign in with your Titan mobile number instead."
+msgstr "شماره‌ی تلگرام شما موبایل ایران نیست. با شماره‌ی موبایلِ حساب تایتان وارد شوید."
 
 #: .\apps\telegram\services.py:195
 msgid ""
-"<b>Welcome to Titan</b> 🎮\n"
+"🔥 <b>Welcome to the Titan Gamers Club!</b> 🎮✨\n"
 "\n"
-"Game top-ups, tournaments, your team and your wallet, all in one app.\n"
-"Tap the button below to open Titan."
+"<blockquote>⚡ <b>Instant Game Store</b> — Auto-delivery top-ups, CP, V-Bucks & gift cards\n"
+"🏆 <b>Pro Tournaments</b> — Compete solo or with your squad for cash prizes\n"
+"🕺 <b>Live Fortnite Shop</b> — Daily item rotation with instant Rial checkout\n"
+"💎 <b>Wallet & Rank Club</b> — Earn XP, climb tiers & unlock exclusive rewards</blockquote>\n"
+"\n"
+"👇 <b>Choose a section below or launch the Titan Super-App:</b>"
 msgstr ""
-"<b>به تایتان خوش آمدید</b> 🎮\n"
+"🔥 <b>به باشگاه گیمرهای تایتان خوش آمدید!</b> 🎮✨\n"
 "\n"
-"خرید آیتم و ارز بازی، تورنمنت‌ها، تیم و کیف پول، همه در یک اپ.\n"
-"برای باز کردن تایتان روی دکمه‌ی زیر بزنید."
+"<blockquote>⚡ <b>فروشگاه آنی بازی</b> — تحویل خودکار سی‌پی، وی‌باکس، یوسی و گیفت‌کارت\n"
+"🏆 <b>تورنمنت‌های حرفه‌ای</b> — رقابت انفرادی و تیمی با جوایز نقدی\n"
+"🕺 <b>آیتم‌شاپ زنده فورتنایت</b> — بروزرسانی روزانه با پرداخت آنی ریالی\n"
+"💎 <b>کیف پول و باشگاه رنکینگ</b> — دریافت XP، ارتقای رنک و جوایز ویژه</blockquote>\n"
+"\n"
+"👇 <b>یکی از بخش‌های شیشه‌ای زیر را انتخاب کنید یا وارد سوپراپ شوید:</b>"
 
-#: .\apps\telegram\services.py:199
+#: .\apps\telegram\services.py:205
 msgid ""
-"Everything happens inside the Titan app. Tap the button below to open it."
-msgstr "همه‌چیز داخل اپ تایتان است. برای باز کردن آن روی دکمه‌ی زیر بزنید."
+"🛒 <b>Titan Game Store</b> ⚡\n"
+"\n"
+"<blockquote>• Instant in-game currencies (CP, UC, V-Bucks, Robux & more)\n"
+"• Official gift cards & game accounts with warranty\n"
+"• Fast checkout with Wallet or direct bank gateway</blockquote>\n"
+"\n"
+"👇 Tap below to browse products and deals:"
+msgstr ""
+"🛒 <b>فروشگاه بازی‌های تایتان</b> ⚡\n"
+"\n"
+"<blockquote>• شارژ آنی ارز بازی‌ها (سی‌پی، یوسی، وی‌باکس، روباکس و...)\n"
+"• گیفت‌کارت‌های رسمی و اکانت‌های قانونی با گارانتی تایتان\n"
+"• پرداخت سریع با کیف پول یا درگاه بانکی</blockquote>\n"
+"\n"
+"👇 برای مشاهده محصولات و تخفیف‌ها روی دکمه زیر بزنید:"
 
-#: .\apps\telegram\services.py:200
-msgid "Open Titan"
-msgstr "باز کردن تایتان"
+#: .\apps\telegram\services.py:214
+msgid ""
+"🕺 <b>Live Fortnite Item Shop</b> ✨\n"
+"\n"
+"<blockquote>• Synced live with today's Epic Games rotation\n"
+"• Transparent Rial pricing & instant gift delivery\n"
+"• Bundles, skins, emotes, pickaxes & jam tracks</blockquote>\n"
+"\n"
+"👇 Tap below to open today's Fortnite Item Shop:"
+msgstr ""
+"🕺 <b>آیتم‌شاپ زنده فورتنایت</b> ✨\n"
+"\n"
+"<blockquote>• همگام‌سازی زنده با آیتم‌شاپ روزانه اپیک گیمز\n"
+"• قیمت‌گذاری شفاف ریالی و ارسال سریع گیفت\n"
+"• باندل‌ها، اسکین‌ها، ایموت‌ها، پیک‌اکس و موزیک‌پک‌ها</blockquote>\n"
+"\n"
+"👇 برای مشاهده آیتم‌شاپ امروز فورتنایت روی دکمه زیر بزنید:"
 
-#: .\apps\telegram\services.py:260
-#, fuzzy
-#| msgid "View on site"
-msgid "View in Titan"
-msgstr "مشاهده در سایت"
+#: .\apps\telegram\services.py:223
+msgid ""
+"🏆 <b>Titan Arena & Tournaments</b> ⚔️\n"
+"\n"
+"<blockquote>• Solo & squad tournaments with guaranteed prize pools\n"
+"• Live brackets, match schedules & room credentials\n"
+"• Automatic prize payout straight to your Titan Wallet</blockquote>\n"
+"\n"
+"👇 Tap below to enter the arena:"
+msgstr ""
+"🏆 <b>آرنا و تورنمنت‌های تایتان</b> ⚔️\n"
+"\n"
+"<blockquote>• مسابقات انفرادی و تیمی با جوایز نقدی تضمین‌شده\n"
+"• جدول براکت زنده، زمان‌بندی مسابقات و اطلاعات روم\n"
+"• واریز خودکار جوایز به کیف پول تایتان</blockquote>\n"
+"\n"
+"👇 برای ورود به میدان رقابت روی دکمه زیر بزنید:"
+
+#: .\apps\telegram\services.py:232
+msgid ""
+"💎 <b>Titan Digital Wallet</b> 💳\n"
+"\n"
+"<blockquote>• Instant Rial top-up for 1-tap checkout\n"
+"• Receive tournament winnings & order refunds\n"
+"• Full transaction history and receipt tracking</blockquote>\n"
+"\n"
+"👇 Tap below to manage your wallet:"
+msgstr ""
+"💎 <b>کیف پول دیجیتال تایتان</b> 💳\n"
+"\n"
+"<blockquote>• شارژ آنی ریالی برای خرید یک‌کلیکی\n"
+"• دریافت آنی جوایز تورنمنت‌ها و بازگشت وجه سفارش‌ها\n"
+"• مشاهده تاریخچه کامل تراکنش‌ها و رسیدها</blockquote>\n"
+"\n"
+"👇 برای مدیریت کیف پول خود روی دکمه زیر بزنید:"
+
+#: .\apps\telegram\services.py:241
+msgid ""
+"📦 <b>Your Orders & Deliveries</b> 🧾\n"
+"\n"
+"<blockquote>• Track live order status and fulfillment progress\n"
+"• View delivered redeem codes and account credentials\n"
+"• Direct support access for every order</blockquote>\n"
+"\n"
+"👇 Tap below to view your orders:"
+msgstr ""
+"📦 <b>سفارش‌ها و تحویل‌های شما</b> 🧾\n"
+"\n"
+"<blockquote>• پیگیری لحظه‌ای وضعیت انجام سفارش‌ها\n"
+"• دریافت کدهای دیجیتالی و اطلاعات تحویل‌شده\n"
+"• دسترسی مستقیم به پشتیبانی برای هر سفارش</blockquote>\n"
+"\n"
+"👇 برای مشاهده سفارش‌های خود روی دکمه زیر بزنید:"
+
+#: .\apps\telegram\services.py:250
+msgid ""
+"📘 <b>Titan Academy & Guides</b> 🎓\n"
+"\n"
+"<blockquote>• Step-by-step tutorials for buying & redeeming items\n"
+"• Account security best practices & two-step verification\n"
+"• How to join tournaments, form teams & climb Titan ranks</blockquote>\n"
+"\n"
+"👇 Tap below to open Titan Academy:"
+msgstr ""
+"📘 <b>آکادمی و راهنمای تایتان</b> 🎓\n"
+"\n"
+"<blockquote>• آموزش گام‌به‌گام خرید و فعال‌سازی کدها و آیتم‌ها\n"
+"• نکات طلایی امنیت اکانت و تایید دو مرحله‌ای\n"
+"• راهنمای شرکت در تورنمنت‌ها، ساخت تیم و افزایش رنک</blockquote>\n"
+"\n"
+"👇 برای ورود به آکادمی تایتان روی دکمه زیر بزنید:"
+
+#: .\apps\telegram\services.py:259
+msgid ""
+"🎧 <b>Titan 24/7 Live Support</b> 💬\n"
+"\n"
+"<blockquote>• Real-time chat with Titan gaming specialists\n"
+"• Order follow-ups, tournament help & account recovery\n"
+"• Instant Telegram alerts when an agent replies</blockquote>\n"
+"\n"
+"👇 Tap below to start or continue a support chat:"
+msgstr ""
+"🎧 <b>پشتیبانی آنلاین ۲۴ ساعته تایتان</b> 💬\n"
+"\n"
+"<blockquote>• گفتگوی زنده با کارشناسان گیمینگ تایتان\n"
+"• پیگیری سفارش‌ها، راهنمایی تورنمنت و بازیابی حساب\n"
+"• دریافت اعلان آنی در تلگرام به محض پاسخ کارشناس</blockquote>\n"
+"\n"
+"👇 برای شروع یا ادامه گفتگو با پشتیبانی روی دکمه زیر بزنید:"
+
+#: .\apps\telegram\services.py:268
+msgid ""
+"✨ <b>Titan Super-App</b> 🎮\n"
+"\n"
+"<blockquote>Everything happens inside the Titan Mini App — instant game top-ups, live Fortnite shop, tournaments, teams, and your wallet!</blockquote>\n"
+"\n"
+"👇 <b>Tap a glass button below to jump right in:</b>"
+msgstr ""
+"✨ <b>سوپراپ گیمینگ تایتان</b> 🎮\n"
+"\n"
+"<blockquote>همه‌چیز داخل مینی‌اپ تایتان آماده است — فروشگاه آنی بازی‌ها، آیتم‌شاپ زنده فورتنایت، تورنمنت‌ها، تیم‌ها و کیف پول شما!</blockquote>\n"
+"\n"
+"👇 <b>روی یکی از دکمه‌های شیشه‌ای زیر بزنید:</b>"
+
+#: .\apps\telegram\services.py:275
+msgid "🚀 Launch Titan Super-App 🎮"
+msgstr "🚀 ورود به سوپراپ تایتان 🎮"
+
+#: .\apps\telegram\services.py:278
+msgid "🛒 Open Game Store"
+msgstr "🛒 ورود به فروشگاه بازی‌ها"
+
+#: .\apps\telegram\services.py:279 .\apps\telegram\services.py:280
+msgid "🕺 Open Fortnite Shop"
+msgstr "🕺 ورود به آیتم‌شاپ فورتنایت"
+
+#: .\apps\telegram\services.py:281
+msgid "🏆 Open Tournaments"
+msgstr "🏆 ورود به تورنمنت‌ها"
+
+#: .\apps\telegram\services.py:282
+msgid "💎 Open My Wallet"
+msgstr "💎 ورود به کیف پول من"
+
+#: .\apps\telegram\services.py:283
+msgid "📦 View My Orders"
+msgstr "📦 مشاهده سفارش‌های من"
+
+#: .\apps\telegram\services.py:284 .\apps\telegram\services.py:285
+msgid "📘 Open Titan Academy"
+msgstr "📘 ورود به آکادمی تایتان"
+
+#: .\apps\telegram\services.py:286
+msgid "🎧 Open Live Support"
+msgstr "🎧 گفتگوی آنلاین با پشتیبانی"
+
+#: .\apps\telegram\services.py:296
+msgid "🛒 Game Store"
+msgstr "🛒 فروشگاه بازی‌ها"
+
+#: .\apps\telegram\services.py:297
+msgid "🏆 Tournaments"
+msgstr "🏆 تورنمنت‌ها"
+
+#: .\apps\telegram\services.py:300
+msgid "🕺 Fortnite Shop"
+msgstr "🕺 آیتم‌شاپ فورتنایت"
+
+#: .\apps\telegram\services.py:301
+msgid "💎 My Wallet"
+msgstr "💎 کیف پول من"
+
+#: .\apps\telegram\services.py:304
+msgid "📘 Academy & Guides"
+msgstr "📘 آکادمی و آموزش‌ها"
+
+#: .\apps\telegram\services.py:305
+msgid "🎧 Live Support"
+msgstr "🎧 پشتیبانی آنلاین"
+
+#: .\apps\telegram\services.py:332
+#, python-brace-format
+msgid "👋 Hey <b>{name}</b>!"
+msgstr "👋 سلام <b>{name}</b> عزیز!"
+
+#: .\apps\telegram\services.py:389
+msgid "📦 <b>Order Update</b>"
+msgstr "📦 <b>وضعیت سفارش تایتان</b>"
+
+#: .\apps\telegram\services.py:389
+msgid "📦 View Order in Titan"
+msgstr "📦 مشاهده سفارش در تایتان"
+
+#: .\apps\telegram\services.py:391
+msgid "💎 <b>Wallet & Payment</b>"
+msgstr "💎 <b>کیف پول و تراکنش</b>"
+
+#: .\apps\telegram\services.py:391
+msgid "💎 Open Wallet in Titan"
+msgstr "💎 مشاهده کیف پول در تایتان"
+
+#: .\apps\telegram\services.py:393
+msgid "🏆 <b>Tournament Alert</b>"
+msgstr "🏆 <b>اعلان تورنمنت تایتان</b>"
+
+#: .\apps\telegram\services.py:393
+msgid "🏆 View Tournament in Titan"
+msgstr "🏆 مشاهده تورنمنت در تایتان"
+
+#: .\apps\telegram\services.py:395
+msgid "💌 <b>Team Invitation</b>"
+msgstr "💌 <b>دعوت‌نامه تیمی</b>"
+
+#: .\apps\telegram\services.py:395
+msgid "⚔️ View Invitation in Titan"
+msgstr "⚔️ مشاهده دعوت‌نامه در تایتان"
+
+#: .\apps\telegram\services.py:397
+msgid "🛡️ <b>Squad Update</b>"
+msgstr "🛡️ <b>اعلان تیم</b>"
+
+#: .\apps\telegram\services.py:397
+msgid "🛡️ View Team in Titan"
+msgstr "🛡️ مشاهده تیم در تایتان"
+
+#: .\apps\telegram\services.py:399
+msgid "🤝 <b>Friends & Social</b>"
+msgstr "🤝 <b>دوستان و کلاب</b>"
+
+#: .\apps\telegram\services.py:399
+msgid "👥 View Friends in Titan"
+msgstr "👥 مشاهده دوستان در تایتان"
+
+#: .\apps\telegram\services.py:401
+msgid "🎧 <b>Titan Support Reply</b>"
+msgstr "🎧 <b>پاسخ پشتیبانی تایتان</b>"
+
+#: .\apps\telegram\services.py:401
+msgid "💬 Open Support Chat"
+msgstr "💬 مشاهده گفتگو در تایتان"
+
+#: .\apps\telegram\services.py:402
+msgid "🔔 <b>Titan Notification</b>"
+msgstr "🔔 <b>اعلان جدید تایتان</b>"
+
+#: .\apps\telegram\services.py:402
+msgid "✨ View in Titan"
+msgstr "✨ مشاهده در تایتان"
+
+#: .\apps\telegram\services.py:416
+#, python-brace-format
+msgid "🔖 Order ID: <code>{order_no}</code>"
+msgstr "🔖 کد سفارش: <code>{order_no}</code>"
 
 #: .\apps\tournaments\admin.py:88
 msgid "Current"
@@ -1991,10 +2249,7 @@ msgid "Broadcast"
 msgstr "ارسال همگانی"
 
 #: .\apps\tournaments\admin.py:210
-msgid ""
-"قوانین مسابقه به صورت لیست متنی. برای ایجاد جدول حذفی شیشه‌ای دلخواه بدون "
-"نیاز به تغییر کد فرانت‌اند، می‌توانید آبجکت {'special_bracket': {...}} شامل "
-"تیم‌ها و نتایج را در همین فیلد قرار دهید."
+msgid "قوانین مسابقه به صورت لیست متنی. برای ایجاد جدول حذفی شیشه‌ای دلخواه بدون نیاز به تغییر کد فرانت‌اند، می‌توانید آبجکت {'special_bracket': {...}} شامل تیم‌ها و نتایج را در همین فیلد قرار دهید."
 msgstr ""
 
 #: .\apps\tournaments\admin.py:249
@@ -2020,8 +2275,7 @@ msgstr "رایگان"
 
 #: .\apps\tournaments\admin.py:350
 msgid "Entering both scores completes the match and advances the winner."
-msgstr ""
-"ورود هر دو امتیاز مسابقه را تکمیل کرده و برنده را به دور بعد منتقل می‌کند."
+msgstr "ورود هر دو امتیاز مسابقه را تکمیل کرده و برنده را به دور بعد منتقل می‌کند."
 
 #: .\apps\tournaments\admin.py:354
 msgid "Lobby"
@@ -2031,11 +2285,6 @@ msgstr "لابی"
 #, python-format
 msgid "Round %(round)s · match %(n)s"
 msgstr "دور %(round)s · مسابقه %(n)s"
-
-#: .\apps\tournaments\apps.py:8 .\apps\tournaments\models.py:109
-#: .\config\settings\unfold.py:168
-msgid "Tournaments"
-msgstr "تورنومنت‌ها"
 
 #: .\apps\tournaments\models.py:14
 msgid "Toman"
@@ -2327,8 +2576,7 @@ msgstr "مبلغ ثبت‌نام بازگردانده شد"
 #: .\apps\tournaments\services\registration.py:314
 #, python-format
 msgid "%(tournament)s filled up; your entry fee was refunded to your wallet."
-msgstr ""
-"ظرفیت %(tournament)s تکمیل شد؛ هزینه ورودی به کیف پول شما بازگردانده شد."
+msgstr "ظرفیت %(tournament)s تکمیل شد؛ هزینه ورودی به کیف پول شما بازگردانده شد."
 
 #: .\apps\tournaments\services\results.py:99
 #: .\apps\tournaments\services\results.py:114
@@ -2602,12 +2850,8 @@ msgid "Authentication Failed"
 msgstr "خطای احراز هویت"
 
 #: .\templates\admin\login.html:170
-msgid ""
-"Please enter a correct username and password. Note that both fields may be "
-"case-sensitive."
-msgstr ""
-"لطفاً نام کاربری و رمز عبور معتبر وارد کنید. دقت کنید که حروف بزرگ و کوچک "
-"حساس هستند."
+msgid "Please enter a correct username and password. Note that both fields may be case-sensitive."
+msgstr "لطفاً نام کاربری و رمز عبور معتبر وارد کنید. دقت کنید که حروف بزرگ و کوچک حساس هستند."
 
 #: .\templates\admin\login.html:188
 msgid "Username or Phone"
@@ -2650,11 +2894,8 @@ msgid "ALL RIGHTS RESERVED"
 msgstr "تمامی حقوق محفوظ است"
 
 #: .\templates\admin\login.html:303
-msgid ""
-"Titan Technologies. Authorized personnel only. Unauthorized access is "
-"prohibited."
-msgstr ""
-"فناوری تایتان. فقط پرسنل مجاز. هرگونه دسترسی غیرمجاز پیگرد قانونی دارد."
+msgid "Titan Technologies. Authorized personnel only. Unauthorized access is prohibited."
+msgstr "فناوری تایتان. فقط پرسنل مجاز. هرگونه دسترسی غیرمجاز پیگرد قانونی دارد."
 
 #: .\templates\unfold\helpers\shortcuts.html:16
 msgid "Available shortcuts"
@@ -2715,3 +2956,17 @@ msgstr "باز کردن مورد انتخاب‌شده در تب جدید"
 #: .\templates\unfold\helpers\shortcuts.html:138
 msgid "Clear"
 msgstr ""
+
+#~ msgid ""
+#~ "<b>Welcome to Titan</b> 🎮\n"
+#~ "\n"
+#~ "Game top-ups, tournaments, your team and your wallet, all in one app.\n"
+#~ "Tap the button below to open Titan."
+#~ msgstr ""
+#~ "<b>به تایتان خوش آمدید</b> 🎮\n"
+#~ "\n"
+#~ "خرید آیتم و ارز بازی، تورنمنت‌ها، تیم و کیف پول، همه در یک اپ.\n"
+#~ "برای باز کردن تایتان روی دکمه‌ی زیر بزنید."
+
+#~ msgid "Everything happens inside the Titan app. Tap the button below to open it."
+#~ msgstr "همه‌چیز داخل اپ تایتان است. برای باز کردن آن روی دکمه‌ی زیر بزنید."
