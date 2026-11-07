@@ -71,7 +71,7 @@ def create_invite_team_guide(apps, schema_editor):
             "game": game,
             "summary": summary,
             "body": body,
-            "meta_title": "آموزش تصویری دعوت افراد به تیم در تایتان (لینک دعوت و آیدی کاربر) | تایتان",
+            "meta_title": "آموزش تصویری دعوت افراد به تیم در تایتان (لینک و آیدی) | تایتان",
             "meta_description": "آموزش گام‌به‌گام و تصویری دعوت افراد و دوستان به تیم در تایتان به ۲ روش: کپی و ارسال لینک دعوت اختصاصی و دعوت مستقیم با آیدی کاربر (Game ID).",
             "is_published": True,
             "sort_order": 15,

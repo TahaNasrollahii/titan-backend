@@ -713,14 +713,14 @@ def apply_product_seo(apps, schema_editor):
             if not specs.get("keywords"):
                 specs["keywords"] = "، ".join(dict.fromkeys(keywords))
                 product.specs = specs
-            if not product.meta_title:
-                product.meta_title = f"خرید {title} با بهترین قیمت و تحویل فوری | فروشگاه تایتان"[:250]
-            if not product.meta_description:
+            if not product.meta_title or len(product.meta_title) > 70:
+                product.meta_title = f"خرید {title} با بهترین قیمت | تایتان"[:70]
+            if not product.meta_description or len(product.meta_description) > 160:
                 product.meta_description = (
                     f"خرید {title} با بهترین قیمت، تضمین اصالت ۱۰۰٪ قانونی، تحویل سریع و پشتیبانی ۲۴ ساعته در فروشگاه تایتان."
-                )[:490]
-            if not product.image_alt:
-                product.image_alt = f"خرید {title} از فروشگاه تایتان"[:250]
+                )[:160]
+            if not product.image_alt or len(product.image_alt) > 150:
+                product.image_alt = f"خرید {title} از فروشگاه تایتان"[:150]
             product.save()
 
 
